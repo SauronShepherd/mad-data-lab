@@ -1,0 +1,132 @@
+{
+  "status": "PASS",
+  "gates": [
+    {
+      "name": "lint",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "server",
+        "tests",
+        "scripts"
+      ],
+      "status": "PASS",
+      "output": ""
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-m",
+        "mypy",
+        "server",
+        "--ignore-missing-imports",
+        "--follow-imports=skip",
+        "--no-site-packages"
+      ],
+      "status": "PASS",
+      "output": "Success: no issues found in 9 source files\n"
+    },
+    {
+      "name": "unit",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "status": "PASS",
+      "output": "...........................................                              [100%]\n43 passed in 1.78s\n"
+    },
+    {
+      "name": "data",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_domain.py",
+        "tests/test_mutation.py"
+      ],
+      "status": "PASS",
+      "output": ".......                                                                  [100%]\n7 passed in 0.10s\n"
+    },
+    {
+      "name": "contract",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_case_contract.py"
+      ],
+      "status": "PASS",
+      "output": "................................                                         [100%]\n32 passed in 2.03s\n"
+    },
+    {
+      "name": "e2e",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/local_e2e.py"
+      ],
+      "status": "PASS",
+      "output": "local e2e: PASS (7 deterministic case journeys)\n"
+    },
+    {
+      "name": "visual",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/visual_gate.py"
+      ],
+      "status": "PASS",
+      "output": "visual gate: PASS (release artifact and visual anchors)\n"
+    },
+    {
+      "name": "assets",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/assets_gate.py"
+      ],
+      "status": "PASS",
+      "output": "assets gate: PASS (2 images, 417.5s audio, 6681145 bytes)\n"
+    },
+    {
+      "name": "security",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/security_gate.py"
+      ],
+      "status": "PASS",
+      "output": "security gate: PASS\n"
+    },
+    {
+      "name": "a11y",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/a11y_gate.py"
+      ],
+      "status": "PASS",
+      "output": "a11y gate: PASS (static semantics; runtime axe is deployment-only)\n"
+    },
+    {
+      "name": "chaos",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/local_chaos.py"
+      ],
+      "status": "PASS",
+      "output": "local chaos: PASS (timeout fallback, missing session, oversized chat, invalid identifier)\n"
+    },
+    {
+      "name": "soak",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/local_soak.py"
+      ],
+      "status": "PASS",
+      "output": "local soak: PASS (10 Case #042 investigations)\n"
+    }
+  ]
+}

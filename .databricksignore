@@ -1,0 +1,10 @@
+.git/
+.idea/
+.mypy_cache/
+.pytest_cache/
+node_modules/
+dist/
+__pycache__/
+*.pyc
+.env
+.env.*

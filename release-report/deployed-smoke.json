@@ -1,0 +1,9 @@
+{
+  "name": "deployed-smoke.json",
+  "command": [
+    "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "scripts/deployed_smoke.py"
+  ],
+  "status": "PASS",
+  "output": "deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\n"
+}

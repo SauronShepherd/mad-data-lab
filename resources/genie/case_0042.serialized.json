@@ -1,0 +1,47 @@
+{
+  "version": 2,
+  "config": {
+    "sample_questions": [
+      {"id": "a0420000000000000000000000000001", "question": ["Why is Capital Available €6.8M below expectation?"]},
+      {"id": "a0420000000000000000000000000002", "question": ["Which component explains most of the deviation?"]},
+      {"id": "a0420000000000000000000000000003", "question": ["Which V2 records changed between snapshots?"]}
+    ]
+  },
+  "data_sources": {
+    "tables": [
+      {"identifier": "sda_dev.mad_data_lab.case_observations", "description": ["Case #042 observed and expected metric values."]},
+      {"identifier": "sda_dev.mad_data_lab.component_deltas", "description": ["Component-level movement that reconciles the metric deviation."]},
+      {"identifier": "sda_dev.mad_data_lab.dq_signals", "description": ["Data-quality warnings that may overlap other evidence and must be assessed for materiality."]},
+      {"identifier": "sda_dev.mad_data_lab.evidence_records", "description": ["Representative source-record evidence for the V2 change."]},
+      {"identifier": "sda_dev.mad_data_lab.formula_versions", "description": ["Formula versions used to check whether the calculation changed."]},
+      {"identifier": "sda_dev.mad_data_lab.snapshot_changes", "description": ["V2 record change aggregates between the two snapshots."]}
+    ]
+  },
+  "instructions": {
+    "text_instructions": [
+      {"id": "a0420000000000000000000000000011", "content": [
+        "You are Dr. Genie, the analytical scientist inside MAD DATA LAB.",
+        "Use only the six curated sda_dev.mad_data_lab tables in this space.",
+        "Capital Available = V1 + V2 - V3 + V4.",
+        "The expected value is €125.0M and the observed value is €118.2M; the deviation is -€6.8M.",
+        "Treat data-quality signals as evidence to assess, not as automatically additive causes.",
+        "The DQ_0042_01 duplicate-key signal has an estimated overlapping impact of -€0.30M and overlaps V2; do not add it again to the -€6.8M deviation.",
+        "When asked for the next experiment, choose among EXP-01 component decomposition, EXP-02 snapshot comparison, and EXP-03 evidence microscope.",
+        "Return concise evidence-backed answers. Do not claim causality unless the reported impacts reconcile with the observed deviation.",
+        "Never invent tables, rows, values, or hidden truth outside the curated data sources."
+      ]}
+    ],
+    "example_question_sqls": [
+      {"id": "a0420000000000000000000000000021", "question": ["Which component explains most of the deviation?"], "sql": ["SELECT component_id, contribution_delta_eur_m, deviation_share_pct FROM sda_dev.mad_data_lab.v_case042_experiment_decomposition ORDER BY ABS(contribution_delta_eur_m) DESC;"]},
+      {"id": "a0420000000000000000000000000022", "question": ["What changed in V2 between snapshots?"], "sql": ["SELECT change_type, record_count, net_impact_eur_m FROM sda_dev.mad_data_lab.v_case042_snapshot_diff ORDER BY ABS(net_impact_eur_m) DESC;"]},
+      {"id": "a0420000000000000000000000000023", "question": ["Did the formula change?"], "sql": ["SELECT * FROM sda_dev.mad_data_lab.v_case042_formula_check;"]}
+    ]
+  },
+  "benchmarks": {
+    "questions": [
+      {"id": "a0420000000000000000000000000031", "question": ["Which component explains most of the €6.8M loss?"], "answer": [{"format": "SQL", "content": ["SELECT component_id, contribution_delta_eur_m FROM sda_dev.mad_data_lab.v_case042_experiment_decomposition ORDER BY ABS(contribution_delta_eur_m) DESC LIMIT 1;"]}]},
+      {"id": "a0420000000000000000000000000032", "question": ["How many V2 records changed and what was their net impact?"], "answer": [{"format": "SQL", "content": ["SELECT SUM(record_count) AS changed_records, SUM(net_impact_eur_m) AS net_impact_eur_m FROM sda_dev.mad_data_lab.v_case042_snapshot_diff;"]}]},
+      {"id": "a0420000000000000000000000000033", "question": ["Did the capital available formula change?"], "answer": [{"format": "SQL", "content": ["SELECT formula_version_count, formula_hash FROM sda_dev.mad_data_lab.v_case042_formula_check;"]}]}
+    ]
+  }
+}

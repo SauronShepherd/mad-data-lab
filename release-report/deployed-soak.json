@@ -1,0 +1,12 @@
+{
+  "name": "deployed-soak.json",
+  "command": [
+    "python",
+    "-u",
+    "scripts/deployed_soak.py"
+  ],
+  "status": "PASS",
+  "output": "deployed soak: PASS (10 authenticated Case #042 journeys)\n",
+  "deployment_id": "01f19f9429fb133e82b07719c652ddd8",
+  "verified_at": "2026-08-24"
+}

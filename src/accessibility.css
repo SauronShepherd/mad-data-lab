@@ -1,0 +1,36 @@
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible {
+  outline: 2px solid #ffc62c;
+  outline-offset: 3px;
+}
+
+.reduced-motion *, .reduced-motion *::before, .reduced-motion *::after {
+  animation-duration: .001ms !important;
+  transition-duration: .001ms !important;
+}
+
+.modal-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 24px; background: #05080ed9; }
+.modal-panel { position: relative; width: min(520px, 100%); padding: 32px; background: linear-gradient(145deg, #172737, #0d131e); border: 2px solid #16d8f5; box-shadow: 10px 10px 0 #05080e; color: #dbe4ee; line-height: 1.5; }
+.modal-panel h2 { margin: 8px 0 16px; color: #16d8f5; font-family: 'Press Start 2P'; font-size: 18px; line-height: 1.45; }
+.modal-panel ol { padding-left: 24px; color: #c8d5e2; }
+.modal-panel li { margin: 8px 0; }
+.modal-close { position: absolute; top: 10px; right: 12px; border: 0; background: none; color: #ffc62c; font-size: 26px; cursor: pointer; }
+.setting-row { display: flex; justify-content: space-between; align-items: center; margin: 22px 0; padding: 14px; background: #0b1420; border: 1px solid #35445a; color: #ffc62c; }
+.setting-row input { width: 20px; height: 20px; accent-color: #a9f41d; }
+.setting-note { color: #9db0c2; font-size: 13px; }
+.hint-card { display: grid; gap: 5px; margin: 12px 0; padding: 11px; background: #2a2435; border: 1px solid #9a63c7; color: #eadcff; font-size: 12px; line-height: 1.35; }
+.hint-card strong { color: #ed65e7; font-size: 10px; letter-spacing: .5px; }
+.hint-button { color: #edb8ff; }
+.hint-button:disabled { color: #68778b; cursor: not-allowed; }
+.badges { display: grid; gap: 8px; margin: 18px 0 24px; padding: 14px; background: #111a27; border: 1px solid #806b2c; }
+.badges .eyebrow { color: #ffc62c; }
+.badges strong { color: #ffe69a; font-size: 12px; }
+.badges small { color: #9db0c2; }

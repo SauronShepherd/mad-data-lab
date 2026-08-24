@@ -1,0 +1,9 @@
+{
+  "name": "visual",
+  "command": [
+    "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "scripts/visual_gate.py"
+  ],
+  "status": "PASS",
+  "output": "visual gate: PASS (release artifact and visual anchors)\n"
+}

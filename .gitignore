@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.idea/
+.env
+.env.*
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.pytest_cache/
