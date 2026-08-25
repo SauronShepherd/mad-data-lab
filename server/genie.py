@@ -247,6 +247,8 @@ class GenieAdapter:
         # that narrow case; arbitrary generated SQL is never accepted.
         query_start = text.upper().find("SELECT ")
         query_text = text[query_start:].strip() if query_start >= 0 else ""
+        if query_text.endswith(";"):
+            query_text = query_text[:-1].rstrip()
         if query_text and "sda_dev.mad_data_lab_curated." in query_text and ";" not in query_text:
             from databricks.sdk.service.sql import Disposition, Format
             space = workspace.genie.get_space(self.space_id)
