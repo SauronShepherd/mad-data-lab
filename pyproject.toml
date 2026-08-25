@@ -18,5 +18,12 @@ testpaths = ["tests"]
 [project.optional-dependencies]
 dev = ["mypy>=1.11,<2", "Pillow>=10,<12"]
 
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["server*", "backend*", "data*"]
+
 [tool.ruff]
 line-length = 120
