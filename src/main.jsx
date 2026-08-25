@@ -310,7 +310,7 @@ function App() {
       {screen === "board" && (
         <main className="hub">
           <div className="hero">
-            <img src="/assets/Mad_Data_Lab.png" alt="MAD DATA LAB laboratory mark" />
+            <div className="lab-mark" role="img" aria-label="MAD DATA LAB laboratory mark" />
             <div className="hero-copy">
               <p className="eyebrow">
                 DR. GENIE'S EXPERIMENTAL DATA LABORATORY
@@ -358,7 +358,7 @@ function App() {
       {screen === "briefing" && (
         <main className="briefing">
           <div className="brief-art">
-            <img src="/assets/board.png" alt="Retro-futurist data laboratory board" />
+            <div className="lab-visual briefing-visual" role="img" aria-label="Abstract data laboratory instrument" />
           </div>
           <div className="brief-panel">
             <p className="eyebrow">
@@ -393,7 +393,7 @@ function App() {
         <main className="investigation">
           <section className="stage">
             <div className="stage-image">
-              <img src="/assets/board.png" alt="Data laboratory experiment board" />
+              <div className="lab-visual stage-visual" role="img" aria-label="Abstract experiment instrument field" />
             </div>
             <div className="overlay">
               <div className="observation">

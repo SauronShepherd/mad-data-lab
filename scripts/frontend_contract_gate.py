@@ -5,7 +5,7 @@ import re, sys
 ROOT = Path(__file__).resolve().parents[1]
 def main():
     source = '\n'.join(p.read_text(encoding='utf-8', errors='ignore') for p in ROOT.glob('src/**/*') if p.is_file())
-    forbidden = ('primary_cause', 'truth_json', 'expected_path_json', 'allowed_final_status_json', 'Promo effect?', 'EXP-01', 'EXP-02', 'EXP-03')
+    forbidden = ('primary_cause', 'truth_json', 'expected_path_json', 'allowed_final_status_json', 'Promo effect?', 'EXP-01', 'EXP-02', 'EXP-03', '/assets/board.png', '/assets/Mad_Data_Lab.png')
     for marker in forbidden:
         assert marker not in source, f'forbidden analytical fixture in frontend source: {marker}'
     dist = ROOT / 'dist'

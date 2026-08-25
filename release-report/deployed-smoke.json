@@ -7,7 +7,7 @@
   "output": "deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\n",
   "source_identity": {
     "git_head": "927ab12d1b05752d118a4571fe21a095a4004e73",
-    "runtime_digest": "453e08fc0600b9e062eb6eb7badfc3104f5d62f90a9e67dc758a1d2853b8a6d7",
+    "runtime_digest": "f32641cf61503b6e9cbafda10ecb469dda3c14e6c12168da3f4f15d48e1eed60",
     "data_contract_digest": "bf19a22f80bfa0bd822374d14888a5bd994c92d64902964e4ffd6c8e0efdfb40"
   },
   "generated_at_utc": "2026-08-25T05:49:33.656122+00:00"
