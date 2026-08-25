@@ -1,0 +1,82 @@
+name: mad-data-lab-deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Databricks deployment environment
+        required: true
+        default: staging
+        type: choice
+        options: [staging]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy-and-smoke:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install application package
+        run: python -m pip install -e ".[dev]"
+
+      - uses: databricks/setup-cli@main
+      - name: Deploy exact checked-out source
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_AUTH_TYPE: github-oidc
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.sha }}"
+          databricks apps deploy mad-data-lab --source-code-path .
+
+      - name: Verify deployment state and provenance
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_AUTH_TYPE: github-oidc
+        run: |
+          mkdir -p release-report
+          databricks apps get mad-data-lab --output json > release-report/deployed-app.json
+          python - <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          app=json.loads(Path('release-report/deployed-app.json').read_text())
+          if app.get('app_status', {}).get('state') != 'RUNNING':
+              raise SystemExit('deployed app is not RUNNING')
+          payload={
+              'status':'PASS',
+              'git_sha':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+              'github_sha':os.environ['GITHUB_SHA'],
+              'app_name':'mad-data-lab',
+              'app_state':app.get('app_status',{}).get('state'),
+              'deployment_identity':app.get('service_principal_id'),
+          }
+          Path('release-report/deployment-provenance.json').write_text(json.dumps(payload,indent=2)+'\n')
+          if payload['git_sha'] != payload['github_sha']:
+              raise SystemExit('checked-out SHA does not match workflow SHA')
+          PY
+
+      - name: Run authenticated deployed smoke
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_AUTH_TYPE: github-oidc
+          DEPLOYED_APP_URL: ${{ vars.DEPLOYED_APP_URL }}
+        run: python scripts/deployed_smoke.py
+
+      - name: Upload deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-evidence-${{ github.sha }}
+          path: release-report/*
