@@ -19,3 +19,27 @@ def test_query_registry_matches_trusted_sql_placeholder_counts():
     for spec in QUERIES.values():
         sql = (Path(__file__).parents[1] / 'sql' / 'trusted' / spec.sql_path).read_text(encoding='utf-8')
         assert len(re.findall(r'\?', sql)) == len(spec.parameter_names)
+
+def test_sdk_cursor_binds_only_validated_positional_values():
+    from scripts.live_sql_check import SdkCursor
+
+    class Result:
+        data_array = [["ok"]]
+
+    class Response:
+        result = Result()
+        manifest = type("Manifest", (), {"schema": type("Schema", (), {"columns": [type("Column", (), {"name": "status"})()]})()})()
+
+    class Execution:
+        def __init__(self):
+            self.sql = None
+        def execute_statement(self, **kwargs):
+            self.sql = kwargs["statement"]
+            return Response()
+
+    execution = Execution()
+    cursor = SdkCursor(type("Client", (), {"statement_execution": execution})(), "warehouse")
+    cursor.execute("SELECT ? AS case_id, ? AS row_limit", ("CASE_0042", 100))
+    assert execution.sql == "SELECT 'CASE_0042' AS case_id, 100 AS row_limit"
+    assert cursor.description == ["status"]
+    assert cursor.fetchall() == [["ok"]]

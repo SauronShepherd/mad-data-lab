@@ -16,6 +16,61 @@ CATALOG=os.getenv('MDL_CATALOG','')
 PUBLIC=f'{CATALOG}.mad_data_lab_public' if CATALOG else '{{PUBLIC}}'
 CURATED=f'{CATALOG}.mad_data_lab_curated' if CATALOG else '{{CURATED}}'
 
+
+class SdkCursor:
+    """Small DB-API-shaped adapter for Databricks Statement Execution."""
+    def __init__(self, client, warehouse_id: str):
+        self.client = client
+        self.warehouse_id = warehouse_id
+        self.rows = []
+        self.description = []
+
+    def execute(self, sql: str, params=()):
+        # Statement Execution currently exposes named parameters, while the
+        # repository contract deliberately stores connector-native positional
+        # placeholders. Bind only the validated runner parameters here; never
+        # accept user SQL or interpolate arbitrary values.
+        rendered = sql
+        for value in params:
+            if isinstance(value, int):
+                literal = str(value)
+            else:
+                literal = "'" + str(value).replace("'", "''") + "'"
+            rendered = rendered.replace("?", literal, 1)
+        from databricks.sdk.service.sql import Disposition, Format
+        response = self.client.statement_execution.execute_statement(
+            statement=rendered, warehouse_id=self.warehouse_id,
+            disposition=Disposition.INLINE, format=Format.JSON_ARRAY, wait_timeout="30s",
+        )
+        result = getattr(response, "result", None)
+        self.rows = list(getattr(result, "data_array", None) or [])
+        schema = getattr(getattr(response, "manifest", None), "schema", None)
+        self.description = [getattr(column, "name", "column") for column in getattr(schema, "columns", [])]
+        return self
+
+    def fetchall(self):
+        return self.rows
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        return False
+
+
+class SdkConnection:
+    def __init__(self, client, warehouse_id: str):
+        self.cursor_adapter = SdkCursor(client, warehouse_id)
+
+    def cursor(self):
+        return self.cursor_adapter
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        return False
+
 def value_checks(results: dict[str, list], descriptions: dict[str, list[str]]) -> dict[str, str]:
     """Grade canonical Case #042 values returned by live Q1-Q8."""
     checks = {}
@@ -69,14 +124,21 @@ def suite_checks(connection, results, descriptions, timings):
     return {key: 'PASS' if value else 'FAIL' for key, value in checks.items()}
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--plan',action='store_true'); ap.add_argument('--case-id',default='CASE_0042'); a=ap.parse_args(); validate_case_id(a.case_id)
+    ap=argparse.ArgumentParser(); ap.add_argument('--plan',action='store_true'); ap.add_argument('--case-id',default='CASE_0042'); ap.add_argument('--profile',default=''); ap.add_argument('--warehouse-id',default=os.getenv('MDL_WAREHOUSE_ID','')); a=ap.parse_args(); validate_case_id(a.case_id)
     plan={'target':'staging','catalog':CATALOG or 'UNCONFIGURED','case_id':a.case_id,'queries':{qid:sql_for(spec) for qid,spec in QUERIES.items()}}
     if a.plan: print(json.dumps(plan,indent=2)); return
     if not CATALOG: raise SystemExit('live SQL requires MDL_CATALOG')
     timings={}; results={}; descriptions={}
     sql_suite={}
     try:
-        with connect_from_env() as connection:
+        if a.profile:
+            if not a.warehouse_id:
+                raise SystemExit('--warehouse-id or MDL_WAREHOUSE_ID is required with --profile')
+            from databricks.sdk import WorkspaceClient
+            connection = SdkConnection(WorkspaceClient(profile=a.profile), a.warehouse_id)
+        else:
+            connection = connect_from_env()
+        with connection:
             for qid,spec in QUERIES.items():
                 started=time.perf_counter()
                 with connection.cursor() as cursor:
