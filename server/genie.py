@@ -323,15 +323,21 @@ class GenieAdapter:
         raise ValueError("Genie did not produce a valid initial control response after retries") from last_error
 
     def next(self, conversation_id: str, context: str, case_id: str = "CASE_0042") -> dict:
-        waiter = self._workspace().genie.create_message(
-            space_id=self.space_id, conversation_id=conversation_id,
-            content=f"{system_prompt(case_id)}\n\nInvestigation context: {context}",
-        )
-        response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
         completed_ids = set(re.findall(r"[A-Z_]+-?[A-Z0-9_]*", context))
         registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
         expected = next((item.id for item in registered if item.id not in completed_ids), registered[-1].id)
-        return {"conversation_id": conversation_id, "message": self._control_message(response, case_id, expected)}
+        last_error = None
+        for _ in range(2):
+            waiter = self._workspace().genie.create_message(
+                space_id=self.space_id, conversation_id=conversation_id,
+                content=f"{system_prompt(case_id)}\n\nInvestigation context: {context}",
+            )
+            response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
+            try:
+                return {"conversation_id": conversation_id, "message": self._control_message(response, case_id, expected)}
+            except ValueError as exc:
+                last_error = exc
+        raise ValueError("Genie did not produce a valid experiment response after retries") from last_error
 
     def ask(self, conversation_id: str, content: str) -> str:
         response = self._workspace().genie.create_message_and_wait(
