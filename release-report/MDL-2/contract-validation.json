@@ -2,12 +2,12 @@
   "checks": 63,
   "diagnostics": {
     "current_identity": {
-      "data_contract_digest": "e7264cff637660f4b7782104dd7bf4f2d7669ec7f6c5dca0dc83e7a45e887987",
+      "data_contract_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3",
       "git_head": "927ab12d1b05752d118a4571fe21a095a4004e73",
-      "runtime_digest": "94336e9218f4912459c5709327285f609f0f016d9b564f7158f208d56a60c0fa"
+      "runtime_digest": "2192c630a217a8785199daf0765f3ee61dc717cb5701572d6cda1666172af364"
     },
-    "expected_data_digest": "e7264cff637660f4b7782104dd7bf4f2d7669ec7f6c5dca0dc83e7a45e887987",
-    "recorded_data_digest": "e7264cff637660f4b7782104dd7bf4f2d7669ec7f6c5dca0dc83e7a45e887987"
+    "expected_data_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3",
+    "recorded_data_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3"
   },
   "failed": [],
   "pending": [
