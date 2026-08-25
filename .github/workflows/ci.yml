@@ -33,6 +33,7 @@ jobs:
       - run: python scripts/security_gate.py
       - run: python scripts/frontend_contract_gate.py
       - run: python scripts/openapi_contract_gate.py
+      - run: python scripts/validate_mdl1_traceability.py
       - run: python scripts/production_architecture_gate.py
       - run: python scripts/run_iteration_gate.py
       - run: python scripts/validate_mdl2_contract.py
