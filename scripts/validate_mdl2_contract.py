@@ -1,14 +1,15 @@
 """Fail-closed repository audit for the implementable MDL-2 contract."""
 from __future__ import annotations
-import argparse, json, re, sys, subprocess
+import argparse, json, sys, subprocess
 from pathlib import Path
 
 _SCRIPT_PATH = globals().get('__file__') or (sys.argv[0] if sys.argv else '')
 ROOT=Path(_SCRIPT_PATH).resolve().parents[1]
 def current_identity():
-    report_text=(ROOT/'docs/iterations/MDL-2-report.md').read_text(encoding='utf-8')
-    match=re.search(r'^implementation_sha:\s*(\S+)', report_text, re.MULTILINE)
-    head=match.group(1) if match else (subprocess.run(['git','rev-parse','HEAD'],cwd=ROOT,capture_output=True,text=True).stdout.strip() or 'NOT_IN_GIT')
+    # Evidence must bind to the actual checked-out tree.  The iteration report
+    # is descriptive metadata and may intentionally lag a later remediation;
+    # it must never override git HEAD for release identity.
+    head=subprocess.run(['git','rev-parse','HEAD'],cwd=ROOT,capture_output=True,text=True).stdout.strip() or 'NOT_IN_GIT'
     runtime=subprocess.check_output([sys.executable,'scripts/compute_runtime_digest.py'],cwd=ROOT,text=True).strip()
     data=subprocess.check_output([sys.executable,'scripts/compute_mdl2_data_digest.py'],cwd=ROOT,text=True).strip()
     return {'git_head':head,'runtime_digest':runtime,'data_contract_digest':data}
