@@ -5,6 +5,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY server server
 COPY backend backend
 COPY data data
+COPY cases cases
 COPY dist dist
 COPY app.yaml .
 ENV UVICORN_HOST=0.0.0.0 DATABRICKS_APP_PORT=8000 ALLOW_FIXTURE_MODE=1
