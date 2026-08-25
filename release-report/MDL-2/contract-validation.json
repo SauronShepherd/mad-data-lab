@@ -3,8 +3,8 @@
   "diagnostics": {
     "current_identity": {
       "data_contract_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3",
-      "git_head": "6284d26a1005b93e062a76e5374e0566e25647d2",
-      "runtime_digest": "1e0fa89cbfd70b27391a31eb461019bda035ff99edb4b105a728760349a06cb5"
+      "git_head": "e741ab152fd8857e2bd95f0780419594d2f32b9b",
+      "runtime_digest": "4e49069544f11ff9f819b98fd35448d92b8129f373882426812a2a226d0bbe45"
     },
     "expected_data_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3",
     "recorded_data_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3"
