@@ -68,9 +68,12 @@ function App() {
       );
   }, []);
   const active = caseCatalog.find((item) => item.id === selectedCaseId) || caseCatalog[0] || INITIAL_CASE;
-  const deviation = Number(active.deviation ?? -6.8);
-  const expected = Number(active.expected ?? 125);
-  const observed = Number(active.observed ?? 118.2);
+  // Analytical values come only from the case catalog response.  The loading
+  // placeholder intentionally contains zeros and must never become a Case
+  // #042 fallback when the API is unavailable.
+  const deviation = Number(active.deviation ?? 0);
+  const expected = Number(active.expected ?? 0);
+  const observed = Number(active.observed ?? 0);
   useEffect(() => {
     getCaseExperiments(active.id).then((result) => {
       if (Array.isArray(result.catalog) && result.catalog.length) {
