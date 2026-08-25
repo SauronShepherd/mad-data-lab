@@ -64,7 +64,7 @@
         "scripts/validate_mdl2_contract.py"
       ],
       "status": "PASS",
-      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 60,\n  \"failed\": [],\n  \"pending\": [\n    \"human-art-approval\",\n    \"predecessor-mdl1\"\n  ]\n}\n"
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 63,\n  \"failed\": [],\n  \"pending\": [\n    \"human-art-approval\",\n    \"predecessor-mdl1\"\n  ]\n}\n"
     }
   ]
 }
