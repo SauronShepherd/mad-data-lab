@@ -11,7 +11,7 @@
   ],
   "remote_repository_observation": {
     "repository": "https://github.com/SauronShepherd/mad-data-lab",
-    "visible_branches": ["MDL-01"],
+    "visible_branches": ["MDL-01", "MDL-2"],
     "visible_pull_requests": 0,
     "observed_at_utc": "2026-08-25"
   },
