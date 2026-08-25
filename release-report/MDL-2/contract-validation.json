@@ -3,7 +3,7 @@
   "diagnostics": {
     "current_identity": {
       "data_contract_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3",
-      "git_head": "1c919378c2c9ae735150fa36e519b7e24065b19c",
+      "git_head": "7231ff1484bcc29c6a4e906fe03473a6ee1742c6",
       "runtime_digest": "95e47d0fb3e5e7bda055e2b7a077fbb2310bfb8b35bfdb97f079f5d60a8a3cd8"
     },
     "expected_data_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3",
