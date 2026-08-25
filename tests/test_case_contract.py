@@ -23,6 +23,8 @@ class Case042ContractTests(unittest.TestCase):
         started = self.client.post(f'/api/sessions/{session_id}/start')
         self.assertEqual(started.status_code, 200)
         self.assertEqual(started.json()['state'], 'HYPOTHESES_READY')
+        self.assertEqual([item['name'] for item in started.json()['hypotheses']], ['H1', 'H2', 'H3'])
+        self.assertNotIn('Promo effect?', str(started.json()['hypotheses']))
         return session_id
 
     def test_case042_reconciles(self):

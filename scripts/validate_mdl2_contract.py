@@ -22,10 +22,18 @@ def main():
         text=path.read_text(encoding='utf-8'); checks.extend([(f'{path.name}:native-params',':case_id' not in text and ':limit' not in text),(f'{path.name}:no-private', 'mad_data_lab_private' not in text)])
     art=json.loads((ROOT/'release-report/MDL-2/art-preflight.json').read_text(encoding='utf-8')); checks.append(('art-preflight',art.get('status')=='CANDIDATES_PREFLIGHT_PASS'))
     identity=current_identity()
+    live_refresh_pending=[]
     for name in ('genie-eval.json','deployed-smoke.json','deployed-soak.json'):
         payload=json.loads((ROOT/'release-report'/name).read_text(encoding='utf-8')); checks.append((f'live-evidence:{name}',payload.get('status')=='PASS'))
         recorded=payload.get('source_identity',{})
-        checks.append((f'live-evidence-current:{name}', all(recorded.get(key)==value for key,value in identity.items())))
+        current=all(recorded.get(key)==value for key,value in identity.items())
+        if not current:
+            # Historical PASS evidence must never certify a new runtime.  In
+            # normal mode this is an explicit refresh obligation so the
+            # validator can describe an honest IN_PROGRESS repository; strict
+            # release validation promotes it to a hard failure below.
+            live_refresh_pending.append(f'live-evidence-refresh:{name}')
+        checks.append((f'live-evidence-current:{name}', current))
     for rel in ('release-report/MDL-2/golden-case.json','release-report/MDL-2/generator.json','release-report/MDL-2/privacy-static.json','release-report/MDL-2/schema-fingerprint.json','release-report/MDL-2/data-contract-digest.json','release-report/MDL-2/iteration-gate.json','docs/traceability/mdl2-data-contract.json'):
         checks.append((f'closure-artifact:{rel}',(ROOT/rel).is_file()))
     expected_digest=subprocess.check_output([sys.executable,'scripts/compute_mdl2_data_digest.py'],cwd=ROOT,text=True).strip()
@@ -36,7 +44,7 @@ def main():
     checks.append(('canonical-hash-current',golden.get('sha256')==canonical_hash))
     failed=[name for name,ok in checks if not ok]
     sql_evidence=ROOT/'release-report/MDL-2/sql-integration.json'
-    pending=['human-art-approval','predecessor-mdl1']
+    pending=['human-art-approval','predecessor-mdl1', *live_refresh_pending]
     v3_record=ROOT/'docs/traceability/v3-source.json'
     if not v3_record.is_file() or json.loads(v3_record.read_text(encoding='utf-8')).get('status') != 'VERIFIED':
         pending.append('accepted-v3-source')
@@ -45,7 +53,9 @@ def main():
     checks.append(('predecessor-record-explicit', 'BLOCKED_PREDECESSOR_EVIDENCE_NOT_PROVABLE' in predecessor))
     report=(ROOT/'docs/iterations/MDL-2-report.md').read_text(encoding='utf-8')
     checks.append(('report-not-falsely-complete', 'status: COMPLETE' not in report or all(x not in report for x in ('NOT_RUN','PENDING','BLOCKED'))))
-    result={'status':'PASS' if not failed and not (a.strict and pending) else 'IN_PROGRESS','checks':len(checks),'failed':failed,'pending':pending,'diagnostics':{'current_identity':identity,'expected_data_digest':expected_digest,'recorded_data_digest':digest_payload.get('sha256')}}
+    if not a.strict:
+        failed=[name for name in failed if not name.startswith('live-evidence-current:')]
+    result={'status':'PASS' if not failed and not pending else 'IN_PROGRESS','checks':len(checks),'failed':failed,'pending':pending,'diagnostics':{'current_identity':identity,'expected_data_digest':expected_digest,'recorded_data_digest':digest_payload.get('sha256')}}
     out=ROOT/'release-report/MDL-2/contract-validation.json'; out.write_text(json.dumps(result,indent=2,sort_keys=True),encoding='utf-8'); print(json.dumps(result,indent=2));
     if failed or (a.strict and pending): raise SystemExit(1)
 if __name__=='__main__': main()

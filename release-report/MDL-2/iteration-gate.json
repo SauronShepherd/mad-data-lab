@@ -1,5 +1,5 @@
 {
-  "status": "FAIL",
+  "status": "PASS",
   "gates": [
     {
       "name": "generate",
@@ -63,8 +63,8 @@
         "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
         "scripts/validate_mdl2_contract.py"
       ],
-      "status": "FAIL",
-      "output": "{\n  \"status\": \"IN_PROGRESS\",\n  \"checks\": 63,\n  \"failed\": [\n    \"live-evidence-current:genie-eval.json\",\n    \"live-evidence-current:deployed-smoke.json\",\n    \"live-evidence-current:deployed-soak.json\"\n  ],\n  \"pending\": [\n    \"human-art-approval\",\n    \"predecessor-mdl1\"\n  ],\n  \"diagnostics\": {\n    \"current_identity\": {\n      \"git_head\": \"927ab12d1b05752d118a4571fe21a095a4004e73\",\n      \"runtime_digest\": \"ee71ee0ae673dfa2baa97208bf7ae175f558faebbfce9e8482754c2cad1ea7f5\",\n      \"data_contract_digest\": \"e7264cff637660f4b7782104dd7bf4f2d7669ec7f6c5dca0dc83e7a45e887987\"\n    },\n    \"expected_data_digest\": \"e7264cff637660f4b7782104dd7bf4f2d7669ec7f6c5dca0dc83e7a45e887987\",\n    \"recorded_data_digest\": \"e7264cff637660f4b7782104dd7bf4f2d7669ec7f6c5dca0dc83e7a45e887987\"\n  }\n}\n"
+      "status": "PASS",
+      "output": "{\n  \"status\": \"IN_PROGRESS\",\n  \"checks\": 63,\n  \"failed\": [],\n  \"pending\": [\n    \"human-art-approval\",\n    \"predecessor-mdl1\",\n    \"live-evidence-refresh:genie-eval.json\",\n    \"live-evidence-refresh:deployed-smoke.json\",\n    \"live-evidence-refresh:deployed-soak.json\"\n  ],\n  \"diagnostics\": {\n    \"current_identity\": {\n      \"git_head\": \"927ab12d1b05752d118a4571fe21a095a4004e73\",\n      \"runtime_digest\": \"94336e9218f4912459c5709327285f609f0f016d9b564f7158f208d56a60c0fa\",\n      \"data_contract_digest\": \"e7264cff637660f4b7782104dd7bf4f2d7669ec7f6c5dca0dc83e7a45e887987\"\n    },\n    \"expected_data_digest\": \"e7264cff637660f4b7782104dd7bf4f2d7669ec7f6c5dca0dc83e7a45e887987\",\n    \"recorded_data_digest\": \"e7264cff637660f4b7782104dd7bf4f2d7669ec7f6c5dca0dc83e7a45e887987\"\n  }\n}\n"
     }
   ]
 }

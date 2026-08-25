@@ -47,6 +47,13 @@ CASE_CATALOG_STATE = "CASE_CATALOG"
 CASE_BRIEFING_STATE = "CASE_BRIEFING"
 STARTING_INVESTIGATION_STATE = "STARTING_INVESTIGATION"
 HYPOTHESES_READY_STATE = "HYPOTHESES_READY"
+# The Case contract is deliberately identifier-based.  Never let free-form
+# Genie text reintroduce the retired prototype hypothesis names.
+CANONICAL_HYPOTHESES = (
+    {"name": "H1", "status": "POSSIBLE"},
+    {"name": "H2", "status": "POSSIBLE"},
+    {"name": "H3", "status": "POSSIBLE"},
+)
 SELECTING_EXPERIMENT_STATE = "SELECTING_EXPERIMENT"
 RUNNING_EXPERIMENT_STATE = "RUNNING_EXPERIMENT"
 EXPERIMENT_RESULT_STATE = "EXPERIMENT_RESULT"
@@ -224,12 +231,28 @@ def session_start(session_id: str) -> dict:
     registered = EXPERIMENTS_BY_CASE.get(session["case_id"]) or PLANNED_EXPERIMENTS_BY_CASE.get(session["case_id"], ())
     conversation_id = None
     source = "fixture"
-    hypotheses = [name for name, _ in registered[0].updates] if registered else []
+    hypotheses = [dict(item) for item in CANONICAL_HYPOTHESES]
     if genie.enabled:
         try:
             live = genie.start(session["case_id"])
             conversation_id = live["conversation_id"]
-            hypotheses = live["message"].get("hypothesis_updates", hypotheses)
+            # The live space may contain stale prose from an older iteration.
+            # Preserve the live conversation, but expose only the current
+            # contract's hypothesis IDs and valid epistemic statuses.
+            live_updates = live["message"].get("hypothesis_updates", ())
+            allowed = {item["name"] for item in CANONICAL_HYPOTHESES}
+            statuses = {"CONFIRMED", "SUPPORTED", "POSSIBLE", "RULED_OUT"}
+            if isinstance(live_updates, list):
+                candidate = [
+                    {"name": str(item.get("name")), "status": str(item.get("status"))}
+                    for item in live_updates
+                    if isinstance(item, dict)
+                    and item.get("name") in allowed
+                    and item.get("status") in statuses
+                ]
+                if candidate:
+                    by_name = {item["name"]: item for item in candidate}
+                    hypotheses = [by_name.get(item["name"], item) for item in CANONICAL_HYPOTHESES]
             source = "genie"
         except Exception as exc:
             session["state"] = "WAITING_FOR_GENIE"
