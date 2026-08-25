@@ -19,7 +19,7 @@ from .catalog import FULL_CASE_CATALOG, case_availability, get_any_case
 from .genie import GenieAdapter
 from .state import InvestigationState, transition
 from backend.data.repositories import EvidenceRepository
-from .config import settings
+from .config import load_settings
 
 
 app = FastAPI(title="MAD DATA LAB API", version="0.1.0")
@@ -68,11 +68,11 @@ DEBRIEF_STATE = "DEBRIEF"
 
 def fixture_mode_enabled() -> bool:
     """Allow offline fixture play only when explicitly enabled for local use."""
-    return settings.allow_fixture_mode
+    return load_settings().allow_fixture_mode
 
 
 def review_mode_enabled() -> bool:
-    return settings.challenge_review_mode
+    return load_settings().challenge_review_mode
 
 
 def observation_payload(case) -> dict[str, Any]:
@@ -488,7 +488,7 @@ def session_chat(session_id: str, request: dict) -> dict:
 
 DIST = Path(__file__).resolve().parent.parent / "dist"
 AXE = Path(__file__).resolve().parent.parent / "node_modules" / "axe-core"
-if settings.local_a11y_test and AXE.exists():
+if load_settings().local_a11y_test and AXE.exists():
     @app.get("/__test__/a11y", response_class=HTMLResponse)
     def local_a11y_harness() -> str:
         bundle = next((DIST / "assets").glob("index-*.js"), None)

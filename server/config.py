@@ -29,4 +29,9 @@ class Settings:
         )
 
 
-settings = Settings.from_env()
+def load_settings() -> Settings:
+    """Read the current process environment into an immutable settings value."""
+    return Settings.from_env()
+
+
+settings = load_settings()
