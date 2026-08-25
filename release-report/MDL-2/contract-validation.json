@@ -1,5 +1,14 @@
 {
   "checks": 63,
+  "diagnostics": {
+    "current_identity": {
+      "data_contract_digest": "bf19a22f80bfa0bd822374d14888a5bd994c92d64902964e4ffd6c8e0efdfb40",
+      "git_head": "927ab12d1b05752d118a4571fe21a095a4004e73",
+      "runtime_digest": "ee71ee0ae673dfa2baa97208bf7ae175f558faebbfce9e8482754c2cad1ea7f5"
+    },
+    "expected_data_digest": "bf19a22f80bfa0bd822374d14888a5bd994c92d64902964e4ffd6c8e0efdfb40",
+    "recorded_data_digest": "bf19a22f80bfa0bd822374d14888a5bd994c92d64902964e4ffd6c8e0efdfb40"
+  },
   "failed": [],
   "pending": [
     "human-art-approval",

@@ -45,7 +45,7 @@ def main():
     checks.append(('predecessor-record-explicit', 'BLOCKED_PREDECESSOR_EVIDENCE_NOT_PROVABLE' in predecessor))
     report=(ROOT/'docs/iterations/MDL-2-report.md').read_text(encoding='utf-8')
     checks.append(('report-not-falsely-complete', 'status: COMPLETE' not in report or all(x not in report for x in ('NOT_RUN','PENDING','BLOCKED'))))
-    result={'status':'PASS' if not failed and not (a.strict and pending) else 'IN_PROGRESS','checks':len(checks),'failed':failed,'pending':pending}
+    result={'status':'PASS' if not failed and not (a.strict and pending) else 'IN_PROGRESS','checks':len(checks),'failed':failed,'pending':pending,'diagnostics':{'current_identity':identity,'expected_data_digest':expected_digest,'recorded_data_digest':digest_payload.get('sha256')}}
     out=ROOT/'release-report/MDL-2/contract-validation.json'; out.write_text(json.dumps(result,indent=2,sort_keys=True),encoding='utf-8'); print(json.dumps(result,indent=2));
     if failed or (a.strict and pending): raise SystemExit(1)
 if __name__=='__main__': main()
