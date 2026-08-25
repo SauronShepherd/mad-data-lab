@@ -1,6 +1,7 @@
 status: IN_PROGRESS
 iteration: MDL-2
 branch: MDL-2
+implementation_sha: 927ab12d1b05752d118a4571fe21a095a4004e73
 base_main_sha: 25e4cec55965929d16cdbdff88e22099edacc42b (origin exposes MDL-01 only; no main ref)
 scope: deterministic Case #042 evidence generator, canonical fixtures, curated SQL contracts, and truth isolation
 predecessor_record: NOT_PROVABLE_IN_LOCAL_REPOSITORY
