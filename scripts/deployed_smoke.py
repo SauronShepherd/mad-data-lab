@@ -32,8 +32,10 @@ def main() -> None:
     session_id = session["session_id"]
     started = call(f"/api/sessions/{session_id}/start", "POST", {})
     assert started["state"] == "HYPOTHESES_READY"
-    for _ in range(3):
-        call(f"/api/sessions/{session_id}/next", "POST", {})
+    experiments = [call(f"/api/sessions/{session_id}/next", "POST", {}) for _ in range(5)]
+    assert [item["experiment_id"] for item in experiments] == [
+        "COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "FORMULA_VALIDATION", "RECONCILIATION"
+    ]
     assert call(f"/api/sessions/{session_id}/evidence")["total"] >= 1
     assert call(f"/api/sessions/{session_id}/conclude", "POST", {})["status"] == "COMPLETE"
     print("deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)")
