@@ -6,7 +6,7 @@ import re
 
 CASE_CONTRACT_METADATA = {
     "CASE_0042": {
-        "required_experiment_families": ["COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "RECONCILIATION"],
+        "required_experiment_families": ["COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "FORMULA_VALIDATION", "RECONCILIATION"],
         "required_evidence_tags": ["COMPONENT_IMPACT", "SNAPSHOT_IMPACT", "FORMULA_MATCH"],
     },
     "CASE_0107": {

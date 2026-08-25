@@ -7,8 +7,13 @@ from datetime import timedelta
 from typing import Any
 
 from .case_data import CASE042_EXPERIMENTS, EXPERIMENTS_BY_CASE, PLANNED_EXPERIMENTS_BY_CASE
-from .domain import STATUSES
 from .catalog import get_any_case
+
+
+# The Genie protocol is a runtime contract. Keep it independent from the
+# legacy fixture/domain module so production validation cannot inherit a
+# second analytical model through an incidental import.
+GENIE_EPISTEMIC_STATUSES = frozenset({"CONFIRMED", "SUPPORTED", "POSSIBLE", "RULED_OUT"})
 
 
 ALLOWED_INSTRUMENTS_BY_EXPERIMENT: dict[str, frozenset[str]] = {
@@ -78,7 +83,7 @@ def validate_control_payload(payload: dict, registered_ids: set[str] | None = No
         raise ValueError("hypothesis_updates must be a bounded array")
     names = set()
     for item in updates:
-        if not isinstance(item, dict) or not isinstance(item.get("name"), str) or item.get("status") not in STATUSES:
+        if not isinstance(item, dict) or not isinstance(item.get("name"), str) or item.get("status") not in GENIE_EPISTEMIC_STATUSES:
             raise ValueError("invalid hypothesis update")
         if item["name"] in names:
             raise ValueError("duplicate hypothesis id")
