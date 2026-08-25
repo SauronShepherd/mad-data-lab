@@ -1,7 +1,9 @@
 .git/
 .idea/
 .mypy_cache/
+**/.mypy_cache/**
 .pytest_cache/
+**/.pytest_cache/**
 node_modules/
 dist/
 __pycache__/
@@ -9,3 +11,6 @@ __pycache__/
 .env
 .env.*
 tmp_remote_bundle_*/
+release-report/
+test-results/
+assets/review/

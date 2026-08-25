@@ -35,9 +35,12 @@ jobs:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
           DATABRICKS_AUTH_TYPE: github-oidc
+          DATABRICKS_SOURCE_PATH: ${{ vars.DATABRICKS_SOURCE_PATH }}
         run: |
           test "$(git rev-parse HEAD)" = "${{ github.sha }}"
-          databricks apps deploy mad-data-lab --source-code-path .
+          test -n "$DATABRICKS_SOURCE_PATH"
+          databricks workspace import-dir . "$DATABRICKS_SOURCE_PATH" --overwrite
+          databricks apps deploy mad-data-lab --source-code-path "$DATABRICKS_SOURCE_PATH"
 
       - name: Verify deployment state and provenance
         env:
