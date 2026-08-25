@@ -302,10 +302,16 @@ class GenieAdapter:
             raise ValueError(f"Genie answer did not contain a control payload: {text[:1200]}") from exc
 
     def start(self, case_id: str = "CASE_0042") -> dict:
-        waiter = self._workspace().genie.start_conversation(space_id=self.space_id, content=system_prompt(case_id))
-        response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
         registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
-        return {"conversation_id": getattr(response, "conversation_id", None), "message": self._control_message(response, case_id, registered[0].id)}
+        last_error = None
+        for _ in range(3):
+            waiter = self._workspace().genie.start_conversation(space_id=self.space_id, content=system_prompt(case_id))
+            response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
+            try:
+                return {"conversation_id": getattr(response, "conversation_id", None), "message": self._control_message(response, case_id, registered[0].id)}
+            except ValueError as exc:
+                last_error = exc
+        raise ValueError("Genie did not produce a valid initial control response after retries") from last_error
 
     def next(self, conversation_id: str, context: str, case_id: str = "CASE_0042") -> dict:
         waiter = self._workspace().genie.create_message(
