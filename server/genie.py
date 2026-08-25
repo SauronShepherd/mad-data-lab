@@ -228,7 +228,8 @@ class GenieAdapter:
                         # directly instead of the requested JSON column. Keep
                         # the live evidence and normalize it into the closed
                         # control protocol; never invent an experiment ID.
-                        columns = [getattr(column, "name", "column") for column in getattr(getattr(statement, "manifest", None).schema, "columns", [])]
+                        schema = getattr(getattr(statement, "manifest", None), "schema", None)
+                        columns = [getattr(column, "name", "column") for column in getattr(schema, "columns", [])]
                         evidence = [dict(zip(columns, row)) for row in data]
                         names = {
                             "COMPONENT_DECOMPOSITION": ("Component Decomposition", "component_evidence"),
