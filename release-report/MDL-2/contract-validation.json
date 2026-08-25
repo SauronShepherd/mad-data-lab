@@ -3,13 +3,18 @@
   "diagnostics": {
     "current_identity": {
       "data_contract_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3",
-      "git_head": "7231ff1484bcc29c6a4e906fe03473a6ee1742c6",
+      "git_head": "cb466fa4c72c1b4478345da66a94c3c2315582a7",
       "runtime_digest": "95e47d0fb3e5e7bda055e2b7a077fbb2310bfb8b35bfdb97f079f5d60a8a3cd8"
     },
     "expected_data_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3",
     "recorded_data_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3"
   },
-  "failed": [],
+  "failed": [
+    "live-evidence-current:genie-eval.json",
+    "live-evidence:deployed-smoke.json",
+    "live-evidence-current:deployed-smoke.json",
+    "live-evidence-current:deployed-soak.json"
+  ],
   "pending": [
     "human-art-approval",
     "predecessor-mdl1",
