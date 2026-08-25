@@ -78,12 +78,18 @@ def parse_control_json(text: str, registered_ids: set[str] | None = None) -> dic
             decoded.append((end, value))
     if not decoded:
         raise ValueError("Genie did not return a JSON control response")
-    # When prose or SQL surrounds the payload, the outermost valid object has
-    # the greatest decoded span; nested evidence objects are ignored.
-    widest = max(item[0] for item in decoded)
-    if sum(1 for end, _ in decoded if end == widest) != 1:
-        raise ValueError("Genie returned multiple JSON control responses")
-    payload = next(value for end, value in decoded if end == widest)
+    required = {"experiment_id", "name", "instrument", "rationale", "evidence", "hypothesis_updates"}
+    control = [(end, value) for end, value in decoded if required.issubset(value)]
+    if len(control) == 1:
+        payload = control[0][1]
+    else:
+        # When prose or SQL surrounds the payload, use the outermost object
+        # only when there is no unique full control object. Duplicate complete
+        # answers remain an explicit protocol violation.
+        widest = max(item[0] for item in decoded)
+        if sum(1 for end, _ in decoded if end == widest) != 1:
+            raise ValueError("Genie returned multiple JSON control responses")
+        payload = next(value for end, value in decoded if end == widest)
     # Normalize the current Genie SQL-attachment vocabulary to the server
     # contract.  Do not broaden experiment IDs: only the registered canonical
     # five are accepted below.
@@ -92,7 +98,6 @@ def parse_control_json(text: str, registered_ids: set[str] | None = None) -> dic
             item["name"] = item.pop("hypothesis_id")
     if isinstance(payload.get("evidence"), list):
         payload["evidence"] = json.dumps(payload["evidence"], ensure_ascii=False, separators=(",", ":"))
-    required = {"experiment_id", "name", "instrument", "rationale", "evidence", "hypothesis_updates"}
     if not required.issubset(payload):
         raise ValueError("Genie control response is missing required fields")
     allowed = registered_ids or {item.id for item in CASE042_EXPERIMENTS}
