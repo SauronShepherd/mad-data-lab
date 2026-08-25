@@ -8,6 +8,7 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse
+from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -15,8 +16,8 @@ from pydantic import BaseModel, Field
 from .case_data import EXPERIMENTS_BY_CASE, PLANNED_EXPERIMENTS_BY_CASE, experiment_payload
 from .catalog import FULL_CASE_CATALOG, case_availability, get_any_case
 from .genie import GenieAdapter
-from .domain import generate_case
 from .state import InvestigationState, transition
+from backend.data.repositories import EvidenceRepository
 
 
 app = FastAPI(title="MAD DATA LAB API", version="0.1.0")
@@ -36,8 +37,15 @@ async def request_id_middleware(request: Request, call_next):
     response.headers["X-Request-ID"] = request_id
     return response
 genie = GenieAdapter()
+evidence_repository = EvidenceRepository()
 SESSIONS: dict[str, dict] = {}
 PROGRESSION: dict[str, Any] = {"completed_case_ids": set(), "best_scores": {}}
+
+
+def fixture_mode_enabled() -> bool:
+    """Allow offline fixture play only when explicitly enabled for local use."""
+    default = "0" if os.getenv("DATABRICKS_APP_PORT") else "1"
+    return os.getenv("ALLOW_FIXTURE_MODE", default) == "1"
 
 
 def observation_payload(case) -> dict[str, Any]:
@@ -86,7 +94,7 @@ class SessionNextRequest(BaseModel):
 
 @app.get("/health")
 def health() -> dict[str, str]:
-    return {"status": "ok", "genie_mode": "live" if genie.enabled else "fixture"}
+    return {"status": "ok", "genie_mode": "live" if genie.enabled else ("fixture" if fixture_mode_enabled() else "unavailable")}
 
 
 @app.get("/api/cases")
@@ -105,7 +113,7 @@ def api_health() -> dict[str, str]:
 def config() -> dict:
     review_mode = os.getenv("CHALLENGE_REVIEW_MODE", "0") == "1"
     enabled = [c.id for c in FULL_CASE_CATALOG if case_availability(c, review_mode=review_mode, completed_case_ids=PROGRESSION["completed_case_ids"]) == "AVAILABLE"]
-    return {"protocol_version": "1.0", "fixture_mode": not genie.enabled, "review_mode": review_mode, "enabled_cases": enabled}
+    return {"protocol_version": "1.0", "fixture_mode": (not genie.enabled and fixture_mode_enabled()), "review_mode": review_mode, "enabled_cases": enabled}
 
 
 @app.get("/api/progression")
@@ -150,17 +158,21 @@ def start_investigation(request: StartInvestigationRequest) -> dict:
     review_mode = os.getenv("CHALLENGE_REVIEW_MODE", "0") == "1"
     if case_availability(case, review_mode=review_mode, completed_case_ids=PROGRESSION["completed_case_ids"]) != "AVAILABLE":
         raise HTTPException(status_code=409, detail="This Case is not enabled yet")
+    if not genie.enabled and not fixture_mode_enabled():
+        raise HTTPException(status_code=503, detail="Live Genie is unavailable")
     registered_experiments = EXPERIMENTS_BY_CASE.get(request.case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(request.case_id, ())
     if genie.enabled:
         try:
             live = genie.start(request.case_id)
             session_id = str(uuid.uuid4())
-            SESSIONS[session_id] = {"case_id": request.case_id, "completed": [], "events": [], "state": InvestigationState.BRIEFING.value, "created_at": datetime.now(timezone.utc).isoformat(), "score": 50, "score_events": ["START_INVESTIGATION"], "conversation_id": live["conversation_id"], "diagnostic_id": uuid.uuid4().hex}
+            SESSIONS[session_id] = {"case_id": request.case_id, "completed": [], "evidence_entitlements": [], "events": [], "state": InvestigationState.BRIEFING.value, "created_at": datetime.now(timezone.utc).isoformat(), "score": 0, "score_events": ["START_INVESTIGATION"], "conversation_id": live["conversation_id"], "diagnostic_id": uuid.uuid4().hex}
             return {"investigation_id": session_id, "session_id": session_id, "conversation_id": live["conversation_id"], "case_id": request.case_id, "observation": observation_payload(case), "hypotheses": [name for name, _ in registered_experiments[0].updates] if registered_experiments else [], "source": "genie"}
-        except Exception:
-            pass
+        except Exception as exc:
+            # A configured live Genie is authoritative.  Do not silently turn
+            # an outage into a scripted analytical session.
+            raise HTTPException(status_code=503, detail="Live Genie is unavailable") from exc
     session_id = str(uuid.uuid4())
-    SESSIONS[session_id] = {"case_id": request.case_id, "completed": [], "events": [], "state": InvestigationState.BRIEFING.value, "created_at": datetime.now(timezone.utc).isoformat(), "score": 50, "score_events": ["START_INVESTIGATION"], "diagnostic_id": uuid.uuid4().hex}
+    SESSIONS[session_id] = {"case_id": request.case_id, "completed": [], "evidence_entitlements": [], "events": [], "state": InvestigationState.BRIEFING.value, "created_at": datetime.now(timezone.utc).isoformat(), "score": 0, "score_events": ["START_INVESTIGATION"], "diagnostic_id": uuid.uuid4().hex}
     return {
         "investigation_id": session_id,
         "session_id": session_id,
@@ -204,7 +216,7 @@ def restart_session(session_id: str) -> dict:
         raise HTTPException(status_code=404, detail="Investigation not found")
     case_id = session["case_id"]
     diagnostic_id = session.get("diagnostic_id", uuid.uuid4().hex)
-    SESSIONS[session_id] = {"case_id": case_id, "completed": [], "events": [], "state": InvestigationState.BRIEFING.value, "created_at": datetime.now(timezone.utc).isoformat(), "score": 50, "score_events": ["START_INVESTIGATION"], "diagnostic_id": diagnostic_id}
+    SESSIONS[session_id] = {"case_id": case_id, "completed": [], "evidence_entitlements": [], "events": [], "state": InvestigationState.BRIEFING.value, "created_at": datetime.now(timezone.utc).isoformat(), "score": 0, "score_events": ["START_INVESTIGATION"], "diagnostic_id": diagnostic_id}
     append_event(SESSIONS[session_id], "RESTART", reason="USER_REQUESTED_RESTART")
     return {"session_id": session_id, "case_id": case_id, "state": InvestigationState.BRIEFING.value, "diagnostic_id": diagnostic_id}
 
@@ -214,15 +226,23 @@ def session_evidence(session_id: str, limit: int = Query(default=100, ge=1, le=1
     session = SESSIONS.get(session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Investigation not found")
-    fixture = generate_case(session["case_id"])
+    if "SNAPSHOT_IMPACT" not in session.get("evidence_entitlements", []):
+        raise HTTPException(status_code=409, detail="Snapshot evidence has not been earned")
     if not session.get("inspected_evidence"):
         session["inspected_evidence"] = True
         session["score"] = min(1000, session.get("score", 0) + 100)
         session.setdefault("score_events", []).append("INSPECT_HIGH_VALUE_EVIDENCE")
         append_event(session, "EVIDENCE_INSPECTED", evidence_scope="CURATED_SOURCE_RECORDS")
-    evidence = fixture.curated_projection()["records"]
-    if business_key:
-        evidence = [item for item in evidence if item["business_key"] == business_key]
+    if session["case_id"] == "CASE_0042":
+        evidence = []
+        for item in evidence_repository.records(session["case_id"], limit=100, business_key=business_key):
+            payload = item.model_dump()
+            for key in ("old_value", "new_value", "impact"):
+                if payload[key] is not None:
+                    payload[key] = float(payload[key])
+            evidence.append(payload)
+    else:
+        raise HTTPException(status_code=409, detail="Curated evidence is not available for this Case")
     return {"session_id": session_id, "case_id": session["case_id"], "total": len(evidence), "offset": offset, "limit": limit, "evidence": evidence[offset:offset + limit]}
 
 
@@ -260,7 +280,7 @@ def session_hint(session_id: str) -> dict:
     }
     case_hints = hints.get(session["case_id"], ("Test the strongest available signal.", "Inspect the supporting evidence.", "Reconcile the full deviation."))
     session["hints"] = hints_used + 1
-    session["score"] = max(0, session.get("score", 50) - 50)
+    session["score"] = max(0, session.get("score", 0) - 50)
     session.setdefault("score_events", []).append("HINT")
     append_event(session, "HINT", hint_number=session["hints"])
     return {"hint_number": session["hints"], "hint": case_hints[hints_used]}
@@ -281,7 +301,7 @@ def conclude_session(session_id: str) -> dict:
     previous = session["state"]
     session["state"] = transition(session["state"], InvestigationState.DEBRIEF)
     append_event(session, "STATE", from_state=previous, to_state=session["state"])
-    score = session.get("score", 50)
+    score = session.get("score", 0)
     score += min(300, 100 * len(session.get("completed", [])))
     score += 125
     score = max(0, min(1000, score))
@@ -310,7 +330,17 @@ def session_next(session_id: str, request: SessionNextRequest) -> dict:
     completed = list(session.get("completed", []))
     result = next_experiment(ExperimentRequest(case_id=session["case_id"], completed_experiments=completed, player_prediction=request.player_prediction, conversation_id=session.get("conversation_id")))
     session["completed"] = list(dict.fromkeys(completed + [result["experiment_id"]]))
-    session["score"] = session.get("score", 50)
+    entitlement_by_experiment = {
+        "COMPONENT_DECOMPOSITION": "COMPONENT_IMPACT",
+        "SNAPSHOT_DIFF": "SNAPSHOT_IMPACT",
+        "DQ_MATERIALITY": "DQ_MATERIALITY",
+        "FORMULA_VALIDATION": "FORMULA_VERSION",
+        "RECONCILIATION": "RECONCILIATION",
+    }
+    tag = entitlement_by_experiment.get(result["experiment_id"])
+    if tag and tag not in session.setdefault("evidence_entitlements", []):
+        session["evidence_entitlements"].append(tag)
+    session["score"] = session.get("score", 0)
     if session["state"] == InvestigationState.BRIEFING.value:
         previous = session["state"]
         session["state"] = transition(session["state"], InvestigationState.INVESTIGATION)
@@ -341,8 +371,8 @@ def next_experiment(request: ExperimentRequest) -> dict:
             message = live["message"]
             message.update({"case_id": request.case_id, "experiment_number": len(completed) + 1, "source": "genie"})
             return message
-        except Exception:
-            pass
+        except Exception as exc:
+            raise HTTPException(status_code=503, detail="Live Genie is unavailable") from exc
     index = next((i for i, experiment in enumerate(experiments) if experiment.id not in completed), None)
     if index is None:
         raise HTTPException(status_code=409, detail="All registered experiments are complete")

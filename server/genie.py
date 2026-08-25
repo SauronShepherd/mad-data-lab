@@ -3,21 +3,19 @@ from __future__ import annotations
 import json
 import os
 import re
-from itertools import chain
 from datetime import timedelta
 from typing import Any
 
-from .case_data import EXPERIMENTS, EXPERIMENTS_BY_CASE, PLANNED_EXPERIMENTS_BY_CASE
+from .case_data import CASE042_EXPERIMENTS, EXPERIMENTS_BY_CASE, PLANNED_EXPERIMENTS_BY_CASE
 from .domain import STATUSES
 from .catalog import get_any_case
 
 
 ALLOWED_INSTRUMENTS_BY_EXPERIMENT: dict[str, frozenset[str]] = {
-    "EXP-01": frozenset({"WATERFALL", "Waterfall instrument"}),
-    "EXP-02": frozenset({"SNAPSHOT_DIFF", "Snapshot comparison"}),
-    "EXP-03": frozenset({"EVIDENCE_TABLE", "Record-level evidence"}),
     "COMPONENT_DECOMPOSITION": frozenset({"WATERFALL", "Waterfall"}),
     "SNAPSHOT_DIFF": frozenset({"SNAPSHOT_DIFF", "Snapshot comparison"}),
+    "DQ_MATERIALITY": frozenset({"DQ_PANEL", "DQ panel"}),
+    "FORMULA_VALIDATION": frozenset({"FORMULA_CHECK", "Formula check"}),
     "RECONCILIATION": frozenset({"RECONCILIATION", "Balance view"}),
 }
 
@@ -36,7 +34,7 @@ def registered_ids_for_case(case_id: str) -> set[str]:
     try:
         return set(get_any_case(case_id).required_experiments)
     except ValueError:
-        return {item.id for item in EXPERIMENTS}
+        return {item.id for item in CASE042_EXPERIMENTS}
 
 
 def _text_from_response(response: Any) -> str:
@@ -55,7 +53,7 @@ def parse_control_json(text: str, registered_ids: set[str] | None = None) -> dic
     required = {"experiment_id", "name", "instrument", "rationale", "evidence", "hypothesis_updates"}
     if not required.issubset(payload):
         raise ValueError("Genie control response is missing required fields")
-    allowed = registered_ids or {item.id for item in EXPERIMENTS}
+    allowed = registered_ids or {item.id for item in CASE042_EXPERIMENTS}
     if payload["experiment_id"] not in allowed:
         raise ValueError("Genie selected an unregistered experiment")
     validate_control_payload(payload, allowed)
@@ -90,34 +88,10 @@ def validate_control_payload(payload: dict, registered_ids: set[str] | None = No
     return payload
 
 
-def infer_control_payload(text: str, expected_experiment_id: str) -> dict:
-    """Turn a normal Genie answer into the app's closed control contract.
-
-    Genie is allowed to answer in natural language even when asked for a control
-    object. The app keeps the analytical text, but only promotes a registered
-    experiment and its known instrument/hypothesis schema into game state.
-    """
-    experiment = next(
-        (item for item in chain(EXPERIMENTS, *PLANNED_EXPERIMENTS_BY_CASE.values()) if item.id == expected_experiment_id),
-        None,
-    )
-    if experiment is None:
-        raise ValueError("expected experiment is not registered")
-    return {
-        "experiment_id": experiment.id,
-        "name": experiment.name,
-        "instrument": experiment.instrument,
-        "rationale": text[:500] or experiment.rationale,
-        "evidence": text[:1200] or experiment.evidence,
-        "hypothesis_updates": [{"name": name, "status": status} for name, status in experiment.updates],
-    }
-
-
 def normalise_control_response(text: str, expected_experiment_id: str, registered_ids: set[str] | None = None) -> dict:
-    try:
-        return parse_control_json(text, registered_ids)
-    except (ValueError, json.JSONDecodeError):
-        return infer_control_payload(text, expected_experiment_id)
+    """Accept only the declared Genie control protocol; never synthesize a choice."""
+    del expected_experiment_id
+    return parse_control_json(text, registered_ids)
 
 
 class GenieAdapter:
@@ -137,7 +111,7 @@ class GenieAdapter:
 
     def start(self, case_id: str = "CASE_0042") -> dict:
         response = self._workspace().genie.start_conversation_and_wait(space_id=self.space_id, content=system_prompt(case_id), timeout=timedelta(seconds=120))
-        registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or EXPERIMENTS
+        registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
         return {"conversation_id": getattr(response, "conversation_id", None), "message": normalise_control_response(_text_from_response(response), registered[0].id, registered_ids_for_case(case_id))}
 
     def next(self, conversation_id: str, context: str, case_id: str = "CASE_0042") -> dict:
@@ -147,7 +121,7 @@ class GenieAdapter:
             timeout=timedelta(seconds=120),
         )
         completed_ids = set(re.findall(r"[A-Z_]+-?[A-Z0-9_]*", context))
-        registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or EXPERIMENTS
+        registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
         expected = next((item.id for item in registered if item.id not in completed_ids), registered[-1].id)
         return {"conversation_id": conversation_id, "message": normalise_control_response(_text_from_response(response), expected, registered_ids_for_case(case_id))}
 

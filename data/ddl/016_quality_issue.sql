@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS {{PUBLIC}}.quality_issue (case_id STRING, issue_id STRING, rule_name STRING, severity STRING, affected_keys STRING, affected_row_count INT, estimated_impact DECIMAL(18,2), impact_is_overlapping BOOLEAN, status STRING, evidence_note STRING) USING DELTA

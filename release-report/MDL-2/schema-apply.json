@@ -1,0 +1,7 @@
+{
+  "catalog": "sda_dev",
+  "ddl_files": 20,
+  "source_digest": "5765685e9b8dfa8721d399591361dc0602c0f81b0c329f6fa75cc4ccceadb818",
+  "status": "PASS",
+  "target": "staging"
+}

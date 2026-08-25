@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS {{PUBLIC}}.datapoint_result (case_id STRING, datapoint_id STRING, entity_id STRING, period_id STRING, run_id STRING, run_ts TIMESTAMP, run_role STRING, value DECIMAL(18,2), expected_value DECIMAL(18,2), deviation DECIMAL(18,2), formula_id STRING, formula_hash STRING, filter_id STRING, filter_hash STRING, population_hash STRING) USING DELTA

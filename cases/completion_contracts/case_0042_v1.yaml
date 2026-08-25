@@ -1,0 +1,10 @@
+contract_id: case_0042_v1
+case_id: CASE_0042
+version: 1
+required_experiment_families: [COMPONENT_DECOMPOSITION, SNAPSHOT_DIFF, DQ_MATERIALITY, FORMULA_VALIDATION, RECONCILIATION]
+required_evidence_tags: [COMPONENT_IMPACT, SNAPSHOT_IMPACT, FORMULA_VERSION]
+required_reconciliation:
+  metric_tolerance_abs: "0.01"
+  primary_component_tolerance_abs: "0.01"
+  final_unreconciled_tolerance_abs: "0.01"
+allows_insufficient_evidence_verdict: false

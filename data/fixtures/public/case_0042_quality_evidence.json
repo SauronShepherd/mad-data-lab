@@ -1,0 +1,20 @@
+{
+  "case_id": "CASE_0042",
+  "fixture_type": "quality_issues",
+  "records": [
+    {
+      "affected_keys": [
+        "TX-004292",
+        "TX-004293",
+        "TX-004294",
+        "TX-004295",
+        "TX-004296"
+      ],
+      "affected_row_count": 5,
+      "estimated_impact": "-0.30",
+      "impact_is_overlapping": true,
+      "issue_id": "DQ_0042_01",
+      "rule_name": "DUPLICATE_BUSINESS_KEY"
+    }
+  ]
+}

@@ -1,0 +1,175 @@
+{
+  "approval_status": "PENDING_HUMAN_SELECTION",
+  "candidate_completeness": {
+    "A01": true,
+    "A02": true,
+    "A21": true,
+    "A28": true
+  },
+  "candidates": [
+    {
+      "asset_id": "A01",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A01/candidate-001.png",
+      "sha256": "eb7987bed463062a0c646c9c0a3a85040fe0ffd9d6499498d55b481e85d46df6",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A01",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A01/candidate-002.png",
+      "sha256": "c3418b990ea5730b495afc01a61d97a54028266456152adb650ab6a40b3c25a9",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A01",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A01/candidate-003.png",
+      "sha256": "0e1857578b8577356ae22eacd8c3d9d80868ad05b9571aa94e2283bca6671241",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A01",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A01/candidate-004.png",
+      "sha256": "4b8bae8764da2719cf465526cbbcdbc05927371646fedc1b06e0e9e98a974226",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A02",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A02/candidate-001.png",
+      "sha256": "c2b3d1e3de8e689f691ac4c5be29f49ff601366ee12b5c9f2bc0fd5faaf93a40",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A02",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A02/candidate-002.png",
+      "sha256": "268dbd1aae0071c71681b3fb6cde9f19365073bcc1d1dc8930cf0403407e4455",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A02",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A02/candidate-003.png",
+      "sha256": "164c86175c4635a1e692909ab031c3b9db6e9f37450ad5d0ca5362a5da45d55c",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A02",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A02/candidate-004.png",
+      "sha256": "72e39c7b7bfb38de9066bb04d94752d1dcbce2b4bb7a750fcabb6ab2f1f6132c",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A02",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A02/candidate-005.png",
+      "sha256": "2fe5c597ffbf04ab334db38ebb14f87bfdc17893f1e78795c4a09b33c8635dd6",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A02",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A02/candidate-006.png",
+      "sha256": "01917556676468ec317e522cd9dab6c1d55378e128409d14a0264ded57a4a84e",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A21",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A21/candidate-001.png",
+      "sha256": "3e37628742bc7e120aa73ffe38b51eba2c4c057286bd5614a839b3324aa3df99",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A21",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A21/candidate-002.png",
+      "sha256": "a80fd5f0aabfb7370e153776a610d6ae8dda283b35693f38b3122688433f4a73",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A21",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A21/candidate-003.png",
+      "sha256": "c38c6e7d2a715dc573d806b1725c53e7fe9bd26282e3afb7ecaefba99cebb725",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A21",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A21/candidate-004.png",
+      "sha256": "5a78e132b576c953a366a3586fd5248b222731b111d1168acf19fffc88cf5f8e",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A28",
+      "height": 941,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A28/candidate-001.png",
+      "sha256": "cb93c433a9d51eb71b7764533ca58c1ad21360d80f6d1a940b90063f9d22ef8e",
+      "status": "CANDIDATE",
+      "width": 1672
+    },
+    {
+      "asset_id": "A28",
+      "height": 941,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A28/candidate-002.png",
+      "sha256": "e324a854a360e3f5343e1d4e55876c7f106db38f32e82e274ccc556eb54efa2d",
+      "status": "CANDIDATE",
+      "width": 1672
+    },
+    {
+      "asset_id": "A28",
+      "height": 941,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A28/candidate-003.png",
+      "sha256": "315e2d2f0a4736987bc4bd2df152484afc7be8fbd80750f1f4493ea6a603a456",
+      "status": "CANDIDATE",
+      "width": 1672
+    },
+    {
+      "asset_id": "A28",
+      "height": 941,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-1/A28/candidate-004.png",
+      "sha256": "f0ea9741dccc878fa8420cff00b7dba3a4677b2f8ab6a708e9d8a22ab39f2f86",
+      "status": "CANDIDATE",
+      "width": 1672
+    }
+  ],
+  "iteration": "MDL-1",
+  "status": "CANDIDATES_PREFLIGHT_PASS"
+}

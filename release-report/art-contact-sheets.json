@@ -1,0 +1,67 @@
+{
+  "MDL-1": {
+    "candidate_count": 18,
+    "height": 2286,
+    "iteration": "MDL-1",
+    "path": "release-report/MDL-1/art-contact-sheet.png",
+    "per_asset": {
+      "A01": {
+        "candidate_count": 4,
+        "path": "assets/review/MDL-1/contact-sheets/A01.png",
+        "sha256": "06186739400cae45bf2104b6c00c6c6ca1619a697868b02bb0f1735f1ba6433f"
+      },
+      "A02": {
+        "candidate_count": 6,
+        "path": "assets/review/MDL-1/contact-sheets/A02.png",
+        "sha256": "58f1854938cf9621fe53110092c85a0762e897a40c30a2b994f682f0e6c3a836"
+      },
+      "A21": {
+        "candidate_count": 4,
+        "path": "assets/review/MDL-1/contact-sheets/A21.png",
+        "sha256": "ed2e63275b17cd4e303817e9fe91d7f22001571f96ce554bea323b188f0dca17"
+      },
+      "A28": {
+        "candidate_count": 4,
+        "path": "assets/review/MDL-1/contact-sheets/A28.png",
+        "sha256": "e7a50b3f5406aa54500b90d1ad5b004166f352d9f07aee2e3861cee9fdd4af7f"
+      }
+    },
+    "status": "PASS",
+    "width": 640
+  },
+  "MDL-2": {
+    "candidate_count": 15,
+    "height": 2032,
+    "iteration": "MDL-2",
+    "path": "release-report/MDL-2/art-contact-sheet.png",
+    "per_asset": {
+      "A08": {
+        "candidate_count": 3,
+        "path": "assets/review/MDL-2/contact-sheets/A08.png",
+        "sha256": "e974400be4e815f8990914208f5bcb31631f21508326f2e44343618dcadb859f"
+      },
+      "A09": {
+        "candidate_count": 3,
+        "path": "assets/review/MDL-2/contact-sheets/A09.png",
+        "sha256": "0e3f3986ffafb2ae264f354749cc5eb381534166d096c82522f2b4ff36150335"
+      },
+      "A10": {
+        "candidate_count": 3,
+        "path": "assets/review/MDL-2/contact-sheets/A10.png",
+        "sha256": "53db0d700e34da91c9263240305bcaa5751e1d5188bc52f856b4c59d21dd60fe"
+      },
+      "A11": {
+        "candidate_count": 3,
+        "path": "assets/review/MDL-2/contact-sheets/A11.png",
+        "sha256": "3fe753a25f44a8ccd6441c1c18083629c6f74a1dfe3893683489d66b6dd143c5"
+      },
+      "A12": {
+        "candidate_count": 3,
+        "path": "assets/review/MDL-2/contact-sheets/A12.png",
+        "sha256": "d573284ff79b73c384027cf34e0f8fae276f214971526d07c218a84dd765afa1"
+      }
+    },
+    "status": "PASS",
+    "width": 640
+  }
+}

@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS {{PUBLIC}}.source_record (case_id STRING, snapshot_id STRING, business_key STRING, entity_id STRING, period_id STRING, component STRING, segment_id STRING, amount DECIMAL(18,2), record_status STRING, changed_from_previous BOOLEAN, duplicate_group_id STRING, included_by_filter BOOLEAN, source_table STRING, source_column STRING) USING DELTA

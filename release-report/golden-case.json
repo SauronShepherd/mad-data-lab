@@ -1,5 +1,11 @@
 {
   "status": "PASS",
+  "source_identity": {
+    "git_head": "25e4cec55965929d16cdbdff88e22099edacc42b",
+    "git_worktree_dirty": true,
+    "runtime_digest": "816409ffeb87852a282f2be7a952a95c9b949a0c2b791485e4fb61514f145870",
+    "data_contract_digest": "d9c2b04bf3957f152e2e358c59df7690b96de025b02867c5f177b26f42f0edce"
+  },
   "gates": [
     {
       "name": "lint",
@@ -35,10 +41,11 @@
         "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
         "-m",
         "pytest",
-        "-q"
+        "-q",
+        "--junitxml=release-report/pytest-results.xml"
       ],
       "status": "PASS",
-      "output": "...........................................                              [100%]\n43 passed in 1.78s\n"
+      "output": "..................................................................       [100%]\n66 passed in 8.88s\n"
     },
     {
       "name": "data",
@@ -51,7 +58,36 @@
         "tests/test_mutation.py"
       ],
       "status": "PASS",
-      "output": ".......                                                                  [100%]\n7 passed in 0.10s\n"
+      "output": ".......                                                                  [100%]\n7 passed in 0.11s\n"
+    },
+    {
+      "name": "mdl2_property",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/mdl2_property_suite.py"
+      ],
+      "status": "PASS",
+      "output": "{\"operator_runs\": 100000, \"operators\": 10, \"release_artifact_unchanged\": true, \"seeds\": 10000, \"status\": \"PASS\", \"template_seed_split\": {\"level1_clean\": 5000, \"level2_noisy\": 5000}, \"templates\": [\"level1_clean\", \"level2_noisy\"]}\n"
+    },
+    {
+      "name": "mdl2_data_deploy_local",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/verify_databricks_data.py",
+        "--target",
+        "local"
+      ],
+      "status": "PASS",
+      "output": "{\"canonical_case_hash\": \"88f885383fe8eb6d1ed6c2aeae1ff93df1be0549fcc51dbf49e2c7d2e35db68b\", \"case_id\": \"CASE_0042\", \"public_truth_excluded\": true, \"snapshot_counts\": {\"ADDED\": 5, \"MODIFIED\": 23, \"REMOVED\": 2, \"UNCHANGED\": 14}, \"status\": \"LOCAL_CANONICAL_ONLY\"}\n"
+    },
+    {
+      "name": "mdl2_sql_preflight",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/mdl2_sql_preflight.py"
+      ],
+      "status": "PASS",
+      "output": "{\"ddl_files\": 12, \"sql_source_digest\": \"254a1ce1e2041e87f8bbcd6da8b73309d1cc6d702e53baa2ae4a8b68f97c5d59\", \"status\": \"PASS\", \"trusted_queries\": 8, \"view_files\": 8}\n"
     },
     {
       "name": "contract",
@@ -63,7 +99,7 @@
         "tests/test_case_contract.py"
       ],
       "status": "PASS",
-      "output": "................................                                         [100%]\n32 passed in 2.03s\n"
+      "output": "................................                                         [100%]\n32 passed in 1.60s\n"
     },
     {
       "name": "e2e",
@@ -72,7 +108,7 @@
         "scripts/local_e2e.py"
       ],
       "status": "PASS",
-      "output": "local e2e: PASS (7 deterministic case journeys)\n"
+      "output": "local e2e: PASS (Case #042 journey; secondary Cases remain locked)\n"
     },
     {
       "name": "visual",
@@ -100,6 +136,80 @@
       ],
       "status": "PASS",
       "output": "security gate: PASS\n"
+    },
+    {
+      "name": "frontend_contract",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/frontend_contract_gate.py"
+      ],
+      "status": "PASS",
+      "output": "frontend contract gate: PASS\n"
+    },
+    {
+      "name": "art_contact_sheets",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/build_art_contact_sheets.py"
+      ],
+      "status": "PASS",
+      "output": "{\"MDL-1\": {\"candidate_count\": 18, \"height\": 2286, \"iteration\": \"MDL-1\", \"path\": \"release-report/MDL-1/art-contact-sheet.png\", \"per_asset\": {\"A01\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-1/contact-sheets/A01.png\", \"sha256\": \"06186739400cae45bf2104b6c00c6c6ca1619a697868b02bb0f1735f1ba6433f\"}, \"A02\": {\"candidate_count\": 6, \"path\": \"assets/review/MDL-1/contact-sheets/A02.png\", \"sha256\": \"58f1854938cf9621fe53110092c85a0762e897a40c30a2b994f682f0e6c3a836\"}, \"A21\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-1/contact-sheets/A21.png\", \"sha256\": \"ed2e63275b17cd4e303817e9fe91d7f22001571f96ce554bea323b188f0dca17\"}, \"A28\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-1/contact-sheets/A28.png\", \"sha256\": \"e7a50b3f5406aa54500b90d1ad5b004166f352d9f07aee2e3861cee9fdd4af7f\"}}, \"status\": \"PASS\", \"width\": 640}, \"MDL-2\": {\"candidate_count\": 15, \"height\": 2032, \"iteration\": \"MDL-2\", \"path\": \"release-report/MDL-2/art-contact-sheet.png\", \"per_asset\": {\"A08\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A08.png\", \"sha256\": \"e974400be4e815f8990914208f5bcb31631f21508326f2e44343618dcadb859f\"}, \"A09\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A09.png\", \"sha256\": \"0e3f3986ffafb2ae264f354749cc5eb381534166d096c82522f2b4ff36150335\"}, \"A10\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A10.png\", \"sha256\": \"53db0d700e34da91c9263240305bcaa5751e1d5188bc52f856b4c59d21dd60fe\"}, \"A11\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A11.png\", \"sha256\": \"3fe753a25f44a8ccd6441c1c18083629c6f74a1dfe3893683489d66b6dd143c5\"}, \"A12\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A12.png\", \"sha256\": \"d573284ff79b73c384027cf34e0f8fae276f214971526d07c218a84dd765afa1\"}}, \"status\": \"PASS\", \"width\": 640}}\n"
+    },
+    {
+      "name": "art_preflight",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/build_mdl2_art_review.py"
+      ],
+      "status": "PASS",
+      "output": "   },\n    {\n      \"asset_id\": \"A08\",\n      \"candidate_id\": \"A08-C03\",\n      \"path\": \"assets/review/MDL-2/A08/candidate-003.png\",\n      \"sha256\": \"f415de9cae08e677842b5111c8c33ff2bb62162c35508f6abb06e830a537081e\",\n      \"width\": 1536,\n      \"height\": 1024,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A09\",\n      \"candidate_id\": \"A09-C01\",\n      \"path\": \"assets/review/MDL-2/A09/candidate-001.png\",\n      \"sha256\": \"998902c2baa4b09ed889b77f14a01c2796e57c7194089fcd5572b62dad086661\",\n      \"width\": 1536,\n      \"height\": 1024,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A09\",\n      \"candidate_id\": \"A09-C02\",\n      \"path\": \"assets/review/MDL-2/A09/candidate-002.png\",\n      \"sha256\": \"8e2332e9bcd4d56c2f8b560dbd7fcb2ca45f68c901fff0ca65f1a1baa7a9067f\",\n      \"width\": 1224,\n      \"height\": 1285,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A09\",\n      \"candidate_id\": \"A09-C03\",\n      \"path\": \"assets/review/MDL-2/A09/candidate-003.png\",\n      \"sha256\": \"4deff03c3774faf1073f2b4ab450f7cbd84b2d2c4dc8edbdbe0888ac5a6cb14c\",\n      \"width\": 1536,\n      \"height\": 1024,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A10\",\n      \"candidate_id\": \"A10-C01\",\n      \"path\": \"assets/review/MDL-2/A10/candidate-001.png\",\n      \"sha256\": \"cbf98d8bada1c648f171852d65f401cd5b1418bcea4cf5da22c5175187e72e54\",\n      \"width\": 1024,\n      \"height\": 1536,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A10\",\n      \"candidate_id\": \"A10-C02\",\n      \"path\": \"assets/review/MDL-2/A10/candidate-002.png\",\n      \"sha256\": \"52969f09e43eadb43b93ec32df59bba8fddafd4386d238d3dba897e0bc48e081\",\n      \"width\": 1214,\n      \"height\": 1295,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A10\",\n      \"candidate_id\": \"A10-C03\",\n      \"path\": \"assets/review/MDL-2/A10/candidate-003.png\",\n      \"sha256\": \"57a121edb687602d1257d167227d1cd27443fe0f47962a6da3cf05a9597ab83b\",\n      \"width\": 1199,\n      \"height\": 1312,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A11\",\n      \"candidate_id\": \"A11-C01\",\n      \"path\": \"assets/review/MDL-2/A11/candidate-001.png\",\n      \"sha256\": \"dd0e5c2bf293d5fd42b199380c971b1323c380bb4bc94aac8908aa21afdbc269\",\n      \"width\": 1254,\n      \"height\": 1254,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A11\",\n      \"candidate_id\": \"A11-C02\",\n      \"path\": \"assets/review/MDL-2/A11/candidate-002.png\",\n      \"sha256\": \"0dd5414cb468069f66538866cf5f6ca5de7a0610abb71ea47edd0efc91a94128\",\n      \"width\": 1672,\n      \"height\": 941,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A11\",\n      \"candidate_id\": \"A11-C03\",\n      \"path\": \"assets/review/MDL-2/A11/candidate-003.png\",\n      \"sha256\": \"c685d6feacd8c59665d75f821628b9c0a7e8a4bf4b78da1c15e0ee9e04442e15\",\n      \"width\": 1199,\n      \"height\": 1312,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A12\",\n      \"candidate_id\": \"A12-C01\",\n      \"path\": \"assets/review/MDL-2/A12/candidate-001.png\",\n      \"sha256\": \"e6085af6e3c61130da5b962eceffa9ebd701dcc9bc39015e514a3380339b20fd\",\n      \"width\": 1224,\n      \"height\": 1285,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A12\",\n      \"candidate_id\": \"A12-C02\",\n      \"path\": \"assets/review/MDL-2/A12/candidate-002.png\",\n      \"sha256\": \"1ef5141eaa7e5186ae077d8e3e7e15dfbea0787f7b34d154d50855c467421dd1\",\n      \"width\": 1672,\n      \"height\": 941,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A12\",\n      \"candidate_id\": \"A12-C03\",\n      \"path\": \"assets/review/MDL-2/A12/candidate-003.png\",\n      \"sha256\": \"3a979148028cbac4f293a42217177b613df6b77807d883a316f54b5af42c951c\",\n      \"width\": 1536,\n      \"height\": 1024,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    }\n  ]\n}\n"
+    },
+    {
+      "name": "mdl1_art_preflight",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/build_mdl1_art_review.py"
+      ],
+      "status": "PASS",
+      "output": "ae8764da2719cf465526cbbcdbc05927371646fedc1b06e0e9e98a974226\",\n      \"width\": 1254,\n      \"height\": 1254,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A02\",\n      \"path\": \"assets/review/MDL-1/A02/candidate-001.png\",\n      \"sha256\": \"c2b3d1e3de8e689f691ac4c5be29f49ff601366ee12b5c9f2bc0fd5faaf93a40\",\n      \"width\": 1254,\n      \"height\": 1254,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A02\",\n      \"path\": \"assets/review/MDL-1/A02/candidate-002.png\",\n      \"sha256\": \"268dbd1aae0071c71681b3fb6cde9f19365073bcc1d1dc8930cf0403407e4455\",\n      \"width\": 1254,\n      \"height\": 1254,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A02\",\n      \"path\": \"assets/review/MDL-1/A02/candidate-003.png\",\n      \"sha256\": \"164c86175c4635a1e692909ab031c3b9db6e9f37450ad5d0ca5362a5da45d55c\",\n      \"width\": 1254,\n      \"height\": 1254,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A02\",\n      \"path\": \"assets/review/MDL-1/A02/candidate-004.png\",\n      \"sha256\": \"72e39c7b7bfb38de9066bb04d94752d1dcbce2b4bb7a750fcabb6ab2f1f6132c\",\n      \"width\": 1254,\n      \"height\": 1254,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A02\",\n      \"path\": \"assets/review/MDL-1/A02/candidate-005.png\",\n      \"sha256\": \"2fe5c597ffbf04ab334db38ebb14f87bfdc17893f1e78795c4a09b33c8635dd6\",\n      \"width\": 1254,\n      \"height\": 1254,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A02\",\n      \"path\": \"assets/review/MDL-1/A02/candidate-006.png\",\n      \"sha256\": \"01917556676468ec317e522cd9dab6c1d55378e128409d14a0264ded57a4a84e\",\n      \"width\": 1254,\n      \"height\": 1254,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A21\",\n      \"path\": \"assets/review/MDL-1/A21/candidate-001.png\",\n      \"sha256\": \"3e37628742bc7e120aa73ffe38b51eba2c4c057286bd5614a839b3324aa3df99\",\n      \"width\": 1254,\n      \"height\": 1254,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A21\",\n      \"path\": \"assets/review/MDL-1/A21/candidate-002.png\",\n      \"sha256\": \"a80fd5f0aabfb7370e153776a610d6ae8dda283b35693f38b3122688433f4a73\",\n      \"width\": 1254,\n      \"height\": 1254,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A21\",\n      \"path\": \"assets/review/MDL-1/A21/candidate-003.png\",\n      \"sha256\": \"c38c6e7d2a715dc573d806b1725c53e7fe9bd26282e3afb7ecaefba99cebb725\",\n      \"width\": 1254,\n      \"height\": 1254,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A21\",\n      \"path\": \"assets/review/MDL-1/A21/candidate-004.png\",\n      \"sha256\": \"5a78e132b576c953a366a3586fd5248b222731b111d1168acf19fffc88cf5f8e\",\n      \"width\": 1254,\n      \"height\": 1254,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A28\",\n      \"path\": \"assets/review/MDL-1/A28/candidate-001.png\",\n      \"sha256\": \"cb93c433a9d51eb71b7764533ca58c1ad21360d80f6d1a940b90063f9d22ef8e\",\n      \"width\": 1672,\n      \"height\": 941,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A28\",\n      \"path\": \"assets/review/MDL-1/A28/candidate-002.png\",\n      \"sha256\": \"e324a854a360e3f5343e1d4e55876c7f106db38f32e82e274ccc556eb54efa2d\",\n      \"width\": 1672,\n      \"height\": 941,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A28\",\n      \"path\": \"assets/review/MDL-1/A28/candidate-003.png\",\n      \"sha256\": \"315e2d2f0a4736987bc4bd2df152484afc7be8fbd80750f1f4493ea6a603a456\",\n      \"width\": 1672,\n      \"height\": 941,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    },\n    {\n      \"asset_id\": \"A28\",\n      \"path\": \"assets/review/MDL-1/A28/candidate-004.png\",\n      \"sha256\": \"f0ea9741dccc878fa8420cff00b7dba3a4677b2f8ab6a708e9d8a22ab39f2f86\",\n      \"width\": 1672,\n      \"height\": 941,\n      \"mode\": \"RGBA\",\n      \"status\": \"CANDIDATE\"\n    }\n  ]\n}\n"
+    },
+    {
+      "name": "browser",
+      "command": [
+        "npm.cmd",
+        "run",
+        "test:browser"
+      ],
+      "status": "PASS",
+      "output": "\n> mad-data-lab@0.1.0 test:browser\n> playwright test\n\n\nRunning 1 test using 1 worker\n\n  ok 1 [chromium] \u00e2\u20ac\u00ba tests\\browser\\app.spec.ts:2:1 \u00e2\u20ac\u00ba same-origin Case #042 browser contract (3.4s)\n\n  1 passed (8.0s)\n\u001b[2m[WebServer] \u001b[22mINFO:     Started server process [36736]\n\u001b[2m[WebServer] \u001b[22mINFO:     Waiting for application startup.\n\u001b[2m[WebServer] \u001b[22mINFO:     Application startup complete.\n\u001b[2m[WebServer] \u001b[22mINFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)\n(node:8136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:8136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "name": "mdl2_contract",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/validate_mdl2_contract.py"
+      ],
+      "status": "PASS",
+      "output": "{\n  \"status\": \"PASS\",\n  \"checks\": 51,\n  \"failed\": [],\n  \"pending\": [\n    \"human-art-approval\",\n    \"predecessor-mdl1\"\n  ]\n}\n"
+    },
+    {
+      "name": "live_sql_plan",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/live_sql_check.py",
+        "--plan"
+      ],
+      "status": "PASS",
+      "output": "{\n  \"target\": \"staging\",\n  \"catalog\": \"UNCONFIGURED\",\n  \"case_id\": \"CASE_0042\",\n  \"queries\": {\n    \"Q1\": \"SELECT * FROM {{CURATED}}.case_summary WHERE case_id = ?\\n\",\n    \"Q2\": \"SELECT * FROM {{CURATED}}.component_evidence WHERE case_id = ? ORDER BY abs_contribution_rank\\n\",\n    \"Q3\": \"SELECT case_id, component, change_type, COUNT(*) AS record_count, SUM(impact) AS net_impact, MIN(previous_snapshot_id) AS previous_snapshot_id, MAX(current_snapshot_id) AS current_snapshot_id FROM {{CURATED}}.snapshot_evidence WHERE case_id = ? GROUP BY case_id, component, change_type ORDER BY component, change_type\\n\",\n    \"Q4\": \"SELECT * FROM {{CURATED}}.snapshot_evidence WHERE case_id = ? ORDER BY ABS(impact) DESC, business_key LIMIT ?\\n\",\n    \"Q5\": \"SELECT * FROM {{CURATED}}.quality_evidence WHERE case_id = ?\\n\",\n    \"Q6\": \"SELECT case_id, current_formula_id, previous_formula_id, current_formula_hash, previous_formula_hash, current_formula_id = previous_formula_id AND current_formula_hash = previous_formula_hash AS formula_unchanged FROM {{CURATED}}.case_summary WHERE case_id = ?\\n\",\n    \"Q7\": \"SELECT * FROM {{CURATED}}.lineage_evidence WHERE case_id = ? ORDER BY depth, node_id\\n\",\n    \"Q8\": \"SELECT case_id, SUM(contribution_delta) AS component_delta, MAX(deviation) AS deviation, SUM(contribution_delta)-MAX(deviation) AS residual FROM {{CURATED}}.component_evidence WHERE case_id = ? GROUP BY case_id\\n\"\n  }\n}\n"
+    },
+    {
+      "name": "traceability",
+      "command": [
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "scripts/validate_traceability.py"
+      ],
+      "status": "PASS",
+      "output": "{\n  \"status\": \"PASS\",\n  \"required_g42\": 27,\n  \"definitions\": 34,\n  \"missing\": [],\n  \"duplicates\": []\n}\n"
     },
     {
       "name": "a11y",

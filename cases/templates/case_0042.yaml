@@ -1,0 +1,30 @@
+case_id: CASE_0042
+public_number: 42
+slug: the-missing-6-8m
+title: "The Missing €6.8M"
+hook: "€6.8M vanished from Capital Available."
+difficulty: LEVEL_2
+seed: 42
+generator_version: 1
+case_template_version: 1
+release_state: CORE
+status: ACTIVE
+sort_order: 10
+primary_metric: CAPITAL_AVAILABLE
+learning_objectives: [DECOMPOSITION, SNAPSHOT_DIFF, DQ_MATERIALITY, LINEAGE]
+observation_contract:
+  datapoint_id: CAPITAL_AVAILABLE
+  metric_label: Capital Available
+  entity_id: PT001
+  period_id: "2026-07"
+  currency: EUR
+  scale: MILLIONS
+  expected_value: "125.00"
+  observed_value: "118.20"
+  deviation: "-6.80"
+hypothesis_families: [SOURCE_VALUES_CHANGED, FORMULA_CHANGED, DATA_QUALITY_ISSUE]
+expected_experiment_families: [COMPONENT_DECOMPOSITION, SNAPSHOT_DIFF, DQ_MATERIALITY, FORMULA_VALIDATION, RECONCILIATION]
+required_evidence_tags: [COMPONENT_IMPACT, SNAPSHOT_IMPACT, FORMULA_VERSION]
+encouraged_evidence_actions: [SOURCE_RECORD_INSPECTION, VALUE_LINEAGE, TECHNICAL_LINEAGE]
+completion_contract: case_0042_v1
+art_asset_id: CASE_0042_KEY_ART

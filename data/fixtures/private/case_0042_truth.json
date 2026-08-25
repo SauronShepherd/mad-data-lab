@@ -1,0 +1,8 @@
+{
+  "case_id": "CASE_0042",
+  "expected_total_deviation": "-6.80",
+  "primary_cause": "SOURCE_RECORD_CHANGE",
+  "primary_component": "V2",
+  "secondary_cause": "DUPLICATE_BUSINESS_KEY",
+  "truth_json": "private"
+}

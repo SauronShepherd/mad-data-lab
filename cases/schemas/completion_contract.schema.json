@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","required":["contract_id","case_id","required_experiment_families","allows_insufficient_evidence_verdict"],"properties":{"contract_id":{"type":"string"},"case_id":{"type":"string"},"required_experiment_families":{"type":"array"},"allows_insufficient_evidence_verdict":{"const":false}}}

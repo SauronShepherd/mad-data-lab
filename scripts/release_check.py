@@ -21,11 +21,10 @@ def require_file(relative: str) -> None:
 def main() -> None:
     for artifact in (
         "app.yaml",
-        "public/assets/Mad_Data_Lab.png",
-        "public/assets/board.png",
-        "public/audio/mad_data_lab_curiosity.mp3",
+        "assets/review/MDL-2/art-generation-plan.json",
+        "release-report/MDL-2/art-preflight.json",
         "resources/genie/case_0042.serialized.json",
-        "resources/genie/case_0042.space.json",
+        "databricks.yml",
     ):
         require_file(artifact)
 
@@ -34,9 +33,6 @@ def main() -> None:
     launcher = (ROOT / "server/run.py").read_text(encoding="utf-8")
     assert "UVICORN_HOST" in launcher and "UVICORN_PORT" in launcher
 
-    space = json.loads((ROOT / "resources/genie/case_0042.space.json").read_text(encoding="utf-8"))
-    assert space["space_id"] and space["warehouse_id"]
-
     serialized = json.loads((ROOT / "resources/genie/case_0042.serialized.json").read_text(encoding="utf-8"))
     identifiers = [item["identifier"] for item in serialized["data_sources"]["tables"]]
     assert len(identifiers) >= 5
@@ -44,7 +40,7 @@ def main() -> None:
 
     case = get_case("CASE_0042")
     assert case.state == "CORE"
-    assert case.required_experiments == ("EXP-01", "EXP-02", "EXP-03")
+    assert case.required_experiments == ("COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "FORMULA_VALIDATION", "RECONCILIATION")
     print("MAD DATA LAB release gate: PASS")
 
 

@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS {{PUBLIC}}.technical_lineage_curated (case_id STRING, source_table STRING, source_column STRING, target_table STRING, target_column STRING, entity_type STRING, event_time TIMESTAMP, lineage_source STRING) USING DELTA

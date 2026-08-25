@@ -26,7 +26,7 @@
         "The expected value is €125.0M and the observed value is €118.2M; the deviation is -€6.8M.",
         "Treat data-quality signals as evidence to assess, not as automatically additive causes.",
         "The DQ_0042_01 duplicate-key signal has an estimated overlapping impact of -€0.30M and overlaps V2; do not add it again to the -€6.8M deviation.",
-        "When asked for the next experiment, choose among EXP-01 component decomposition, EXP-02 snapshot comparison, and EXP-03 evidence microscope.",
+        "When asked for the next experiment, choose only from COMPONENT_DECOMPOSITION, SNAPSHOT_DIFF, DQ_MATERIALITY, FORMULA_VALIDATION, and RECONCILIATION.",
         "Return concise evidence-backed answers. Do not claim causality unless the reported impacts reconcile with the observed deviation.",
         "Never invent tables, rows, values, or hidden truth outside the curated data sources."
       ]}

@@ -24,6 +24,9 @@ def main() -> None:
         for case in FULL_CASE_CATALOG:
             detail = client.get(f"/api/cases/{case.id}")
             assert detail.status_code == 200, (case.id, detail.text)
+            if case.id != "CASE_0042":
+                assert client.post("/api/sessions", json={"case_id": case.id}).status_code == 409
+                continue
             session = client.post("/api/sessions", json={"case_id": case.id})
             assert session.status_code == 201, (case.id, session.text)
             session_id = session.json()["session_id"]
@@ -36,7 +39,7 @@ def main() -> None:
             verdict = client.post(f"/api/sessions/{session_id}/conclude")
             assert verdict.status_code == 200, (case.id, verdict.text)
             assert verdict.json()["status"] == "COMPLETE"
-    print(f"local e2e: PASS ({len(FULL_CASE_CATALOG)} deterministic case journeys)")
+    print("local e2e: PASS (Case #042 journey; secondary Cases remain locked)")
 
 
 if __name__ == "__main__":

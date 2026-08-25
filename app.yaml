@@ -2,3 +2,5 @@ command: ["python", "-m", "server.run"]
 env:
   - name: GENIE_SPACE_ID
     valueFrom: genie-space
+  - name: ALLOW_FIXTURE_MODE
+    value: "0"

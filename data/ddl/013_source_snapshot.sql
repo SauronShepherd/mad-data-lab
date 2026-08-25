@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS {{PUBLIC}}.source_snapshot (snapshot_id STRING, case_id STRING, source_table STRING, as_of_ts TIMESTAMP, row_count BIGINT, status STRING, snapshot_role STRING, pipeline_run_id STRING) USING DELTA

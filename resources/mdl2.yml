@@ -1,0 +1,24 @@
+resources:
+  jobs:
+    mdl2_validation:
+      name: mdl2-validation
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "2"
+            dependencies:
+              - "databricks-sdk>=0.60,<1"
+              - "databricks-sql-connector>=3.0,<4"
+              - "pydantic>=2.0,<3"
+              - "pyyaml>=6,<7"
+      tasks:
+        - task_key: local_contract_reference
+          spark_python_task:
+            python_file: ../scripts/validate_mdl2_contract.py
+          environment_key: default
+        - task_key: sql_source_preflight
+          depends_on:
+            - task_key: local_contract_reference
+          spark_python_task:
+            python_file: ../scripts/mdl2_sql_preflight.py
+          environment_key: default

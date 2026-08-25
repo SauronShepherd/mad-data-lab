@@ -1,0 +1,9 @@
+{
+  "checks": 63,
+  "failed": [],
+  "pending": [
+    "human-art-approval",
+    "predecessor-mdl1"
+  ],
+  "status": "PASS"
+}

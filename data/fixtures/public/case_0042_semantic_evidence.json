@@ -1,0 +1,16 @@
+{
+  "case_id": "CASE_0042",
+  "fixture_type": "semantic_evidence",
+  "records": [
+    {
+      "affected_population_count": 0,
+      "changed": false,
+      "current_hash": "d1b885360649e8a8cd7322d54a221a9041459b709e49f8444f140c1727fcaf65",
+      "current_id": "CAPITAL_AVAILABLE_V1",
+      "estimated_impact": "0.00",
+      "previous_hash": "d1b885360649e8a8cd7322d54a221a9041459b709e49f8444f140c1727fcaf65",
+      "previous_id": "CAPITAL_AVAILABLE_V1",
+      "semantic_type": "FORMULA"
+    }
+  ]
+}

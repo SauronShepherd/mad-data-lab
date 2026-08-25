@@ -1,0 +1,6 @@
+release_state: ARCHIVED
+test_only: true
+public_case: false
+difficulty: LEVEL_2
+primary_operator: VALUE_CHANGE
+secondary_operator: DUPLICATE_KEYS

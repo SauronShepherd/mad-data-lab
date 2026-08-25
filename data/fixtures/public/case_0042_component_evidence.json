@@ -1,0 +1,24 @@
+{
+  "case_id": "CASE_0042",
+  "fixture_type": "calculation_trace",
+  "records": [
+    {
+      "node_id": "CAPITAL_AVAILABLE",
+      "node_type": "METRIC",
+      "parent_node_id": null,
+      "sequence_no": 0
+    },
+    {
+      "node_id": "V2",
+      "node_type": "COMPONENT",
+      "parent_node_id": "CAPITAL_AVAILABLE",
+      "sequence_no": 1
+    },
+    {
+      "node_id": "finance_reporting_source.amount",
+      "node_type": "SOURCE_COLUMN",
+      "parent_node_id": "V2",
+      "sequence_no": 2
+    }
+  ]
+}

@@ -18,7 +18,7 @@ def main() -> None:
             assert created.status_code == 201
             session_id = created.json()["session_id"]
             completed: list[str] = []
-            for _ in range(3):
+            for _ in range(5):
                 response = client.post(f"/api/sessions/{session_id}/next", json={"completed_experiments": completed})
                 assert response.status_code == 200, response.text
                 completed.append(response.json()["experiment_id"])

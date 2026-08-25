@@ -1,0 +1,1 @@
+SELECT d.*, COUNT(*) OVER (PARTITION BY case_id, change_type) AS change_type_count, SUM(impact) OVER (PARTITION BY case_id, change_type) AS change_type_total_impact, SUM(impact) OVER (PARTITION BY case_id, component) AS component_total_impact FROM {{PUBLIC}}.snapshot_diff d

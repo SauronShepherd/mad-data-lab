@@ -17,95 +17,8 @@ import {
   startInvestigation,
 } from "./api";
 
-const CASES = [
-  {
-    id: "CASE_0042",
-    number: "042",
-    title: "The Missing €6.8M",
-    metric: "Capital Available",
-    hook: "A trusted metric is €6.8M below expectation.",
-    difficulty: "LEVEL 2",
-    concepts: "Decomposition · Snapshots · Evidence",
-    state: "CORE",
-    expected: 125,
-    observed: 118.2,
-    deviation: -6.8,
-  },
-  {
-    id: "CASE_0107",
-    number: "107",
-    title: "Attack of the Clones",
-    metric: "Net Revenue",
-    hook: "Duplicate keys are inflating the total.",
-    difficulty: "LEVEL 2",
-    concepts: "Duplicates · Pipeline replay",
-    state: "COMING SOON",
-    expected: 42,
-    observed: 43.8,
-    deviation: 1.8,
-  },
-  {
-    id: "CASE_0213",
-    number: "213",
-    title: "The Vanishing Revenue",
-    metric: "Recognized Revenue",
-    hook: "A filter quietly removed the population.",
-    difficulty: "LEVEL 2",
-    concepts: "Filters · Reconciliation",
-    state: "COMING SOON",
-    expected: 41.2,
-    observed: 34.7,
-    deviation: -6.5,
-  },
-];
-
-const EXPERIMENTS = [
-  {
-    id: "EXP-01",
-    name: "Deviation Decomposer",
-    instrument: "Waterfall instrument",
-    rationale:
-      "V2 carries most of the unexplained movement, so I am splitting the metric into its components.",
-    evidence:
-      "The V2 component explains €5.9M of the €6.8M deviation — 87% of the anomaly.",
-    updates: [
-      ["Promo effect?", "POSSIBLE"],
-      ["Data bug?", "POSSIBLE"],
-      ["Pricing change?", "SUPPORTED"],
-      ["Seasonal factor?", "SUPPORTED"],
-    ],
-  },
-  {
-    id: "EXP-02",
-    name: "Snapshot Reactor",
-    instrument: "Snapshot comparison",
-    rationale:
-      "The largest signal is in V2. I am comparing the previous and current snapshots to find the changed records.",
-    evidence:
-      "30 V2 records changed: 23 modified, 2 removed, 5 added. Net impact: -€5.9M.",
-    updates: [
-      ["Promo effect?", "SUPPORTED"],
-      ["Data bug?", "SUPPORTED"],
-      ["Pricing change?", "SUPPORTED"],
-      ["Seasonal factor?", "RULED_OUT"],
-    ],
-  },
-  {
-    id: "EXP-03",
-    name: "Evidence Microscope",
-    instrument: "Record-level evidence",
-    rationale:
-      "One representative source record can reconcile the aggregate result without guessing at causality.",
-    evidence:
-      "TX-004291 moved from €4.2M to €0.0M, contributing -€4.2M to the V2 change.",
-    updates: [
-      ["Promo effect?", "RULED_OUT"],
-      ["Data bug?", "SUPPORTED"],
-      ["Pricing change?", "RULED_OUT"],
-      ["Seasonal factor?", "RULED_OUT"],
-    ],
-  },
-];
+const CASES = [];
+const INITIAL_CASE = { id: "CASE_0042", number: "042", title: "Loading case…", metric: "", hook: "", difficulty: "", concepts: "", state: "LOADING", expected: 0, observed: 0, deviation: 0 };
 
 const formatMoney = (value) => `${value < 0 ? "-" : ""}€${Math.abs(value).toFixed(1)}M`;
 
@@ -137,7 +50,7 @@ function App() {
   const [reducedMotion, setReducedMotion] = useState(() => localStorage.getItem("mad-data-lab-reduced-motion") === "on");
   const [caseCatalog, setCaseCatalog] = useState(CASES);
   const [selectedCaseId, setSelectedCaseId] = useState("CASE_0042");
-  const [experimentRegistry, setExperimentRegistry] = useState(EXPERIMENTS);
+  const [experimentRegistry, setExperimentRegistry] = useState([]);
   const audioRef = useRef(null);
   useEffect(() => {
     listCases()
@@ -154,7 +67,7 @@ function App() {
         ),
       );
   }, []);
-  const active = caseCatalog.find((item) => item.id === selectedCaseId) || caseCatalog[0] || CASES[0];
+  const active = caseCatalog.find((item) => item.id === selectedCaseId) || caseCatalog[0] || INITIAL_CASE;
   const deviation = Number(active.deviation ?? -6.8);
   const expected = Number(active.expected ?? 125);
   const observed = Number(active.observed ?? 118.2);
@@ -163,7 +76,7 @@ function App() {
       if (Array.isArray(result.catalog) && result.catalog.length) {
         setExperimentRegistry(result.catalog);
       }
-    }).catch(() => setExperimentRegistry(EXPERIMENTS));
+    }).catch(() => setExperimentRegistry([]));
   }, [active.id]);
   useEffect(() => {
     document.documentElement.classList.toggle("reduced-motion", reducedMotion);
@@ -242,9 +155,7 @@ function App() {
       setSessionId(session.session_id || session.investigation_id || null);
       setDiagnosticId(session.diagnostic_id || null);
     } catch {
-      setServiceError(
-        "Fixture mode active — the local investigation service is unavailable.",
-      );
+      setServiceError("Investigation service unavailable. Start the API to continue.");
     }
   };
   const run = async () => {
@@ -259,14 +170,13 @@ function App() {
       setCompleted((v) => [...v, next.experiment_id]);
       setExp(next.experiment_number - 1);
       if (sessionId) {
-        const evidenceResult = await getSessionEvidence(sessionId);
-        setEvidenceRecords(evidenceResult.evidence || []);
+        if (next.experiment_id !== "COMPONENT_DECOMPOSITION") {
+          const evidenceResult = await getSessionEvidence(sessionId);
+          setEvidenceRecords(evidenceResult.evidence || []);
+        }
       }
     } catch {
-      setServiceError(
-        "Dr. Genie is offline. Start the local API or continue with the verified fixture.",
-      );
-      setExp((v) => Math.min(v + 1, experimentRegistry.length - 1));
+      setServiceError("Dr. Genie is offline. No analytical fallback is available.");
     } finally {
       setLoading(false);
     }
@@ -291,7 +201,7 @@ function App() {
         return;
       }
     }
-    setScreen("verdict");
+    if (conclusion) setScreen("verdict");
   };
   const recoverInvestigation = async () => {
     if (sessionId) {
@@ -595,19 +505,19 @@ function App() {
                   <span>{current.instrument}</span>
                 </div>
                 <p>{evidence}</p>
-                {exp === 2 && (
+                {evidenceRecords.find((item) => item.business_key === "TX-004291") && (
                   <dl>
                     <div>
                       <dt>BUSINESS KEY</dt>
-                      <dd>TX-004291</dd>
+                      <dd>{evidenceRecords.find((item) => item.business_key === "TX-004291").business_key}</dd>
                     </div>
                     <div>
                       <dt>IMPACT</dt>
-                      <dd>-€4.20M</dd>
+                      <dd>{formatMoney(evidenceRecords.find((item) => item.business_key === "TX-004291").impact)}</dd>
                     </div>
                     <div>
                       <dt>SOURCE</dt>
-                      <dd>finance_reporting_source</dd>
+                      <dd>{evidenceRecords.find((item) => item.business_key === "TX-004291").source_table || "curated source record"}</dd>
                     </div>
                   </dl>
                 )}
@@ -631,7 +541,7 @@ function App() {
                 <option>Formula change</option>
               </select>
             </div>
-            {exp < experimentRegistry.length - 1 ? (
+            {experimentRegistry.length > 0 && exp < experimentRegistry.length - 1 ? (
               <button className="primary wide" onClick={run} disabled={loading}>
                 {loading
                   ? "GENIE IS INVESTIGATING…"
@@ -640,13 +550,15 @@ function App() {
                     : "RUN NEXT EXPERIMENT"}{" "}
                 <span>→</span>
               </button>
-            ) : (
+            ) : experimentRegistry.length > 0 ? (
               <button
                 className="primary wide"
                 onClick={revealVerdict}
               >
                 REVEAL SCIENTIFIC VERDICT <span>→</span>
               </button>
+            ) : (
+              <button className="primary wide" disabled>No experiment contract available</button>
             )}
             <button className="text-button" onClick={() => setScreen("board")}>
               Exit Investigation
@@ -663,7 +575,7 @@ function App() {
             <p className="eyebrow">
               SCIENTIFIC VERDICT · CASE #{active.number}
             </p>
-            <h1>{active.id === "CASE_0042" ? "V2 source-record change is the primary explanation." : "The evidence supports a reconciled explanation."}</h1>
+            <h1>{conclusion?.verdict || "The server has not issued a scientific verdict."}</h1>
             <p className="lead">
               The evidence reconciles the full <strong>{formatMoney(deviation)}</strong>{" "}
               deviation for <strong>{active.title}</strong>. The investigation
@@ -680,7 +592,7 @@ function App() {
               </div>
               <div>
                 <span>FALSE LEAD</span>
-                <strong>{active.id === "CASE_0042" ? "DQ OVERLAPS V2" : "COMPETING SIGNAL TESTED"}</strong>
+                <strong>{conclusion?.false_lead || "SERVER-RECORDED EVIDENCE"}</strong>
               </div>
             </div>
             <p className="genie-line">

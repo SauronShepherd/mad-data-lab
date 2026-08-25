@@ -1,0 +1,29 @@
+name: mad-data-lab-ci
+on:
+  push:
+    branches: [main, 'MDL-*']
+  pull_request:
+jobs:
+  local-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: pip install -r requirements.txt pytest pyyaml pydantic
+      - run: python scripts/generate_cases.py
+      - run: python -m pytest -q
+      - run: python scripts/security_gate.py
+      - run: python scripts/frontend_contract_gate.py
+      - run: python scripts/run_iteration_gate.py
+      - run: python scripts/validate_mdl2_contract.py
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22', cache: npm}
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser

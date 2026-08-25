@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS {{PUBLIC}}.semantic_change_evidence (case_id STRING, semantic_type STRING, previous_id STRING, current_id STRING, previous_hash STRING, current_hash STRING, affected_population_count INT, estimated_impact DECIMAL(18,2), details_json STRING) USING DELTA

@@ -1,0 +1,1 @@
+SELECT case_id, component, change_type, COUNT(*) AS record_count, SUM(impact) AS net_impact, MIN(previous_snapshot_id) AS previous_snapshot_id, MAX(current_snapshot_id) AS current_snapshot_id FROM {{CURATED}}.snapshot_evidence WHERE case_id = ? GROUP BY case_id, component, change_type ORDER BY component, change_type

@@ -1,0 +1,5 @@
+release_state: ARCHIVED
+test_only: true
+public_case: false
+difficulty: LEVEL_1
+primary_operator: VALUE_CHANGE

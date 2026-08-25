@@ -1,0 +1,12 @@
+bundle:
+  name: mad-data-lab-mdl2
+
+include:
+  - resources/*.yml
+
+targets:
+  staging:
+    mode: development
+    workspace:
+      profile: sda
+      root_path: ~/.bundle/${bundle.name}/${bundle.target}

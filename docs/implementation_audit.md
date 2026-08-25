@@ -16,9 +16,9 @@ Updated after the final aligned deployment and authenticated smoke.
 | Evidence explorer | bounded/filterable evidence API and browser flow |
 | Accessibility | runtime axe: 0 violations / 29 passes; static gate |
 | Security/assets/dependencies | security gate, asset gate, npm audit |
-| Local and Docker validation | 41 tests, 12 local gates, Docker same-origin smoke |
+| Local and Docker validation | 66 tests, 23 local gates, current Docker image build and same-origin smoke |
 | Live SQL/Genie | `scripts/live_sql_check.py`, `scripts/live_genie_check.py`, profile `sda` |
-| Deployed runtime | deployment `01f19f9af34c19e2a70395d32935717c`, current smoke PASS; 10-run soak PASS on the prior functionally equivalent snapshot |
+| Deployed runtime | Databricks App `mad-data-lab`; source-bound authenticated smoke PASS and 10-run soak PASS |
 | Secondary deterministic coverage | six secondary Cases × five review-mode journeys |
 
 ## External or intentionally out-of-scope evidence

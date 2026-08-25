@@ -1,0 +1,14 @@
+{
+  "case_id": "CASE_0042",
+  "fixture_type": "technical_lineage",
+  "records": [
+    {
+      "entity_type": "COLUMN",
+      "lineage_source": "TECHNICAL_LINEAGE_FALLBACK",
+      "source_column": "amount",
+      "source_table": "finance_reporting_source",
+      "target_column": "value",
+      "target_table": "datapoint_result"
+    }
+  ]
+}

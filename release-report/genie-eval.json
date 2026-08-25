@@ -1,9 +1,14 @@
 {
-  "name": "genie-eval.json",
+  "status": "PASS",
   "command": [
     "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
     "scripts/live_genie_check.py"
   ],
-  "status": "PASS",
-  "output": "live Genie gate: PASS (analytical benchmark and injection refusal)\n"
+  "output": "live Genie gate: PASS (analytical benchmark and injection refusal)\n",
+  "source_identity": {
+    "git_head": "25e4cec55965929d16cdbdff88e22099edacc42b",
+    "runtime_digest": "2c71274e09e8f1f52583870fdf794fa885fade61fbab62c42f19d56e45c0f230",
+    "data_contract_digest": "bf19a22f80bfa0bd822374d14888a5bd994c92d64902964e4ffd6c8e0efdfb40"
+  },
+  "generated_at_utc": "2026-08-25T05:13:07.870390+00:00"
 }

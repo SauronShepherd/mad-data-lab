@@ -1,0 +1,157 @@
+{
+  "approval_status": "PENDING_HUMAN_SELECTION",
+  "candidates": [
+    {
+      "asset_id": "A08",
+      "candidate_id": "A08-C01",
+      "height": 1278,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A08/candidate-001.png",
+      "sha256": "5eb2a51080c359ea819f4be4f3f956c5efd74ac9ea8c982d96f199aa03ae6837",
+      "status": "CANDIDATE",
+      "width": 1230
+    },
+    {
+      "asset_id": "A08",
+      "candidate_id": "A08-C02",
+      "height": 1024,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A08/candidate-002.png",
+      "sha256": "d61fa929536a562e5d6e41dae8d493567c9345b473c58bdf8b65e8169fab7a4c",
+      "status": "CANDIDATE",
+      "width": 1536
+    },
+    {
+      "asset_id": "A08",
+      "candidate_id": "A08-C03",
+      "height": 1024,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A08/candidate-003.png",
+      "sha256": "f415de9cae08e677842b5111c8c33ff2bb62162c35508f6abb06e830a537081e",
+      "status": "CANDIDATE",
+      "width": 1536
+    },
+    {
+      "asset_id": "A09",
+      "candidate_id": "A09-C01",
+      "height": 1024,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A09/candidate-001.png",
+      "sha256": "998902c2baa4b09ed889b77f14a01c2796e57c7194089fcd5572b62dad086661",
+      "status": "CANDIDATE",
+      "width": 1536
+    },
+    {
+      "asset_id": "A09",
+      "candidate_id": "A09-C02",
+      "height": 1285,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A09/candidate-002.png",
+      "sha256": "8e2332e9bcd4d56c2f8b560dbd7fcb2ca45f68c901fff0ca65f1a1baa7a9067f",
+      "status": "CANDIDATE",
+      "width": 1224
+    },
+    {
+      "asset_id": "A09",
+      "candidate_id": "A09-C03",
+      "height": 1024,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A09/candidate-003.png",
+      "sha256": "4deff03c3774faf1073f2b4ab450f7cbd84b2d2c4dc8edbdbe0888ac5a6cb14c",
+      "status": "CANDIDATE",
+      "width": 1536
+    },
+    {
+      "asset_id": "A10",
+      "candidate_id": "A10-C01",
+      "height": 1536,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A10/candidate-001.png",
+      "sha256": "cbf98d8bada1c648f171852d65f401cd5b1418bcea4cf5da22c5175187e72e54",
+      "status": "CANDIDATE",
+      "width": 1024
+    },
+    {
+      "asset_id": "A10",
+      "candidate_id": "A10-C02",
+      "height": 1295,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A10/candidate-002.png",
+      "sha256": "52969f09e43eadb43b93ec32df59bba8fddafd4386d238d3dba897e0bc48e081",
+      "status": "CANDIDATE",
+      "width": 1214
+    },
+    {
+      "asset_id": "A10",
+      "candidate_id": "A10-C03",
+      "height": 1312,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A10/candidate-003.png",
+      "sha256": "57a121edb687602d1257d167227d1cd27443fe0f47962a6da3cf05a9597ab83b",
+      "status": "CANDIDATE",
+      "width": 1199
+    },
+    {
+      "asset_id": "A11",
+      "candidate_id": "A11-C01",
+      "height": 1254,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A11/candidate-001.png",
+      "sha256": "dd0e5c2bf293d5fd42b199380c971b1323c380bb4bc94aac8908aa21afdbc269",
+      "status": "CANDIDATE",
+      "width": 1254
+    },
+    {
+      "asset_id": "A11",
+      "candidate_id": "A11-C02",
+      "height": 941,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A11/candidate-002.png",
+      "sha256": "0dd5414cb468069f66538866cf5f6ca5de7a0610abb71ea47edd0efc91a94128",
+      "status": "CANDIDATE",
+      "width": 1672
+    },
+    {
+      "asset_id": "A11",
+      "candidate_id": "A11-C03",
+      "height": 1312,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A11/candidate-003.png",
+      "sha256": "c685d6feacd8c59665d75f821628b9c0a7e8a4bf4b78da1c15e0ee9e04442e15",
+      "status": "CANDIDATE",
+      "width": 1199
+    },
+    {
+      "asset_id": "A12",
+      "candidate_id": "A12-C01",
+      "height": 1285,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A12/candidate-001.png",
+      "sha256": "e6085af6e3c61130da5b962eceffa9ebd701dcc9bc39015e514a3380339b20fd",
+      "status": "CANDIDATE",
+      "width": 1224
+    },
+    {
+      "asset_id": "A12",
+      "candidate_id": "A12-C02",
+      "height": 941,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A12/candidate-002.png",
+      "sha256": "1ef5141eaa7e5186ae077d8e3e7e15dfbea0787f7b34d154d50855c467421dd1",
+      "status": "CANDIDATE",
+      "width": 1672
+    },
+    {
+      "asset_id": "A12",
+      "candidate_id": "A12-C03",
+      "height": 1024,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-2/A12/candidate-003.png",
+      "sha256": "3a979148028cbac4f293a42217177b613df6b77807d883a316f54b5af42c951c",
+      "status": "CANDIDATE",
+      "width": 1536
+    }
+  ],
+  "iteration": "MDL-2",
+  "status": "CANDIDATES_PREFLIGHT_PASS"
+}

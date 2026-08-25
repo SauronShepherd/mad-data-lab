@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS {{PUBLIC}}.snapshot_diff (case_id STRING, component STRING, business_key STRING, entity_id STRING, segment_id STRING, change_type STRING, old_value DECIMAL(18,2), new_value DECIMAL(18,2), impact DECIMAL(18,2), duplicate_group_id STRING, pipeline_run_id STRING, previous_snapshot_id STRING, current_snapshot_id STRING) USING DELTA

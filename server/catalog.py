@@ -74,7 +74,7 @@ CASE_CATALOG = (
         "CASE_0042", 42, "The Missing €6.8M", "Capital Available",
         "A trusted metric is €6.8M below expectation.", "LEVEL 2",
         ("Decomposition", "Snapshots", "Evidence"), "CORE",
-        ("EXP-01", "EXP-02", "EXP-03"), 125.0, 118.2, -6.8,
+        ("COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "FORMULA_VALIDATION", "RECONCILIATION"), 125.0, 118.2, -6.8,
     ),
     CaseContract(
         "CASE_0107", 107, "Attack of the Clones", "Net Revenue",
@@ -120,14 +120,8 @@ def get_any_case(case_id: str) -> CaseContract:
 
 def case_availability(case: CaseContract, *, review_mode: bool = False, completed_case_ids: set[str] | None = None) -> str:
     """Server-side availability; frontend never reimplements release logic."""
-    if case.state == "CORE":
-        return "AVAILABLE"
-    if review_mode and case.state in {"COMING_SOON", "TARGET", "FULL_GAME", "STRETCH"}:
-        return "AVAILABLE"
-    if case.required_case_ids and not set(case.required_case_ids).issubset(completed_case_ids or set()):
-        return "LOCKED"
-    if case.required_case_ids:
-        return "AVAILABLE"
-    if case.state == "FULL_GAME" or case.state == "STRETCH":
-        return "COMING_SOON"
-    return "COMING_SOON" if case.state in {"COMING_SOON", "TARGET"} else "LOCKED"
+    if case.state == "CORE": return "AVAILABLE"
+    # MDL-2 does not own secondary Case contracts. They remain unavailable in
+    # normal and review mode until their own deterministic data/Genie gates
+    # exist; metadata visibility is not analytical entitlement.
+    return "LOCKED"

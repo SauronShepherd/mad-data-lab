@@ -17,7 +17,7 @@ def main() -> None:
         session = client.post("/api/sessions", json={"case_id": "CASE_0042"}).json()["session_id"]
         with patch.object(genie, "next", side_effect=TimeoutError("synthetic timeout")):
             response = client.post(f"/api/sessions/{session}/next", json={"completed_experiments": []})
-            assert response.status_code == 200 and response.json()["source"] == "fixture"
+            assert response.status_code == 200 and response.json()["source"] == "generated_case_data"
         assert client.post("/api/sessions/missing/next", json={}).status_code == 404
         assert client.post(f"/api/sessions/{session}/chat", json={"question": "x" * 2001}).status_code == 422
         assert client.post("/api/sessions", json={"case_id": "CASE_../"}).status_code == 422

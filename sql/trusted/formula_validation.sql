@@ -1,0 +1,1 @@
+SELECT case_id, current_formula_id, previous_formula_id, current_formula_hash, previous_formula_hash, current_formula_id = previous_formula_id AND current_formula_hash = previous_formula_hash AS formula_unchanged FROM {{CURATED}}.case_summary WHERE case_id = ?

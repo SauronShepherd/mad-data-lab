@@ -1,0 +1,1 @@
+SELECT q.*, c.deviation AS total_deviation, CASE WHEN c.deviation=0 OR q.estimated_impact IS NULL THEN NULL ELSE ABS(q.estimated_impact)/ABS(c.deviation) END AS deviation_share FROM {{PUBLIC}}.quality_issue q JOIN {{PUBLIC}}.case_definition c USING (case_id)

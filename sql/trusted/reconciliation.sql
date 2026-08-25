@@ -1,0 +1,1 @@
+SELECT case_id, SUM(contribution_delta) AS component_delta, MAX(deviation) AS deviation, SUM(contribution_delta)-MAX(deviation) AS residual FROM {{CURATED}}.component_evidence WHERE case_id = ? GROUP BY case_id

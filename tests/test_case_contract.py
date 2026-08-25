@@ -5,7 +5,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from server.main import PROGRESSION, SESSIONS, app
-from server.genie import infer_control_payload, parse_control_json, registered_ids_for_case, system_prompt
+from server.genie import normalise_control_response, parse_control_json, registered_ids_for_case, system_prompt
 from server.catalog import CASE_CATALOG, get_case
 
 
@@ -33,20 +33,20 @@ class Case042ContractTests(unittest.TestCase):
     def test_experiments_are_ordered_and_closed(self):
         response = self.client.post('/api/experiments/next', json={'case_id': 'CASE_0042', 'completed_experiments': []})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()['experiment_id'], 'EXP-01')
-        response = self.client.post('/api/experiments/next', json={'case_id': 'CASE_0042', 'completed_experiments': ['EXP-01', 'EXP-02']})
-        self.assertEqual(response.json()['experiment_id'], 'EXP-03')
+        self.assertEqual(response.json()['experiment_id'], 'COMPONENT_DECOMPOSITION')
+        response = self.client.post('/api/experiments/next', json={'case_id': 'CASE_0042', 'completed_experiments': ['COMPONENT_DECOMPOSITION', 'SNAPSHOT_DIFF']})
+        self.assertEqual(response.json()['experiment_id'], 'DQ_MATERIALITY')
 
     def test_full_fixture_progression_closes_after_case042_sequence(self):
         completed = []
         observed = []
-        for _ in range(3):
+        for _ in range(5):
             response = self.client.post('/api/experiments/next', json={'case_id': 'CASE_0042', 'completed_experiments': completed})
             self.assertEqual(response.status_code, 200)
             experiment_id = response.json()['experiment_id']
             observed.append(experiment_id)
             completed.append(experiment_id)
-        self.assertEqual(observed, ['EXP-01', 'EXP-02', 'EXP-03'])
+        self.assertEqual(observed, ['COMPONENT_DECOMPOSITION', 'SNAPSHOT_DIFF', 'DQ_MATERIALITY', 'FORMULA_VALIDATION', 'RECONCILIATION'])
         response = self.client.post('/api/experiments/next', json={'case_id': 'CASE_0042', 'completed_experiments': completed})
         self.assertEqual(response.status_code, 409)
 
@@ -68,7 +68,7 @@ class Case042ContractTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.json()['ready'])
         self.assertEqual(response.json()['experiments'][1], 'DUPLICATE_KEY_ANALYSIS')
-        self.assertEqual(response.json()['catalog'][0]['name'], 'Row Count Analyzer')
+        self.assertFalse(response.json()['catalog'])
         self.assertFalse(response.json()['ready'])
 
     def test_health_reports_fixture_without_genie_resource(self):
@@ -78,13 +78,12 @@ class Case042ContractTests(unittest.TestCase):
 
     def test_deployed_frontend_uses_same_origin_api_by_default(self):
         from pathlib import Path
-        source = (Path(__file__).parents[1] / 'src' / 'api.js').read_text(encoding='utf-8')
+        source = (Path(__file__).parents[1] / 'src' / 'api.ts').read_text(encoding='utf-8')
         self.assertIn("import.meta.env.DEV ? 'http://localhost:8000' : ''", source)
 
-    def test_natural_language_genie_answer_is_promoted_to_registered_experiment(self):
-        payload = infer_control_payload('The next experiment is EXP-02: compare the snapshots.', 'EXP-02')
-        self.assertEqual(payload['experiment_id'], 'EXP-02')
-        self.assertEqual(payload['name'], 'Snapshot Reactor')
+    def test_non_json_genie_output_is_rejected_instead_of_synthesized(self):
+        with self.assertRaises(ValueError):
+            normalise_control_response('The next experiment is SNAPSHOT_DIFF.', 'SNAPSHOT_DIFF', {'SNAPSHOT_DIFF'})
 
     def test_genie_prompt_is_case_scoped(self):
         self.assertIn('CASE_0107', system_prompt('CASE_0107'))
@@ -95,16 +94,16 @@ class Case042ContractTests(unittest.TestCase):
         self.assertEqual(payload['experiment_id'], 'ROW_COUNT_ANALYSIS')
 
     def test_case_registry_drives_live_allowlist(self):
-        self.assertEqual(registered_ids_for_case('CASE_0042'), {'EXP-01', 'EXP-02', 'EXP-03'})
+        self.assertEqual(registered_ids_for_case('CASE_0042'), {'COMPONENT_DECOMPOSITION', 'SNAPSHOT_DIFF', 'DQ_MATERIALITY', 'FORMULA_VALIDATION', 'RECONCILIATION'})
         self.assertEqual(registered_ids_for_case('CASE_0107'), {'ROW_COUNT_ANALYSIS', 'DUPLICATE_KEY_ANALYSIS', 'PIPELINE_RUN_COMPARISON'})
 
     def test_genie_protocol_rejects_invalid_status_duplicate_json_and_script(self):
-        base = '{"experiment_id":"EXP-01","name":"x","instrument":"Waterfall instrument","rationale":"x","evidence":"x","hypothesis_updates":[]}'
-        self.assertEqual(parse_control_json('prefix ```json\n' + base + '\n``` suffix')['experiment_id'], 'EXP-01')
+        base = '{"experiment_id":"COMPONENT_DECOMPOSITION","name":"x","instrument":"WATERFALL","rationale":"x","evidence":"x","hypothesis_updates":[]}'
+        self.assertEqual(parse_control_json('prefix ```json\n' + base + '\n``` suffix')['experiment_id'], 'COMPONENT_DECOMPOSITION')
         with self.assertRaises(ValueError): parse_control_json(base + base)
         invalid_status = base.replace('[]', '[{"name":"h","status":"INVALID"}]')
         with self.assertRaises(ValueError): parse_control_json(invalid_status)
-        with self.assertRaises(ValueError): parse_control_json(base.replace('Waterfall instrument', 'ARBITRARY_WIDGET'))
+        with self.assertRaises(ValueError): parse_control_json(base.replace('WATERFALL', 'ARBITRARY_WIDGET'))
         with self.assertRaises(ValueError): parse_control_json(base.replace('"x","evidence"', '"<script>alert(1)</script>","evidence"'))
 
     def test_complete_catalog_is_published_but_only_core_cases_start(self):
@@ -133,19 +132,10 @@ class Case042ContractTests(unittest.TestCase):
             self.assertEqual(response.json()['case_id'], case_id)
 
     def test_secondary_experiments_expose_contract_evidence(self):
-        expected = {
-            'CASE_0107': ('ROW_COUNT_DELTA', 'DUPLICATE_IMPACT', 'PIPELINE_REPLAY'),
-            'CASE_0213': ('FILTER_HASH_CHANGE', 'EXCLUDED_POPULATION', 'EXCLUDED_IMPACT'),
-            'CASE_0314': ('MISSING_ROW_COUNT', 'MISSING_IMPACT'),
-            'CASE_0441': ('DQ_IMPACT',),
-            'CASE_0520': ('ENTITY_OUTLIER', 'JOIN_MULTIPLICITY'),
-            'CASE_0812': ('SOURCE_CAUSE_IMPACT', 'FILTER_CAUSE_IMPACT'),
-        }
-        for case_id, tags in expected.items():
+        for case_id in ('CASE_0107', 'CASE_0213', 'CASE_0314', 'CASE_0441', 'CASE_0520', 'CASE_0812'):
             payload = self.client.get(f'/api/cases/{case_id}/experiments').json()
-            evidence = ' '.join(item.get('evidence', '') for item in payload['catalog'])
-            for tag in tags:
-                self.assertIn(tag, evidence, case_id)
+            self.assertFalse(payload['ready'], case_id)
+            self.assertEqual(payload['catalog'], [], case_id)
 
     def test_case_availability_is_server_controlled_review_mode(self):
         normal = {item['id']: item['availability'] for item in self.client.get('/api/cases').json()['cases']}
@@ -153,12 +143,12 @@ class Case042ContractTests(unittest.TestCase):
         self.assertNotEqual(normal['CASE_0107'], 'AVAILABLE')
         with patch.dict('os.environ', {'CHALLENGE_REVIEW_MODE': '1'}):
             review = {item['id']: item['availability'] for item in self.client.get('/api/cases').json()['cases']}
-            self.assertEqual(review['CASE_0107'], 'AVAILABLE')
+            self.assertNotEqual(review['CASE_0107'], 'AVAILABLE')
             self.assertTrue(self.client.get('/api/config').json()['review_mode'])
             started = self.client.post('/api/investigations', json={'case_id': 'CASE_0107'})
-            self.assertEqual(started.status_code, 201)
+            self.assertEqual(started.status_code, 409)
             nxt = self.client.post('/api/experiments/next', json={'case_id': 'CASE_0107', 'completed_experiments': []})
-            self.assertEqual(nxt.json()['experiment_id'], 'ROW_COUNT_ANALYSIS')
+            self.assertEqual(nxt.status_code, 409)
 
     def test_session_lifecycle_is_server_authoritative(self):
         created = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'})
@@ -168,8 +158,8 @@ class Case042ContractTests(unittest.TestCase):
         hint = self.client.post(f'/api/sessions/{session_id}/hint')
         self.assertEqual(hint.json()['hint_number'], 1)
         evidence = self.client.get(f'/api/sessions/{session_id}/evidence')
-        self.assertEqual(evidence.status_code, 200)
-        for _ in range(3):
+        self.assertEqual(evidence.status_code, 409)
+        for _ in range(5):
             self.client.post(f'/api/sessions/{session_id}/next', json={})
         verdict = self.client.post(f'/api/sessions/{session_id}/conclude')
         self.assertEqual(verdict.json()['status'], 'COMPLETE')
@@ -184,12 +174,16 @@ class Case042ContractTests(unittest.TestCase):
         self.assertEqual(detail.status_code, 200)
         self.assertNotIn('truth', str(detail.json()).lower())
         session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
+        self.client.post(f'/api/sessions/{session_id}/next', json={})
+        self.client.post(f'/api/sessions/{session_id}/next', json={})
         evidence = self.client.get(f'/api/sessions/{session_id}/evidence').json()
         self.assertEqual(evidence['total'], 30)
         self.assertEqual(evidence['evidence'][0]['business_key'], min(item['business_key'] for item in evidence['evidence']))
 
     def test_evidence_is_bounded_filterable_and_request_has_id(self):
         session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
+        self.client.post(f'/api/sessions/{session_id}/next', json={})
+        self.client.post(f'/api/sessions/{session_id}/next', json={})
         response = self.client.get(f'/api/sessions/{session_id}/evidence?limit=1&business_key=TX-004291')
         self.assertIn('X-Request-ID', response.headers)
         self.assertEqual(response.json()['total'], 1)
@@ -201,7 +195,7 @@ class Case042ContractTests(unittest.TestCase):
         self.assertEqual(self.client.post(f'/api/sessions/{session_id}/start').status_code, 200)
         next_response = self.client.post(f'/api/sessions/{session_id}/next', json={'completed_experiments': []})
         self.assertEqual(next_response.status_code, 200)
-        self.assertEqual(next_response.json()['experiment_id'], 'EXP-01')
+        self.assertEqual(next_response.json()['experiment_id'], 'COMPONENT_DECOMPOSITION')
         chat = self.client.post(f'/api/sessions/{session_id}/chat', json={'question': 'What is the strongest signal?'})
         self.assertEqual(chat.status_code, 200)
 
@@ -210,20 +204,20 @@ class Case042ContractTests(unittest.TestCase):
         self.client.post(f'/api/sessions/{session_id}/prediction', json={'prediction': 'component movement'})
         self.client.post(f'/api/sessions/{session_id}/hint')
         self.assertEqual(self.client.post(f'/api/sessions/{session_id}/conclude').status_code, 409)
-        for _ in range(3):
+        for _ in range(5):
             self.client.post(f'/api/sessions/{session_id}/next', json={})
         result = self.client.post(f'/api/sessions/{session_id}/conclude').json()
-        # Spec formula: start 50 + prediction 150 + 3 experiments 300
-        # + debrief 125 - one hint 50 = 575.
-        self.assertEqual(result['score'], 575)
+        # Spec formula: start 0 + prediction 150 + 5 experiments 500
+        # + debrief 125 - one hint 50 = 525.
+        self.assertEqual(result['score'], 525)
         progress = self.client.get('/api/progression').json()
         self.assertIn('CASE_0042', progress['completed_case_ids'])
-        self.assertEqual(progress['best_scores']['CASE_0042'], 575)
+        self.assertEqual(progress['best_scores']['CASE_0042'], 525)
 
     def test_score_dto_reports_evidence_badge_and_event_ledger(self):
         session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
         self.client.post(f'/api/sessions/{session_id}/prediction', json={'prediction': 'component movement'})
-        for _ in range(3):
+        for _ in range(5):
             self.client.post(f'/api/sessions/{session_id}/next', json={})
         self.client.get(f'/api/sessions/{session_id}/evidence')
         result = self.client.post(f'/api/sessions/{session_id}/conclude').json()
@@ -242,6 +236,7 @@ class Case042ContractTests(unittest.TestCase):
     def test_session_events_are_sequenced_and_append_only(self):
         session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
         self.client.post(f'/api/sessions/{session_id}/prediction', json={'prediction': 'component movement'})
+        self.client.post(f'/api/sessions/{session_id}/next', json={})
         self.client.post(f'/api/sessions/{session_id}/next', json={})
         self.client.get(f'/api/sessions/{session_id}/evidence')
         events = self.client.get(f'/api/sessions/{session_id}').json()['events']
@@ -264,10 +259,10 @@ class Case042ContractTests(unittest.TestCase):
     def test_session_next_ignores_forged_client_completion_and_blocks_early_verdict(self):
         session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
         self.assertEqual(self.client.post(f'/api/sessions/{session_id}/conclude').status_code, 409)
-        first = self.client.post(f'/api/sessions/{session_id}/next', json={'completed_experiments': ['EXP-01', 'EXP-02', 'EXP-03']})
-        self.assertEqual(first.json()['experiment_id'], 'EXP-01')
+        first = self.client.post(f'/api/sessions/{session_id}/next', json={'completed_experiments': ['COMPONENT_DECOMPOSITION', 'SNAPSHOT_DIFF', 'DQ_MATERIALITY', 'FORMULA_VALIDATION', 'RECONCILIATION']})
+        self.assertEqual(first.json()['experiment_id'], 'COMPONENT_DECOMPOSITION')
         second = self.client.post(f'/api/sessions/{session_id}/next', json={'completed_experiments': []})
-        self.assertEqual(second.json()['experiment_id'], 'EXP-02')
+        self.assertEqual(second.json()['experiment_id'], 'SNAPSHOT_DIFF')
         UUID(session_id)
 
 

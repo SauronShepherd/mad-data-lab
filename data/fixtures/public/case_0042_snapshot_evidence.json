@@ -1,0 +1,246 @@
+{
+  "case_id": "CASE_0042",
+  "fixture_type": "snapshot_diff",
+  "records": [
+    {
+      "business_key": "TX-004291",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-4.20",
+      "new_value": "0.00",
+      "old_value": "4.20"
+    },
+    {
+      "business_key": "TX-004292",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.06",
+      "new_value": "0.44",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004293",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.06",
+      "new_value": "0.44",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004294",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.06",
+      "new_value": "0.44",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004295",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.06",
+      "new_value": "0.44",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004296",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.06",
+      "new_value": "0.44",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004297",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004298",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004299",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004300",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004301",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004302",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004303",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004304",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004305",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004306",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004307",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004308",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004309",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004310",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004311",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.04",
+      "new_value": "0.46",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004312",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.05",
+      "new_value": "0.45",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004313",
+      "change_type": "MODIFIED",
+      "component": "V2",
+      "impact": "-0.05",
+      "new_value": "0.45",
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004314",
+      "change_type": "REMOVED",
+      "component": "V2",
+      "impact": "-0.50",
+      "new_value": null,
+      "old_value": "0.50"
+    },
+    {
+      "business_key": "TX-004315",
+      "change_type": "REMOVED",
+      "component": "V2",
+      "impact": "-0.30",
+      "new_value": null,
+      "old_value": "0.30"
+    },
+    {
+      "business_key": "TX-004316",
+      "change_type": "ADDED",
+      "component": "V2",
+      "impact": "0.02",
+      "new_value": "0.02",
+      "old_value": null
+    },
+    {
+      "business_key": "TX-004317",
+      "change_type": "ADDED",
+      "component": "V2",
+      "impact": "0.02",
+      "new_value": "0.02",
+      "old_value": null
+    },
+    {
+      "business_key": "TX-004318",
+      "change_type": "ADDED",
+      "component": "V2",
+      "impact": "0.02",
+      "new_value": "0.02",
+      "old_value": null
+    },
+    {
+      "business_key": "TX-004319",
+      "change_type": "ADDED",
+      "component": "V2",
+      "impact": "0.02",
+      "new_value": "0.02",
+      "old_value": null
+    },
+    {
+      "business_key": "TX-004320",
+      "change_type": "ADDED",
+      "component": "V2",
+      "impact": "0.02",
+      "new_value": "0.02",
+      "old_value": null
+    }
+  ]
+}

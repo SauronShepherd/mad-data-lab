@@ -1,0 +1,15 @@
+case_id: CASE_0042
+case_template_version: 1
+generator_version: 1
+primary_mutation: {family: SOURCE_RECORD_CHANGE, target_component: V2}
+secondary_signal: {family: DUPLICATE_BUSINESS_KEY, causal_role: OVERLAPPING_SECONDARY_SIGNAL, affected_row_count: 5, estimated_overlapping_impact: "-0.30"}
+expected_truth:
+  primary_component: V2
+  primary_source: finance_reporting_source
+  primary_cause: SOURCE_RECORD_CHANGE
+  secondary_cause: DUPLICATE_BUSINESS_KEY
+  expected_primary_impact: "-5.90"
+  expected_total_deviation: "-6.80"
+  formula_changed: false
+  confidence: HIGH
+expected_path_oracle: {must_include: [COMPONENT_DECOMPOSITION, SNAPSHOT_DIFF, DQ_MATERIALITY, FORMULA_VALIDATION, RECONCILIATION]}

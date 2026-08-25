@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS {{PUBLIC}}.pipeline_run_evidence (case_id STRING, pipeline_run_id STRING, run_ts TIMESTAMP, source_snapshot_id STRING, execution_status STRING, replay_of_run_id STRING, rows_written BIGINT, duplicate_rows_written BIGINT, note STRING) USING DELTA

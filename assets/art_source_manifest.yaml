@@ -1,0 +1,11 @@
+iteration: MDL-2
+status: CANDIDATES_GENERATED
+approval_status: PENDING_HUMAN_SELECTION
+review_plan: assets/review/MDL-2/art-generation-plan.json
+slots:
+  - A08
+  - A09
+  - A10
+  - A11
+  - A12
+production_derivatives: []
