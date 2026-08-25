@@ -27,3 +27,14 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: docker compose build --pull=false
+      - run: docker compose up -d
+      - run: python scripts/container_smoke.py
+      - if: always()
+        run: docker compose down
