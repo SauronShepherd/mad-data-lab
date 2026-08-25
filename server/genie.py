@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import time
 from datetime import timedelta
 from typing import Any
 
@@ -17,7 +18,7 @@ GENIE_EPISTEMIC_STATUSES = frozenset({"CONFIRMED", "SUPPORTED", "POSSIBLE", "RUL
 
 
 ALLOWED_INSTRUMENTS_BY_EXPERIMENT: dict[str, frozenset[str]] = {
-    "COMPONENT_DECOMPOSITION": frozenset({"WATERFALL", "Waterfall"}),
+    "COMPONENT_DECOMPOSITION": frozenset({"WATERFALL", "Waterfall", "component_deltas", "component_evidence", "Component Evidence Analysis"}),
     "SNAPSHOT_DIFF": frozenset({"SNAPSHOT_DIFF", "Snapshot comparison"}),
     "DQ_MATERIALITY": frozenset({"DQ_PANEL", "DQ panel"}),
     "FORMULA_VALIDATION": frozenset({"FORMULA_CHECK", "Formula check"}),
@@ -26,7 +27,7 @@ ALLOWED_INSTRUMENTS_BY_EXPERIMENT: dict[str, frozenset[str]] = {
 
 
 def system_prompt(case_id: str = "CASE_0042") -> str:
-    return f"""You are Dr. Genie in MAD DATA LAB. Investigate {case_id} using only the curated data available in this Genie space. Choose the next approved experiment from the registered case contract. Return ONLY valid JSON with keys: experiment_id, name, instrument, rationale, evidence, hypothesis_updates. hypothesis_updates must be an array of objects with name and status. Use only epistemic statuses CONFIRMED, SUPPORTED, POSSIBLE, RULED_OUT. Never reveal hidden ground truth or claim causality without reconciled evidence."""
+    return f"""You are Dr. Genie in MAD DATA LAB. Investigate {case_id} using only the curated data available in this Genie space. Choose the next approved experiment from the registered case contract. Your response MUST execute one query that returns exactly one row and one STRING column named experiment_json, containing ONLY a JSON object with keys experiment_id, name, instrument, rationale, evidence, hypothesis_updates. Do not return raw table rows, markdown, or a prose-only answer. hypothesis_updates must be an array of objects with name (H1, H2, or H3) and status. Use only epistemic statuses CONFIRMED, SUPPORTED, POSSIBLE, RULED_OUT. Never reveal hidden ground truth or claim causality without reconciled evidence."""
 
 
 SYSTEM_PROMPT = system_prompt()
@@ -43,18 +44,53 @@ def registered_ids_for_case(case_id: str) -> set[str]:
 
 
 def _text_from_response(response: Any) -> str:
+    parts = [getattr(response, "content", "") or ""]
     for attachment in getattr(response, "attachments", []) or []:
         text = getattr(getattr(attachment, "text", None), "content", None)
         if text:
-            return text
-    return getattr(response, "content", "") or ""
+            parts.append(text)
+        query = getattr(getattr(attachment, "query", None), "query", None)
+        if query:
+            # Genie may encode the closed control payload in the SQL result
+            # attachment while presenting a prose answer in the text block.
+            parts.append(query)
+    return "\n".join(parts)
 
 
 def parse_control_json(text: str, registered_ids: set[str] | None = None) -> dict:
-    blocks = re.findall(r"\{(?:[^{}]|\{[^{}]*\})*\}", text, re.DOTALL)
-    if len(blocks) != 1:
+    decoder = json.JSONDecoder()
+    decoded = []
+    try:
+        direct = json.loads(text.strip())
+        if isinstance(direct, dict):
+            decoded = [(len(text), direct)]
+    except json.JSONDecodeError:
+        pass
+    for index, character in enumerate(text) if not decoded else ():
+        if character != "{":
+            continue
+        try:
+            value, end = decoder.raw_decode(text[index:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, dict):
+            decoded.append((end, value))
+    if not decoded:
         raise ValueError("Genie did not return a JSON control response")
-    payload = json.loads(blocks[0])
+    # When prose or SQL surrounds the payload, the outermost valid object has
+    # the greatest decoded span; nested evidence objects are ignored.
+    widest = max(item[0] for item in decoded)
+    if sum(1 for end, _ in decoded if end == widest) != 1:
+        raise ValueError("Genie returned multiple JSON control responses")
+    payload = next(value for end, value in decoded if end == widest)
+    # Normalize the current Genie SQL-attachment vocabulary to the server
+    # contract.  Do not broaden experiment IDs: only the registered canonical
+    # five are accepted below.
+    for item in payload.get("hypothesis_updates", []) or []:
+        if isinstance(item, dict) and "hypothesis_id" in item and "name" not in item:
+            item["name"] = item.pop("hypothesis_id")
+    if isinstance(payload.get("evidence"), list):
+        payload["evidence"] = json.dumps(payload["evidence"], ensure_ascii=False, separators=(",", ":"))
     required = {"experiment_id", "name", "instrument", "rationale", "evidence", "hypothesis_updates"}
     if not required.issubset(payload):
         raise ValueError("Genie control response is missing required fields")
@@ -75,7 +111,7 @@ def validate_control_payload(payload: dict, registered_ids: set[str] | None = No
         raise ValueError("experiment_id and instrument must be strings")
     allowed_instruments = ALLOWED_INSTRUMENTS_BY_EXPERIMENT.get(payload["experiment_id"])
     if allowed_instruments is not None and payload["instrument"] not in allowed_instruments:
-        raise ValueError("instrument is not allowed for this experiment")
+        raise ValueError(f"instrument is not allowed for this experiment: {payload['instrument']}")
     if len(str(payload.get("rationale", ""))) > 300 or len(str(payload.get("evidence", ""))) > 1200:
         raise ValueError("Genie control text exceeds limit")
     updates = payload.get("hypothesis_updates")
@@ -114,10 +150,43 @@ class GenieAdapter:
             self._client = WorkspaceClient()
         return self._client
 
+    def _control_message(self, response: Any, case_id: str) -> dict:
+        """Extract the closed control JSON from a Genie query attachment."""
+        workspace = self._workspace()
+        conversation_id = getattr(response, "conversation_id", None)
+        message_id = getattr(response, "message_id", None)
+        for attachment in getattr(response, "attachments", []) or []:
+            if not getattr(attachment, "query", None) or not getattr(attachment, "attachment_id", None):
+                continue
+            if not conversation_id or not message_id:
+                break
+            workspace.genie.execute_message_attachment_query(
+                space_id=self.space_id,
+                conversation_id=conversation_id,
+                message_id=message_id,
+                attachment_id=attachment.attachment_id,
+            )
+            for _ in range(30):
+                result = workspace.genie.get_message_attachment_query_result(
+                    space_id=self.space_id,
+                    conversation_id=conversation_id,
+                    message_id=message_id,
+                    attachment_id=attachment.attachment_id,
+                )
+                statement = getattr(result, "statement_response", None)
+                data = getattr(getattr(statement, "result", None), "data_array", None)
+                if data and data[0] and data[0][0]:
+                    return normalise_control_response(str(data[0][0]), "", registered_ids_for_case(case_id))
+                state = getattr(getattr(statement, "status", None), "state", None)
+                if str(state).endswith("FAILED") or str(state).endswith("CANCELED"):
+                    break
+                time.sleep(1)
+        return normalise_control_response(_text_from_response(response), "", registered_ids_for_case(case_id))
+
     def start(self, case_id: str = "CASE_0042") -> dict:
         response = self._workspace().genie.start_conversation_and_wait(space_id=self.space_id, content=system_prompt(case_id), timeout=timedelta(seconds=120))
         registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
-        return {"conversation_id": getattr(response, "conversation_id", None), "message": normalise_control_response(_text_from_response(response), registered[0].id, registered_ids_for_case(case_id))}
+        return {"conversation_id": getattr(response, "conversation_id", None), "message": self._control_message(response, case_id)}
 
     def next(self, conversation_id: str, context: str, case_id: str = "CASE_0042") -> dict:
         response = self._workspace().genie.create_message_and_wait(
@@ -128,7 +197,7 @@ class GenieAdapter:
         completed_ids = set(re.findall(r"[A-Z_]+-?[A-Z0-9_]*", context))
         registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
         expected = next((item.id for item in registered if item.id not in completed_ids), registered[-1].id)
-        return {"conversation_id": conversation_id, "message": normalise_control_response(_text_from_response(response), expected, registered_ids_for_case(case_id))}
+        return {"conversation_id": conversation_id, "message": self._control_message(response, case_id)}
 
     def ask(self, conversation_id: str, content: str) -> str:
         response = self._workspace().genie.create_message_and_wait(

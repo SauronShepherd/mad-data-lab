@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import uuid
 from datetime import datetime, timezone
@@ -21,6 +22,7 @@ from backend.data.repositories import EvidenceRepository
 
 
 app = FastAPI(title="MAD DATA LAB API", version="0.1.0")
+LOGGER = logging.getLogger("mad_data_lab")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -255,6 +257,7 @@ def session_start(session_id: str) -> dict:
                     hypotheses = [by_name.get(item["name"], item) for item in CANONICAL_HYPOTHESES]
             source = "genie"
         except Exception as exc:
+            LOGGER.exception("live Genie start failed")
             session["state"] = "WAITING_FOR_GENIE"
             append_event(session, "STATE", from_state=STARTING_INVESTIGATION_STATE, to_state=session["state"])
             raise HTTPException(status_code=503, detail="Live Genie is unavailable") from exc

@@ -9,19 +9,21 @@
   },
   "data_sources": {
     "tables": [
-      {"identifier": "sda_dev.mad_data_lab.case_observations", "description": ["Case #042 observed and expected metric values."]},
-      {"identifier": "sda_dev.mad_data_lab.component_deltas", "description": ["Component-level movement that reconciles the metric deviation."]},
-      {"identifier": "sda_dev.mad_data_lab.dq_signals", "description": ["Data-quality warnings that may overlap other evidence and must be assessed for materiality."]},
-      {"identifier": "sda_dev.mad_data_lab.evidence_records", "description": ["Representative source-record evidence for the V2 change."]},
-      {"identifier": "sda_dev.mad_data_lab.formula_versions", "description": ["Formula versions used to check whether the calculation changed."]},
-      {"identifier": "sda_dev.mad_data_lab.snapshot_changes", "description": ["V2 record change aggregates between the two snapshots."]}
+      {"identifier": "sda_dev.mad_data_lab_curated.component_evidence", "description": ["Curated component movements that reconcile the metric deviation."]},
+      {"identifier": "sda_dev.mad_data_lab_curated.lineage_evidence", "description": ["Curated technical and value lineage evidence."]},
+      {"identifier": "sda_dev.mad_data_lab_curated.population_evidence", "description": ["Curated population-level evidence and source-record counts."]},
+      {"identifier": "sda_dev.mad_data_lab_curated.quality_evidence", "description": ["Curated quality signals assessed for overlapping materiality."]},
+      {"identifier": "sda_dev.mad_data_lab_curated.semantic_evidence", "description": ["Curated formula and semantic-change evidence."]},
+      {"identifier": "sda_dev.mad_data_lab_curated.snapshot_evidence", "description": ["Curated source snapshot differences for Case #042."]},
+      {"identifier": "sda_dev.mad_data_lab_public.case_definition", "description": ["Canonical public Case #042 definition and observed deviation."]},
+      {"identifier": "sda_dev.mad_data_lab_public.datapoint_result", "description": ["Canonical public metric results, formula identity, and population hashes."]}
     ]
   },
   "instructions": {
     "text_instructions": [
       {"id": "a0420000000000000000000000000011", "content": [
         "You are Dr. Genie, the analytical scientist inside MAD DATA LAB.",
-        "Use only the six curated sda_dev.mad_data_lab tables in this space.",
+        "Use only the registered canonical public and curated sda_dev.mad_data_lab_public and sda_dev.mad_data_lab_curated objects in this space.",
         "Capital Available = V1 + V2 - V3 + V4.",
         "The expected value is €125.0M and the observed value is €118.2M; the deviation is -€6.8M.",
         "Treat data-quality signals as evidence to assess, not as automatically additive causes.",
@@ -34,16 +36,16 @@
       ]}
     ],
     "example_question_sqls": [
-      {"id": "a0420000000000000000000000000021", "question": ["Which component explains most of the deviation?"], "sql": ["SELECT component_id, contribution_delta_eur_m, deviation_share_pct FROM sda_dev.mad_data_lab.v_case042_experiment_decomposition ORDER BY ABS(contribution_delta_eur_m) DESC;"]},
-      {"id": "a0420000000000000000000000000022", "question": ["What changed in V2 between snapshots?"], "sql": ["SELECT change_type, record_count, net_impact_eur_m FROM sda_dev.mad_data_lab.v_case042_snapshot_diff ORDER BY ABS(net_impact_eur_m) DESC;"]},
-      {"id": "a0420000000000000000000000000023", "question": ["Did the formula change?"], "sql": ["SELECT * FROM sda_dev.mad_data_lab.v_case042_formula_check;"]}
+      {"id": "a0420000000000000000000000000021", "question": ["Which component explains most of the deviation?"], "sql": ["SELECT * FROM sda_dev.mad_data_lab_curated.component_evidence WHERE case_id = 'CASE_0042' ORDER BY abs_contribution_rank;"]},
+      {"id": "a0420000000000000000000000000022", "question": ["What changed in V2 between snapshots?"], "sql": ["SELECT * FROM sda_dev.mad_data_lab_curated.snapshot_evidence WHERE case_id = 'CASE_0042' ORDER BY component, change_type;"]},
+      {"id": "a0420000000000000000000000000023", "question": ["Did the formula change?"], "sql": ["SELECT * FROM sda_dev.mad_data_lab_curated.semantic_evidence WHERE case_id = 'CASE_0042' AND semantic_type = 'FORMULA';"]}
     ]
   },
   "benchmarks": {
     "questions": [
-      {"id": "a0420000000000000000000000000031", "question": ["Which component explains most of the €6.8M loss?"], "answer": [{"format": "SQL", "content": ["SELECT component_id, contribution_delta_eur_m FROM sda_dev.mad_data_lab.v_case042_experiment_decomposition ORDER BY ABS(contribution_delta_eur_m) DESC LIMIT 1;"]}]},
-      {"id": "a0420000000000000000000000000032", "question": ["How many V2 records changed and what was their net impact?"], "answer": [{"format": "SQL", "content": ["SELECT SUM(record_count) AS changed_records, SUM(net_impact_eur_m) AS net_impact_eur_m FROM sda_dev.mad_data_lab.v_case042_snapshot_diff;"]}]},
-      {"id": "a0420000000000000000000000000033", "question": ["Did the capital available formula change?"], "answer": [{"format": "SQL", "content": ["SELECT formula_version_count, formula_hash FROM sda_dev.mad_data_lab.v_case042_formula_check;"]}]}
+      {"id": "a0420000000000000000000000000031", "question": ["Which component explains most of the €6.8M loss?"], "answer": [{"format": "SQL", "content": ["SELECT component, contribution_delta, share_of_abs_deviation FROM sda_dev.mad_data_lab_curated.component_evidence WHERE case_id = 'CASE_0042' ORDER BY abs_contribution_rank LIMIT 1;"]}]},
+      {"id": "a0420000000000000000000000000032", "question": ["How many V2 records changed and what was their net impact?"], "answer": [{"format": "SQL", "content": ["SELECT component, change_type, record_count, net_impact FROM sda_dev.mad_data_lab_curated.snapshot_evidence WHERE case_id = 'CASE_0042' ORDER BY component, change_type;"]}]},
+      {"id": "a0420000000000000000000000000033", "question": ["Did the capital available formula change?"], "answer": [{"format": "SQL", "content": ["SELECT previous_id, current_id, previous_hash, current_hash FROM sda_dev.mad_data_lab_curated.semantic_evidence WHERE case_id = 'CASE_0042' AND semantic_type = 'FORMULA';"]}]}
     ]
   }
 }

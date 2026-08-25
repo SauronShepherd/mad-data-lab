@@ -24,7 +24,11 @@ def main():
     identity=current_identity()
     live_refresh_pending=[]
     for name in ('genie-eval.json','deployed-smoke.json','deployed-soak.json'):
-        payload=json.loads((ROOT/'release-report'/name).read_text(encoding='utf-8')); checks.append((f'live-evidence:{name}',payload.get('status')=='PASS'))
+        payload=json.loads((ROOT/'release-report'/name).read_text(encoding='utf-8'))
+        live_pass=payload.get('status')=='PASS'
+        checks.append((f'live-evidence:{name}',live_pass))
+        if not live_pass:
+            live_refresh_pending.append(f'live-evidence-refresh:{name}')
         recorded=payload.get('source_identity',{})
         current=all(recorded.get(key)==value for key,value in identity.items())
         if not current:
@@ -54,7 +58,8 @@ def main():
     report=(ROOT/'docs/iterations/MDL-2-report.md').read_text(encoding='utf-8')
     checks.append(('report-not-falsely-complete', 'status: COMPLETE' not in report or all(x not in report for x in ('NOT_RUN','PENDING','BLOCKED'))))
     if not a.strict:
-        failed=[name for name in failed if not name.startswith('live-evidence-current:')]
+        failed=[name for name in failed if not name.startswith('live-evidence')]
+    pending=list(dict.fromkeys(pending))
     result={'status':'PASS' if not failed and not pending else 'IN_PROGRESS','checks':len(checks),'failed':failed,'pending':pending,'diagnostics':{'current_identity':identity,'expected_data_digest':expected_digest,'recorded_data_digest':digest_payload.get('sha256')}}
     out=ROOT/'release-report/MDL-2/contract-validation.json'; out.write_text(json.dumps(result,indent=2,sort_keys=True),encoding='utf-8'); print(json.dumps(result,indent=2));
     if failed or (a.strict and pending): raise SystemExit(1)

@@ -1,14 +1,14 @@
 {
-  "status": "PASS",
+  "status": "FAIL",
   "command": [
-    "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
     "scripts/deployed_smoke.py"
   ],
-  "output": "deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\n",
+  "output": "Traceback (most recent call last):\n  File \"C:\\Users\\angel.alvarez\\PycharmProjects\\mad-data-lab\\scripts\\deployed_smoke.py\", line 43, in <module>\n    main()\n  File \"C:\\Users\\angel.alvarez\\PycharmProjects\\mad-data-lab\\scripts\\deployed_smoke.py\", line 33, in main\n    started = call(f\"/api/sessions/{session_id}/start\", \"POST\", {})\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\angel.alvarez\\PycharmProjects\\mad-data-lab\\scripts\\deployed_smoke.py\", line 23, in call\n    with urlopen(request, timeout=180) as response:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 216, in urlopen\n    return opener.open(url, data, timeout)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 525, in open\n    response = meth(req, response)\n               ^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 634, in http_response\n    response = self.parent.error(\n               ^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 563, in error\n    return self._call_chain(*args)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 496, in _call_chain\n    result = func(*args)\n             ^^^^^^^^^^^\n  File \"C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\Lib\\urllib\\request.py\", line 643, in http_error_default\n    raise HTTPError(req.full_url, code, msg, hdrs, fp)\nurllib.error.HTTPError: HTTP Error 409: Conflict\n",
   "source_identity": {
-    "git_head": "927ab12d1b05752d118a4571fe21a095a4004e73",
-    "runtime_digest": "ee71ee0ae673dfa2baa97208bf7ae175f558faebbfce9e8482754c2cad1ea7f5",
-    "data_contract_digest": "e7264cff637660f4b7782104dd7bf4f2d7669ec7f6c5dca0dc83e7a45e887987"
+    "git_head": "4ace13b6e846e61119f94bdf90a44aec87debf55",
+    "runtime_digest": "b6202ac29b3fa2dfdf5e8aac7c1c06e13e7d791d37dfeeefc3226a163496ff78",
+    "data_contract_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3"
   },
-  "generated_at_utc": "2026-08-25T05:49:33.656122+00:00"
+  "generated_at_utc": "2026-08-25T07:30:40.869985+00:00"
 }

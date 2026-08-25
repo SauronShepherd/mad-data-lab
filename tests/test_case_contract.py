@@ -122,6 +122,16 @@ class Case042ContractTests(unittest.TestCase):
         with self.assertRaises(ValueError): parse_control_json(base.replace('WATERFALL', 'ARBITRARY_WIDGET'))
         with self.assertRaises(ValueError): parse_control_json(base.replace('"x","evidence"', '"<script>alert(1)</script>","evidence"'))
 
+    def test_genie_sql_attachment_payload_is_normalized(self):
+        payload = parse_control_json(
+            '{"experiment_id":"COMPONENT_DECOMPOSITION","name":"Component Decomposition",'
+            '"instrument":"component_deltas","rationale":"check","evidence":[{"deviation":-6.8}],'
+            '"hypothesis_updates":[{"hypothesis_id":"H1","status":"POSSIBLE"}]}',
+            {'COMPONENT_DECOMPOSITION'},
+        )
+        self.assertEqual(payload['hypothesis_updates'][0]['name'], 'H1')
+        self.assertIn('6.8', payload['evidence'])
+
     def test_complete_catalog_is_published_but_only_core_cases_start(self):
         response = self.client.get('/api/cases')
         self.assertEqual(response.status_code, 200)
