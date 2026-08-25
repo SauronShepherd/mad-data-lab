@@ -27,7 +27,8 @@ ALLOWED_INSTRUMENTS_BY_EXPERIMENT: dict[str, frozenset[str]] = {
 
 
 def system_prompt(case_id: str = "CASE_0042") -> str:
-    return "Return ONLY JSON with experiment_id, name, instrument, rationale, evidence, hypothesis_updates for the initial Case 042 investigation. Use H1 H2 H3 and a canonical experiment."
+    case_label = "Case 042" if case_id == "CASE_0042" else case_id
+    return f"Return ONLY JSON with experiment_id, name, instrument, rationale, evidence, hypothesis_updates for the initial {case_label} investigation. Use H1 H2 H3 and a canonical experiment."
 
 
 SYSTEM_PROMPT = system_prompt()
