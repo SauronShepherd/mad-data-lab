@@ -7,7 +7,7 @@ from datetime import timedelta
 from typing import Any
 
 from .case_data import CASE042_EXPERIMENTS, EXPERIMENTS_BY_CASE, PLANNED_EXPERIMENTS_BY_CASE
-from .domain import STATUSES
+from .protocol import STATUSES
 from .catalog import get_any_case
 
 
