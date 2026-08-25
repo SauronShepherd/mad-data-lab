@@ -169,7 +169,11 @@ class GenieAdapter:
             )
             status = str(getattr(last, "status", ""))
             attachments = getattr(last, "attachments", []) or []
-            has_answer = bool(attachments) or bool(getattr(last, "query_result", None))
+            has_answer = bool(getattr(last, "query_result", None)) or any(
+                getattr(attachment, "query", None) is not None
+                or getattr(attachment, "text", None) is not None
+                for attachment in attachments
+            )
             if status.endswith("COMPLETED") or (status.endswith("ASKING_AI") and has_answer):
                 return last
             # Genie has been observed to report FAILED while transitioning
