@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import json
 import os
+import time
+from urllib.error import URLError
 from urllib.request import Request, urlopen
 
 
@@ -19,7 +21,19 @@ def call(path: str, method: str = "GET", body: dict | None = None) -> dict:
 
 
 def main() -> None:
-    assert call("/health")["status"] == "ok"
+    # `docker compose up -d` only starts the process; it does not wait for
+    # Uvicorn's socket to accept requests.  Bound the readiness wait so a
+    # crashed container still fails quickly and diagnostically in CI.
+    last_error: Exception | None = None
+    for _ in range(30):
+        try:
+            if call("/health")["status"] == "ok":
+                break
+        except (URLError, ConnectionError, TimeoutError, OSError) as exc:
+            last_error = exc
+        time.sleep(1)
+    else:
+        raise AssertionError(f"container did not become ready: {last_error}")
     session = call("/api/sessions", "POST", {"case_id": "CASE_0042"})
     assert session["state"] == "CASE_BRIEFING" and session["score"] == 0
     session_id = session["session_id"]
