@@ -195,19 +195,28 @@ class GenieAdapter:
                 continue
             if not conversation_id or not message_id:
                 break
-            workspace.genie.execute_message_attachment_query(
-                space_id=self.space_id,
-                conversation_id=conversation_id,
-                message_id=message_id,
-                attachment_id=attachment.attachment_id,
-            )
-            for _ in range(30):
-                result = workspace.genie.get_message_attachment_query_result(
+            try:
+                workspace.genie.execute_message_attachment_query(
                     space_id=self.space_id,
                     conversation_id=conversation_id,
                     message_id=message_id,
                     attachment_id=attachment.attachment_id,
                 )
+            except Exception:
+                # App-runtime messages can advertise an attachment before its
+                # query resource exists. The canonical-view recovery below is
+                # the safe path for that transient SDK race.
+                continue
+            for _ in range(30):
+                try:
+                    result = workspace.genie.get_message_attachment_query_result(
+                        space_id=self.space_id,
+                        conversation_id=conversation_id,
+                        message_id=message_id,
+                        attachment_id=attachment.attachment_id,
+                    )
+                except Exception:
+                    break
                 statement = getattr(result, "statement_response", None)
                 data = getattr(getattr(statement, "result", None), "data_array", None)
                 if data and data[0] and data[0][0]:
