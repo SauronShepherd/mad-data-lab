@@ -8,7 +8,7 @@ def paths():
     for prefix in PREFIXES:
         p=ROOT/prefix
         if p.is_file(): out.append(p)
-        elif p.is_dir(): out.extend(x for x in p.rglob('*') if x.is_file())
+        elif p.is_dir(): out.extend(x for x in p.rglob('*') if x.is_file() and '__pycache__' not in x.parts and x.suffix != '.pyc')
     return sorted(set(out), key=lambda p:p.relative_to(ROOT).as_posix())
 def digest():
     h=hashlib.sha256()
