@@ -19,10 +19,10 @@ GENIE_EPISTEMIC_STATUSES = frozenset({"CONFIRMED", "SUPPORTED", "POSSIBLE", "RUL
 
 ALLOWED_INSTRUMENTS_BY_EXPERIMENT: dict[str, frozenset[str]] = {
     "COMPONENT_DECOMPOSITION": frozenset({"WATERFALL", "Waterfall", "component_deltas", "component_evidence", "Component Evidence Analysis"}),
-    "SNAPSHOT_DIFF": frozenset({"SNAPSHOT_DIFF", "Snapshot comparison"}),
-    "DQ_MATERIALITY": frozenset({"DQ_PANEL", "DQ panel"}),
-    "FORMULA_VALIDATION": frozenset({"FORMULA_CHECK", "Formula check"}),
-    "RECONCILIATION": frozenset({"RECONCILIATION", "Balance view"}),
+    "SNAPSHOT_DIFF": frozenset({"SNAPSHOT_DIFF", "Snapshot comparison", "snapshot_evidence"}),
+    "DQ_MATERIALITY": frozenset({"DQ_PANEL", "DQ panel", "quality_evidence"}),
+    "FORMULA_VALIDATION": frozenset({"FORMULA_CHECK", "Formula check", "semantic_evidence"}),
+    "RECONCILIATION": frozenset({"RECONCILIATION", "Balance view", "case_summary"}),
 }
 
 
@@ -234,7 +234,7 @@ class GenieAdapter:
                             "name": name,
                             "instrument": instrument,
                             "rationale": "Curated evidence returned by the live Genie query.",
-                            "evidence": json.dumps(evidence, ensure_ascii=False, default=str),
+                            "evidence": json.dumps(evidence, ensure_ascii=False, default=str)[:1200],
                             "hypothesis_updates": [{"name": key, "status": "POSSIBLE"} for key in ("H1", "H2", "H3")],
                         }, registered_ids_for_case(case_id))
                 state = getattr(getattr(statement, "status", None), "state", None)
