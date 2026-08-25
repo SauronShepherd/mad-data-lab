@@ -12,7 +12,18 @@ jobs:
         with: {python-version: '3.11'}
       - run: pip install -r requirements.txt pytest pyyaml pydantic
       - run: python scripts/generate_cases.py
-      - run: python -m pytest -q
+      - name: Run pytest with collection diagnostics
+        shell: bash
+        run: |
+          set +e
+          python -m pytest -q --maxfail=1 > pytest-report.txt 2>&1
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            detail=$(tail -c 8000 pytest-report.txt | tr '\n' ' ' | tr '\r' ' ')
+            echo "::error title=Python test suite::$detail"
+          fi
+          cat pytest-report.txt
+          exit "$status"
       - run: python scripts/security_gate.py
       - run: python scripts/frontend_contract_gate.py
       - run: python scripts/production_architecture_gate.py
@@ -24,7 +35,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
-      - run: pip install -r requirements.txt
+      # Playwright's webServer launches the FastAPI app; install its runtime
+      # dependencies before starting the browser contract.
+      - run: python -m pip install -r requirements.txt
       - uses: actions/setup-node@v4
         with: {node-version: '22', cache: npm}
       - run: npm ci

@@ -125,20 +125,14 @@ function App() {
   };
   const showHint = () => {
     if (hintsUsed >= 3) return;
-    const hints = [
-      "Start with the largest absolute component movement; it carries the most information.",
-      "A data-quality warning can overlap the main signal without explaining the full deviation.",
-      "Inspect a representative source record before declaring causality.",
-    ];
-    if (sessionId) {
-      requestHint(sessionId).then((result) => {
-        setHintText(result.hint);
-        setHintsUsed(result.hint_number);
-      }).catch(() => setServiceError("Hints are temporarily unavailable."));
+    if (!sessionId) {
+      setServiceError("Start an investigation before requesting a hint.");
       return;
     }
-    setHintText(hints[hintsUsed]);
-    setHintsUsed((value) => value + 1);
+    requestHint(sessionId).then((result) => {
+      setHintText(result.hint);
+      setHintsUsed(result.hint_number);
+    }).catch(() => setServiceError("Hints are temporarily unavailable."));
   };
   useEffect(() => {
     localStorage.setItem("mad-data-lab-audio", audioOn ? "on" : "off");
