@@ -39,7 +39,10 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "${{ github.sha }}"
           test -n "$DATABRICKS_SOURCE_PATH"
-          databricks workspace import-dir . "$DATABRICKS_SOURCE_PATH" --overwrite
+          clean_source="$RUNNER_TEMP/mad-data-lab-source"
+          mkdir -p "$clean_source"
+          git archive "${{ github.sha }}" | tar -x -C "$clean_source"
+          databricks workspace import-dir "$clean_source" "$DATABRICKS_SOURCE_PATH" --overwrite
           databricks apps deploy mad-data-lab --source-code-path "$DATABRICKS_SOURCE_PATH"
 
       - name: Verify deployment state and provenance
