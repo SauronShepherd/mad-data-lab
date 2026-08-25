@@ -8,12 +8,12 @@ RUN npm run build
 
 FROM python:3.11-slim
 WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml uv.lock ./
 COPY server server
 COPY backend backend
 COPY data data
 COPY cases cases
+RUN pip install --no-cache-dir .
 COPY --from=frontend-build /frontend/dist dist
 COPY app.yaml .
 ENV UVICORN_HOST=0.0.0.0 DATABRICKS_APP_PORT=8000 ALLOW_FIXTURE_MODE=1

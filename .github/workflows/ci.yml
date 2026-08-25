@@ -10,7 +10,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
-      - run: pip install -r requirements.txt pytest pyyaml pydantic
+      - run: python -m pip install -e ".[dev]" pytest
       - run: python scripts/generate_cases.py
       - name: Run pytest with collection diagnostics
         shell: bash
@@ -37,7 +37,7 @@ jobs:
         with: {python-version: '3.11'}
       # Playwright's webServer launches the FastAPI app; install its runtime
       # dependencies before starting the browser contract.
-      - run: python -m pip install -r requirements.txt
+      - run: python -m pip install -e ".[dev]"
       - uses: actions/setup-node@v4
         with: {node-version: '22', cache: npm}
       - run: npm ci

@@ -2,7 +2,7 @@ import hashlib
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-PREFIXES=('cases/templates','cases/completion_contracts','data/ddl','data/views','data/generation','data/validation','sql/trusted','backend/data','scripts/generate_cases.py','scripts/validate_cases.py','scripts/seed_databricks.py','scripts/snapshot_case_data.py','scripts/restore_case_data.py','scripts/verify_databricks_data.py','scripts/fingerprint_databricks_objects.py','scripts/verify_databricks_permissions.py','pyproject.toml','uv.lock','requirements.txt','databricks.yml','resources/mdl2.yml')
+PREFIXES=('cases/templates','cases/completion_contracts','data/ddl','data/views','data/generation','data/validation','sql/trusted','backend/data','scripts/generate_cases.py','scripts/validate_cases.py','scripts/seed_databricks.py','scripts/snapshot_case_data.py','scripts/restore_case_data.py','scripts/verify_databricks_data.py','scripts/fingerprint_databricks_objects.py','scripts/verify_databricks_permissions.py','pyproject.toml','uv.lock','databricks.yml','resources/mdl2.yml')
 def paths():
     out=[]
     for prefix in PREFIXES:

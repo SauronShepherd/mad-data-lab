@@ -2,7 +2,7 @@
 import hashlib
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
-PREFIXES=('server','backend','data','src','index.html','package.json','package-lock.json','pyproject.toml','uv.lock','requirements.txt','Dockerfile','app.yaml','databricks.yml','resources')
+PREFIXES=('server','backend','data','src','index.html','package.json','package-lock.json','pyproject.toml','uv.lock','Dockerfile','app.yaml','databricks.yml','resources')
 def files():
     result=[]
     for name in PREFIXES:

@@ -6,7 +6,7 @@ Local-first React + FastAPI game foundation for the Databricks Genie-Powered App
 
 ```powershell
 npm install
-python -m pip install -r requirements.txt
+python -m pip install -e ".[dev]"
 uvicorn server.main:app --reload --port 8000
 ```
 
