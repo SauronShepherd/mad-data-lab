@@ -76,6 +76,11 @@ class Case042ContractTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()['genie_mode'], 'fixture')
 
+    def test_production_without_genie_fails_closed_instead_of_using_fixture(self):
+        with patch.dict('os.environ', {'DATABRICKS_APP_PORT': '8000', 'ALLOW_FIXTURE_MODE': '0'}, clear=False):
+            self.assertEqual(self.client.get('/health').json()['genie_mode'], 'unavailable')
+            self.assertEqual(self.client.post('/api/investigations', json={'case_id': 'CASE_0042'}).status_code, 503)
+
     def test_deployed_frontend_uses_same_origin_api_by_default(self):
         from pathlib import Path
         source = (Path(__file__).parents[1] / 'src' / 'api.ts').read_text(encoding='utf-8')
