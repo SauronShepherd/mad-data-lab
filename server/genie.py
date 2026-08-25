@@ -238,6 +238,27 @@ class GenieAdapter:
                     break
                 time.sleep(1)
         text = _text_from_response(response)
+        # Some App-runtime Genie responses expose the SQL text but omit the
+        # attachment identifier. Execute only the canonical curated query in
+        # that narrow case; arbitrary generated SQL is never accepted.
+        query_start = text.upper().find("SELECT ")
+        query_text = text[query_start:].strip() if query_start >= 0 else ""
+        if query_text and "sda_dev.mad_data_lab_curated." in query_text and ";" not in query_text:
+            from databricks.sdk.service.sql import Disposition, Format
+            space = workspace.genie.get_space(self.space_id)
+            statement = workspace.statement_execution.execute_statement(
+                statement=query_text,
+                warehouse_id=space.warehouse_id,
+                disposition=Disposition.INLINE,
+                format=Format.JSON_ARRAY,
+                wait_timeout="30s",
+            )
+            data = getattr(getattr(statement, "result", None), "data_array", None) or []
+            if data and data[0]:
+                try:
+                    return normalise_control_response(str(data[0][0]), expected_experiment_id, registered_ids_for_case(case_id))
+                except ValueError:
+                    pass
         try:
             return normalise_control_response(text, expected_experiment_id, registered_ids_for_case(case_id))
         except ValueError as exc:
