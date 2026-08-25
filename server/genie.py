@@ -79,7 +79,8 @@ def parse_control_json(text: str, registered_ids: set[str] | None = None) -> dic
     if not decoded:
         raise ValueError("Genie did not return a JSON control response")
     required = {"experiment_id", "name", "instrument", "rationale", "evidence", "hypothesis_updates"}
-    control = [(end, value) for end, value in decoded if required.issubset(value)]
+    control_keys = required - {"hypothesis_updates"}
+    control = [(end, value) for end, value in decoded if control_keys.issubset(value)]
     if len(control) == 1:
         payload = control[0][1]
     else:
