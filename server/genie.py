@@ -151,7 +151,7 @@ class GenieAdapter:
             self._client = WorkspaceClient()
         return self._client
 
-    def _control_message(self, response: Any, case_id: str) -> dict:
+    def _control_message(self, response: Any, case_id: str, expected_experiment_id: str) -> dict:
         """Extract the closed control JSON from a Genie query attachment."""
         workspace = self._workspace()
         conversation_id = getattr(response, "conversation_id", None)
@@ -177,17 +177,42 @@ class GenieAdapter:
                 statement = getattr(result, "statement_response", None)
                 data = getattr(getattr(statement, "result", None), "data_array", None)
                 if data and data[0] and data[0][0]:
-                    return normalise_control_response(str(data[0][0]), "", registered_ids_for_case(case_id))
+                    raw = str(data[0][0])
+                    try:
+                        return normalise_control_response(raw, expected_experiment_id, registered_ids_for_case(case_id))
+                    except ValueError:
+                        # Some Genie plans return the curated evidence rows
+                        # directly instead of the requested JSON column. Keep
+                        # the live evidence and normalize it into the closed
+                        # control protocol; never invent an experiment ID.
+                        columns = [getattr(column, "name", "column") for column in getattr(getattr(statement, "manifest", None).schema, "columns", [])]
+                        evidence = [dict(zip(columns, row)) for row in data]
+                        names = {
+                            "COMPONENT_DECOMPOSITION": ("Component Decomposition", "component_evidence"),
+                            "SNAPSHOT_DIFF": ("Snapshot Diff", "SNAPSHOT_DIFF"),
+                            "DQ_MATERIALITY": ("DQ Materiality", "DQ_PANEL"),
+                            "FORMULA_VALIDATION": ("Formula Validation", "FORMULA_CHECK"),
+                            "RECONCILIATION": ("Reconciliation", "RECONCILIATION"),
+                        }
+                        name, instrument = names[expected_experiment_id]
+                        return validate_control_payload({
+                            "experiment_id": expected_experiment_id,
+                            "name": name,
+                            "instrument": instrument,
+                            "rationale": "Curated evidence returned by the live Genie query.",
+                            "evidence": json.dumps(evidence, ensure_ascii=False, default=str),
+                            "hypothesis_updates": [{"name": key, "status": "POSSIBLE"} for key in ("H1", "H2", "H3")],
+                        }, registered_ids_for_case(case_id))
                 state = getattr(getattr(statement, "status", None), "state", None)
                 if str(state).endswith("FAILED") or str(state).endswith("CANCELED"):
                     break
                 time.sleep(1)
-        return normalise_control_response(_text_from_response(response), "", registered_ids_for_case(case_id))
+        return normalise_control_response(_text_from_response(response), expected_experiment_id, registered_ids_for_case(case_id))
 
     def start(self, case_id: str = "CASE_0042") -> dict:
         response = self._workspace().genie.start_conversation_and_wait(space_id=self.space_id, content=system_prompt(case_id), timeout=timedelta(seconds=120))
         registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
-        return {"conversation_id": getattr(response, "conversation_id", None), "message": self._control_message(response, case_id)}
+        return {"conversation_id": getattr(response, "conversation_id", None), "message": self._control_message(response, case_id, registered[0].id)}
 
     def next(self, conversation_id: str, context: str, case_id: str = "CASE_0042") -> dict:
         response = self._workspace().genie.create_message_and_wait(
@@ -198,7 +223,7 @@ class GenieAdapter:
         completed_ids = set(re.findall(r"[A-Z_]+-?[A-Z0-9_]*", context))
         registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
         expected = next((item.id for item in registered if item.id not in completed_ids), registered[-1].id)
-        return {"conversation_id": conversation_id, "message": self._control_message(response, case_id)}
+        return {"conversation_id": conversation_id, "message": self._control_message(response, case_id, expected)}
 
     def ask(self, conversation_id: str, content: str) -> str:
         response = self._workspace().genie.create_message_and_wait(
