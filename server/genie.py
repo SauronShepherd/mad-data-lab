@@ -9,6 +9,7 @@ from typing import Any
 
 from .case_data import CASE042_EXPERIMENTS, EXPERIMENTS_BY_CASE, PLANNED_EXPERIMENTS_BY_CASE
 from .catalog import get_any_case
+from .config import load_settings
 
 
 # The Genie protocol is a runtime contract. Keep it independent from the
@@ -147,7 +148,7 @@ def normalise_control_response(text: str, expected_experiment_id: str, registere
 
 class GenieAdapter:
     def __init__(self) -> None:
-        self.space_id = os.getenv("GENIE_SPACE_ID") or os.getenv("DATABRICKS_GENIE_SPACE_ID")
+        self.space_id = load_settings().genie_space_id
         self._client = None
 
     @property

@@ -16,6 +16,7 @@ class Settings:
     allow_fixture_mode: bool
     challenge_review_mode: bool
     local_a11y_test: bool
+    genie_space_id: str | None
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -26,6 +27,7 @@ class Settings:
             allow_fixture_mode=_flag("ALLOW_FIXTURE_MODE", default=not deployed),
             challenge_review_mode=_flag("CHALLENGE_REVIEW_MODE"),
             local_a11y_test=_flag("LOCAL_A11Y_TEST"),
+            genie_space_id=os.getenv("GENIE_SPACE_ID") or os.getenv("DATABRICKS_GENIE_SPACE_ID"),
         )
 
 
