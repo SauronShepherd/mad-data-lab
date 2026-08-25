@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import argparse
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -23,8 +24,12 @@ def identity() -> dict:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--only", choices=tuple(TARGETS), action="append")
+    args = parser.parse_args()
     source_identity = identity()
-    for filename, script in TARGETS.items():
+    targets = ((filename, TARGETS[filename]) for filename in (args.only or list(TARGETS)))
+    for filename, script in targets:
         result = subprocess.run([sys.executable, script], cwd=ROOT, capture_output=True, text=True)
         payload = {
             "status": "PASS" if result.returncode == 0 else "FAIL",
