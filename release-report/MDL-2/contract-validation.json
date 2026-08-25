@@ -4,7 +4,7 @@
     "current_identity": {
       "data_contract_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3",
       "git_head": "927ab12d1b05752d118a4571fe21a095a4004e73",
-      "runtime_digest": "7552e83884117a45de4ab27712f13c8b4a9f7dcb709287ef6b07752de1d47f0e"
+      "runtime_digest": "79fcf83941dd947a6a512a283c063a0b904d3b4b5146254b90ccd09b9f043549"
     },
     "expected_data_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3",
     "recorded_data_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3"
