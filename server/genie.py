@@ -151,6 +151,25 @@ class GenieAdapter:
             self._client = WorkspaceClient()
         return self._client
 
+    def _wait_for_message(self, conversation_id: str, message_id: str) -> Any:
+        """Poll Genie without the SDK waiter, which can reject transient FAILED states."""
+        workspace = self._workspace()
+        deadline = time.monotonic() + 120
+        last = None
+        while time.monotonic() < deadline:
+            last = workspace.genie.get_message(
+                space_id=self.space_id,
+                conversation_id=conversation_id,
+                message_id=message_id,
+            )
+            status = str(getattr(last, "status", ""))
+            if status.endswith("COMPLETED") or status.endswith("ASKING_AI"):
+                return last
+            # Genie has been observed to report FAILED while transitioning
+            # through context filtering. Keep polling until the deadline.
+            time.sleep(2)
+        raise TimeoutError(f"Genie message did not complete: {status or last}")
+
     def _control_message(self, response: Any, case_id: str, expected_experiment_id: str) -> dict:
         """Extract the closed control JSON from a Genie query attachment."""
         workspace = self._workspace()
@@ -210,16 +229,17 @@ class GenieAdapter:
         return normalise_control_response(_text_from_response(response), expected_experiment_id, registered_ids_for_case(case_id))
 
     def start(self, case_id: str = "CASE_0042") -> dict:
-        response = self._workspace().genie.start_conversation_and_wait(space_id=self.space_id, content=system_prompt(case_id), timeout=timedelta(seconds=120))
+        waiter = self._workspace().genie.start_conversation(space_id=self.space_id, content=system_prompt(case_id))
+        response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
         registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
         return {"conversation_id": getattr(response, "conversation_id", None), "message": self._control_message(response, case_id, registered[0].id)}
 
     def next(self, conversation_id: str, context: str, case_id: str = "CASE_0042") -> dict:
-        response = self._workspace().genie.create_message_and_wait(
+        waiter = self._workspace().genie.create_message(
             space_id=self.space_id, conversation_id=conversation_id,
             content=f"{system_prompt(case_id)}\n\nInvestigation context: {context}",
-            timeout=timedelta(seconds=120),
         )
+        response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
         completed_ids = set(re.findall(r"[A-Z_]+-?[A-Z0-9_]*", context))
         registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
         expected = next((item.id for item in registered if item.id not in completed_ids), registered[-1].id)
