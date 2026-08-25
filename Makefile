@@ -81,9 +81,9 @@ audit-contract:
 
 docker-smoke: docker-build
 	docker compose up -d
-	python scripts/container_smoke.py
+	trap 'docker compose down' EXIT; \
+	python scripts/container_smoke.py && \
 	python scripts/container_shutdown_smoke.py
-	docker compose down
 
 docker-build:
 	docker build -t mad-data-lab:local .
