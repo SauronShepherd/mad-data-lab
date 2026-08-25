@@ -19,6 +19,7 @@ from .catalog import FULL_CASE_CATALOG, case_availability, get_any_case
 from .genie import GenieAdapter
 from .state import InvestigationState, transition
 from backend.data.repositories import EvidenceRepository
+from .config import settings
 
 
 app = FastAPI(title="MAD DATA LAB API", version="0.1.0")
@@ -67,8 +68,11 @@ DEBRIEF_STATE = "DEBRIEF"
 
 def fixture_mode_enabled() -> bool:
     """Allow offline fixture play only when explicitly enabled for local use."""
-    default = "0" if os.getenv("DATABRICKS_APP_PORT") else "1"
-    return os.getenv("ALLOW_FIXTURE_MODE", default) == "1"
+    return settings.allow_fixture_mode
+
+
+def review_mode_enabled() -> bool:
+    return settings.challenge_review_mode
 
 
 def observation_payload(case) -> dict[str, Any]:
@@ -122,7 +126,7 @@ def health() -> dict[str, str]:
 
 @app.get("/api/cases")
 def cases() -> dict:
-    review_mode = os.getenv("CHALLENGE_REVIEW_MODE", "0") == "1"
+    review_mode = review_mode_enabled()
     completed = PROGRESSION["completed_case_ids"]
     return {"cases": [case.public_payload() | {"availability": case_availability(case, review_mode=review_mode, completed_case_ids=completed)} for case in FULL_CASE_CATALOG]}
 
@@ -134,7 +138,7 @@ def api_health() -> dict[str, str]:
 
 @app.get("/api/config")
 def config() -> dict:
-    review_mode = os.getenv("CHALLENGE_REVIEW_MODE", "0") == "1"
+    review_mode = review_mode_enabled()
     enabled = [c.id for c in FULL_CASE_CATALOG if case_availability(c, review_mode=review_mode, completed_case_ids=PROGRESSION["completed_case_ids"]) == "AVAILABLE"]
     return {"protocol_version": "1.0", "fixture_mode": (not genie.enabled and fixture_mode_enabled()), "review_mode": review_mode, "enabled_cases": enabled}
 
@@ -143,7 +147,7 @@ def config() -> dict:
 def progression() -> dict:
     completed = sorted(PROGRESSION["completed_case_ids"])
     best_scores = dict(PROGRESSION["best_scores"])
-    review_mode = os.getenv("CHALLENGE_REVIEW_MODE", "0") == "1"
+    review_mode = review_mode_enabled()
     available = [c.id for c in FULL_CASE_CATALOG if case_availability(c, review_mode=review_mode, completed_case_ids=PROGRESSION["completed_case_ids"]) == "AVAILABLE"]
     return {"completed_case_ids": completed, "best_scores": best_scores, "available_case_ids": available}
 
@@ -178,7 +182,7 @@ def start_investigation(request: StartInvestigationRequest) -> dict:
         case = get_any_case(request.case_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
-    review_mode = os.getenv("CHALLENGE_REVIEW_MODE", "0") == "1"
+    review_mode = review_mode_enabled()
     if case_availability(case, review_mode=review_mode, completed_case_ids=PROGRESSION["completed_case_ids"]) != "AVAILABLE":
         raise HTTPException(status_code=409, detail="This Case is not enabled yet")
     if not genie.enabled and not fixture_mode_enabled():
@@ -211,7 +215,7 @@ def create_session(request: StartInvestigationRequest) -> dict:
         case = get_any_case(request.case_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
-    review_mode = os.getenv("CHALLENGE_REVIEW_MODE", "0") == "1"
+    review_mode = review_mode_enabled()
     if case_availability(case, review_mode=review_mode, completed_case_ids=PROGRESSION["completed_case_ids"]) != "AVAILABLE":
         raise HTTPException(status_code=409, detail="This Case is not enabled yet")
     session_id = str(uuid.uuid4())
@@ -435,7 +439,7 @@ def next_experiment(request: ExperimentRequest) -> dict:
         case = get_any_case(request.case_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
-    review_mode = os.getenv("CHALLENGE_REVIEW_MODE", "0") == "1"
+    review_mode = review_mode_enabled()
     if case_availability(case, review_mode=review_mode, completed_case_ids=PROGRESSION["completed_case_ids"]) != "AVAILABLE":
         raise HTTPException(status_code=409, detail="This Case is not enabled yet")
     experiments = EXPERIMENTS_BY_CASE.get(request.case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(request.case_id, ())
@@ -461,7 +465,7 @@ def ask_genie(request: GenieQuestionRequest) -> dict:
         case = get_any_case(request.case_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
-    if case.state != "CORE" and os.getenv("CHALLENGE_REVIEW_MODE", "0") != "1":
+    if case.state != "CORE" and not review_mode_enabled():
         raise HTTPException(status_code=409, detail="This Case is not enabled yet")
     if not genie.enabled or not request.conversation_id:
         return {"answer": "Dr. Genie’s console is available when the live Genie conversation is connected.", "source": "fixture"}
@@ -484,7 +488,7 @@ def session_chat(session_id: str, request: dict) -> dict:
 
 DIST = Path(__file__).resolve().parent.parent / "dist"
 AXE = Path(__file__).resolve().parent.parent / "node_modules" / "axe-core"
-if os.getenv("LOCAL_A11Y_TEST") == "1" and AXE.exists():
+if settings.local_a11y_test and AXE.exists():
     @app.get("/__test__/a11y", response_class=HTMLResponse)
     def local_a11y_harness() -> str:
         bundle = next((DIST / "assets").glob("index-*.js"), None)

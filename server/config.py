@@ -1,0 +1,32 @@
+"""Typed runtime configuration for the application boundary."""
+from __future__ import annotations
+
+from dataclasses import dataclass
+import os
+
+
+def _flag(name: str, default: bool = False) -> bool:
+    return os.getenv(name, "1" if default else "0").strip().lower() in {"1", "true", "yes", "on"}
+
+
+@dataclass(frozen=True)
+class Settings:
+    host: str
+    port: int
+    allow_fixture_mode: bool
+    challenge_review_mode: bool
+    local_a11y_test: bool
+
+    @classmethod
+    def from_env(cls) -> "Settings":
+        deployed = bool(os.getenv("DATABRICKS_APP_PORT"))
+        return cls(
+            host=os.getenv("UVICORN_HOST", "0.0.0.0"),
+            port=int(os.getenv("DATABRICKS_APP_PORT", os.getenv("UVICORN_PORT", "8000"))),
+            allow_fixture_mode=_flag("ALLOW_FIXTURE_MODE", default=not deployed),
+            challenge_review_mode=_flag("CHALLENGE_REVIEW_MODE"),
+            local_a11y_test=_flag("LOCAL_A11Y_TEST"),
+        )
+
+
+settings = Settings.from_env()
