@@ -4,3 +4,5 @@ env:
     valueFrom: genie-space
   - name: ALLOW_FIXTURE_MODE
     value: "0"
+  - name: CHALLENGE_REVIEW_MODE
+    value: "0"
