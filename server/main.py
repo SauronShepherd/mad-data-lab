@@ -447,6 +447,7 @@ def next_experiment(request: ExperimentRequest) -> dict:
             message.update({"case_id": request.case_id, "experiment_number": len(completed) + 1, "source": "genie"})
             return message
         except Exception as exc:
+            LOGGER.exception("live Genie next failed")
             raise HTTPException(status_code=503, detail="Live Genie is unavailable") from exc
     index = next((i for i, experiment in enumerate(experiments) if experiment.id not in completed), None)
     if index is None:
