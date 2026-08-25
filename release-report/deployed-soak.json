@@ -6,9 +6,9 @@
   ],
   "output": "deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 1/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 2/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 3/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 4/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 5/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 6/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 7/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 8/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 9/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 10/10\ndeployed soak: PASS (10 authenticated Case #042 journeys)\n",
   "source_identity": {
-    "git_head": "25e4cec55965929d16cdbdff88e22099edacc42b",
+    "git_head": "927ab12d1b05752d118a4571fe21a095a4004e73",
     "runtime_digest": "2c71274e09e8f1f52583870fdf794fa885fade61fbab62c42f19d56e45c0f230",
     "data_contract_digest": "bf19a22f80bfa0bd822374d14888a5bd994c92d64902964e4ffd6c8e0efdfb40"
   },
-  "generated_at_utc": "2026-08-25T05:26:20.319085+00:00"
+  "generated_at_utc": "2026-08-25T05:42:42.530155+00:00"
 }
