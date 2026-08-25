@@ -6,6 +6,7 @@ import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
+PRIVATE_MARKERS = ('truth_json', 'primary_cause', 'primary_component', 'secondary_cause', 'expected_path_json', 'allowed_final_status_json', 'case_truth')
 
 
 def main() -> None:
@@ -16,9 +17,14 @@ def main() -> None:
     assert "CASE_TRUTH" not in frontend and "primary_component" not in frontend
     assert "eval(" not in frontend and "new Function(" not in frontend
     assert "case_id" in source and "registered" in source
-    for path in ROOT.glob("data/fixtures/public/**/*.json"):
+    public_files = list(ROOT.glob("data/fixtures/public/**/*.json"))
+    for path in public_files:
         text = path.read_text(encoding="utf-8", errors="ignore").lower()
-        assert 'truth_json' not in text and 'primary_cause' not in text and 'expected_path' not in text, f'private truth leaked: {path}'
+        assert not any(marker in text for marker in PRIVATE_MARKERS), f'private truth leaked: {path}'
+    for path in ROOT.glob("dist/**/*"):
+        if path.is_file() and path.suffix.lower() in {'.js', '.html', '.css'}:
+            text = path.read_text(encoding="utf-8", errors="ignore").lower()
+            assert not any(marker in text for marker in PRIVATE_MARKERS), f'private truth leaked in build: {path}'
     print("security gate: PASS")
 
 
