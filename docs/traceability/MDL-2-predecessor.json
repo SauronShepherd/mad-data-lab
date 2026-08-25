@@ -11,8 +11,16 @@
   ],
   "remote_repository_observation": {
     "repository": "https://github.com/SauronShepherd/mad-data-lab",
-    "visible_branches": ["MDL-01", "MDL-2"],
+    "visible_branches": [
+      {"name": "MDL-01", "head_sha": "25e4cec55965929d16cdbdff88e22099edacc42b"},
+      {"name": "MDL-2", "head_sha": "fd77862d5a6835a84794992241734a8482aea117"}
+    ],
     "visible_pull_requests": 0,
+    "observed_ci": {
+      "run_id": 32814200497,
+      "head_sha": "7684c55c2751b39e57e26d27cb4504691c96c8e9",
+      "conclusion": "failure"
+    },
     "observed_at_utc": "2026-08-25"
   },
   "claim_allowed": false
