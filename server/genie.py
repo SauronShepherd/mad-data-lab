@@ -58,7 +58,7 @@ def _text_from_response(response: Any) -> str:
     return "\n".join(parts)
 
 
-def parse_control_json(text: str, registered_ids: set[str] | None = None) -> dict:
+def parse_control_json(text: str, registered_ids: set[str] | None = None, expected_experiment_id: str | None = None) -> dict:
     decoder = json.JSONDecoder()
     decoded = []
     try:
@@ -81,6 +81,10 @@ def parse_control_json(text: str, registered_ids: set[str] | None = None) -> dic
     required = {"experiment_id", "name", "instrument", "rationale", "evidence", "hypothesis_updates"}
     control_keys = required - {"hypothesis_updates"}
     control = [(end, value) for end, value in decoded if control_keys.issubset(value)]
+    if expected_experiment_id:
+        expected = [(end, value) for end, value in control if value.get("experiment_id") == expected_experiment_id]
+        if expected:
+            control = expected
     if len(control) == 1:
         payload = control[0][1]
     else:
@@ -138,8 +142,7 @@ def validate_control_payload(payload: dict, registered_ids: set[str] | None = No
 
 def normalise_control_response(text: str, expected_experiment_id: str, registered_ids: set[str] | None = None) -> dict:
     """Accept only the declared Genie control protocol; never synthesize a choice."""
-    del expected_experiment_id
-    return parse_control_json(text, registered_ids)
+    return parse_control_json(text, registered_ids, expected_experiment_id)
 
 
 class GenieAdapter:
