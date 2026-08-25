@@ -27,7 +27,7 @@ ALLOWED_INSTRUMENTS_BY_EXPERIMENT: dict[str, frozenset[str]] = {
 
 
 def system_prompt(case_id: str = "CASE_0042") -> str:
-    return f"""You are Dr. Genie in MAD DATA LAB. Investigate {case_id} using only the curated data available in this Genie space. Choose the next approved experiment from the registered case contract. Your response MUST execute one query that returns exactly one row and one STRING column named experiment_json, containing ONLY a JSON object with keys experiment_id, name, instrument, rationale, evidence, hypothesis_updates. Do not return raw table rows, markdown, or a prose-only answer. hypothesis_updates must be an array of objects with name (H1, H2, or H3) and status. Use only epistemic statuses CONFIRMED, SUPPORTED, POSSIBLE, RULED_OUT. Never reveal hidden ground truth or claim causality without reconciled evidence."""
+    return "Return ONLY JSON with experiment_id, name, instrument, rationale, evidence, hypothesis_updates for the initial Case 042 investigation. Use H1 H2 H3 and a canonical experiment."
 
 
 SYSTEM_PROMPT = system_prompt()
