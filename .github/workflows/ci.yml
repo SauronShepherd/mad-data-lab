@@ -37,5 +37,6 @@ jobs:
       - run: docker compose build --pull=false
       - run: docker compose up -d
       - run: python scripts/container_smoke.py
+      - run: python scripts/container_shutdown_smoke.py
       - if: always()
         run: docker compose down
