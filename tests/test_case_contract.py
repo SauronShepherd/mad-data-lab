@@ -16,6 +16,15 @@ class Case042ContractTests(unittest.TestCase):
         PROGRESSION["best_scores"].clear()
         self.client = TestClient(app)
 
+    def new_session(self):
+        created = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'})
+        self.assertEqual(created.status_code, 201)
+        session_id = created.json()['session_id']
+        started = self.client.post(f'/api/sessions/{session_id}/start')
+        self.assertEqual(started.status_code, 200)
+        self.assertEqual(started.json()['state'], 'HYPOTHESES_READY')
+        return session_id
+
     def test_case042_reconciles(self):
         previous = 100.1 + 30.0 - 5.1 + 0.0
         current = 98.9 + 24.1 - 4.8 + 0.0
@@ -159,6 +168,7 @@ class Case042ContractTests(unittest.TestCase):
         created = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'})
         self.assertEqual(created.status_code, 201)
         session_id = created.json()['session_id']
+        self.assertEqual(self.client.post(f'/api/sessions/{session_id}/start').status_code, 200)
         self.assertEqual(self.client.post(f'/api/sessions/{session_id}/prediction', json={'prediction': 'component movement'}).status_code, 200)
         hint = self.client.post(f'/api/sessions/{session_id}/hint')
         self.assertEqual(hint.json()['hint_number'], 1)
@@ -178,7 +188,7 @@ class Case042ContractTests(unittest.TestCase):
         detail = self.client.get('/api/cases/CASE_0042')
         self.assertEqual(detail.status_code, 200)
         self.assertNotIn('truth', str(detail.json()).lower())
-        session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
+        session_id = self.new_session()
         self.client.post(f'/api/sessions/{session_id}/next', json={})
         self.client.post(f'/api/sessions/{session_id}/next', json={})
         evidence = self.client.get(f'/api/sessions/{session_id}/evidence').json()
@@ -186,7 +196,7 @@ class Case042ContractTests(unittest.TestCase):
         self.assertEqual(evidence['evidence'][0]['business_key'], min(item['business_key'] for item in evidence['evidence']))
 
     def test_evidence_is_bounded_filterable_and_request_has_id(self):
-        session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
+        session_id = self.new_session()
         self.client.post(f'/api/sessions/{session_id}/next', json={})
         self.client.post(f'/api/sessions/{session_id}/next', json={})
         response = self.client.get(f'/api/sessions/{session_id}/evidence?limit=1&business_key=TX-004291')
@@ -205,7 +215,7 @@ class Case042ContractTests(unittest.TestCase):
         self.assertEqual(chat.status_code, 200)
 
     def test_completion_records_best_score_and_hints_reduce_score(self):
-        session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
+        session_id = self.new_session()
         self.client.post(f'/api/sessions/{session_id}/prediction', json={'prediction': 'component movement'})
         self.client.post(f'/api/sessions/{session_id}/hint')
         self.assertEqual(self.client.post(f'/api/sessions/{session_id}/conclude').status_code, 409)
@@ -220,7 +230,7 @@ class Case042ContractTests(unittest.TestCase):
         self.assertEqual(progress['best_scores']['CASE_0042'], 525)
 
     def test_score_dto_reports_evidence_badge_and_event_ledger(self):
-        session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
+        session_id = self.new_session()
         self.client.post(f'/api/sessions/{session_id}/prediction', json={'prediction': 'component movement'})
         for _ in range(5):
             self.client.post(f'/api/sessions/{session_id}/next', json={})
@@ -232,14 +242,14 @@ class Case042ContractTests(unittest.TestCase):
         self.assertLessEqual(result['score'], 1000)
 
     def test_hints_are_server_ledgered_progressive_and_bounded(self):
-        session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
+        session_id = self.new_session()
         hints = [self.client.post(f'/api/sessions/{session_id}/hint').json() for _ in range(3)]
         self.assertEqual([item['hint_number'] for item in hints], [1, 2, 3])
         self.assertNotEqual(hints[0]['hint'], hints[1]['hint'])
         self.assertEqual(self.client.post(f'/api/sessions/{session_id}/hint').status_code, 409)
 
     def test_session_events_are_sequenced_and_append_only(self):
-        session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
+        session_id = self.new_session()
         self.client.post(f'/api/sessions/{session_id}/prediction', json={'prediction': 'component movement'})
         self.client.post(f'/api/sessions/{session_id}/next', json={})
         self.client.post(f'/api/sessions/{session_id}/next', json={})
@@ -251,18 +261,18 @@ class Case042ContractTests(unittest.TestCase):
         self.assertIn('EVIDENCE_INSPECTED', [event['type'] for event in events])
 
     def test_restart_is_recoverable_and_keeps_case_isolation(self):
-        session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
+        session_id = self.new_session()
         self.client.post(f'/api/sessions/{session_id}/next', json={})
         before = self.client.get(f'/api/sessions/{session_id}').json()['diagnostic_id']
         restarted = self.client.post(f'/api/sessions/{session_id}/restart').json()
         self.assertEqual(restarted['diagnostic_id'], before)
         current = self.client.get(f'/api/sessions/{session_id}').json()
-        self.assertEqual(current['state'], 'BRIEFING')
+        self.assertEqual(current['state'], 'CASE_BRIEFING')
         self.assertEqual(current['completed'], [])
         self.assertEqual(current['events'][0]['type'], 'RESTART')
 
     def test_session_next_ignores_forged_client_completion_and_blocks_early_verdict(self):
-        session_id = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'}).json()['session_id']
+        session_id = self.new_session()
         self.assertEqual(self.client.post(f'/api/sessions/{session_id}/conclude').status_code, 409)
         first = self.client.post(f'/api/sessions/{session_id}/next', json={'completed_experiments': ['COMPONENT_DECOMPOSITION', 'SNAPSHOT_DIFF', 'DQ_MATERIALITY', 'FORMULA_VALIDATION', 'RECONCILIATION']})
         self.assertEqual(first.json()['experiment_id'], 'COMPONENT_DECOMPOSITION')

@@ -30,6 +30,8 @@ def main() -> None:
     assert any(item["id"] == "CASE_0042" for item in cases)
     session = call("/api/sessions", "POST", {"case_id": "CASE_0042"})
     session_id = session["session_id"]
+    started = call(f"/api/sessions/{session_id}/start", "POST", {})
+    assert started["state"] == "HYPOTHESES_READY"
     for _ in range(3):
         call(f"/api/sessions/{session_id}/next", "POST", {})
     assert call(f"/api/sessions/{session_id}/evidence")["total"] >= 1
