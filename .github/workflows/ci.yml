@@ -27,7 +27,17 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:browser
+      - name: Run browser contract with diagnostics
+        shell: bash
+        run: |
+          set +e
+          npm run test:browser -- --reporter=json > browser-report.json 2>&1
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            detail=$(tail -c 5000 browser-report.json | tr '\n' ' ' | tr '\r' ' ')
+            echo "::error title=Playwright browser contract::$detail"
+          fi
+          exit "$status"
   container:
     runs-on: ubuntu-latest
     steps:
