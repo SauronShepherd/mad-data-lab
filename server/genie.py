@@ -163,7 +163,9 @@ class GenieAdapter:
                 message_id=message_id,
             )
             status = str(getattr(last, "status", ""))
-            if status.endswith("COMPLETED") or status.endswith("ASKING_AI"):
+            attachments = getattr(last, "attachments", []) or []
+            has_answer = bool(attachments) or bool(getattr(last, "query_result", None))
+            if status.endswith("COMPLETED") or (status.endswith("ASKING_AI") and has_answer):
                 return last
             # Genie has been observed to report FAILED while transitioning
             # through context filtering. Keep polling until the deadline.
