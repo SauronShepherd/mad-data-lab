@@ -265,7 +265,7 @@ class GenieAdapter:
                     return normalise_control_response(str(data[0][0]), expected_experiment_id, registered_ids_for_case(case_id))
                 except ValueError:
                     pass
-        if expected_experiment_id and "sda_dev.mad_data_lab_curated" in text:
+        if expected_experiment_id:
             view_by_experiment = {
                 "COMPONENT_DECOMPOSITION": ("component_evidence", "component_evidence"),
                 "SNAPSHOT_DIFF": ("snapshot_evidence", "snapshot_evidence"),
