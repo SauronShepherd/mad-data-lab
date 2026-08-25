@@ -27,6 +27,8 @@
         "Treat data-quality signals as evidence to assess, not as automatically additive causes.",
         "The DQ_0042_01 duplicate-key signal has an estimated overlapping impact of -€0.30M and overlaps V2; do not add it again to the -€6.8M deviation.",
         "When asked for the next experiment, choose only from COMPONENT_DECOMPOSITION, SNAPSHOT_DIFF, DQ_MATERIALITY, FORMULA_VALIDATION, and RECONCILIATION.",
+        "Use exactly the hypothesis IDs H1 (source values changed), H2 (formula changed), and H3 (data quality issue); never emit retired prototype names or EXP-01/EXP-02/EXP-03.",
+        "For the initial investigation, return H1, H2, and H3 with status POSSIBLE unless direct evidence supports another valid epistemic status.",
         "Return concise evidence-backed answers. Do not claim causality unless the reported impacts reconcile with the observed deviation.",
         "Never invent tables, rows, values, or hidden truth outside the curated data sources."
       ]}

@@ -9,7 +9,11 @@
     "expected_data_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3",
     "recorded_data_digest": "3d6cd091a0121dbf648decbeeb019e4ad38f544146d4f40450da277f11a858b3"
   },
-  "failed": [],
+  "failed": [
+    "live-evidence-current:genie-eval.json",
+    "live-evidence-current:deployed-smoke.json",
+    "live-evidence-current:deployed-soak.json"
+  ],
   "pending": [
     "human-art-approval",
     "predecessor-mdl1",
