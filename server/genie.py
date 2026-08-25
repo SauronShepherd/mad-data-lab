@@ -237,7 +237,11 @@ class GenieAdapter:
                 if str(state).endswith("FAILED") or str(state).endswith("CANCELED"):
                     break
                 time.sleep(1)
-        return normalise_control_response(_text_from_response(response), expected_experiment_id, registered_ids_for_case(case_id))
+        text = _text_from_response(response)
+        try:
+            return normalise_control_response(text, expected_experiment_id, registered_ids_for_case(case_id))
+        except ValueError as exc:
+            raise ValueError(f"Genie answer did not contain a control payload: {text[:1200]}") from exc
 
     def start(self, case_id: str = "CASE_0042") -> dict:
         waiter = self._workspace().genie.start_conversation(space_id=self.space_id, content=system_prompt(case_id))
