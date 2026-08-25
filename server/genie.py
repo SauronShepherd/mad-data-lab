@@ -18,7 +18,7 @@ GENIE_EPISTEMIC_STATUSES = frozenset({"CONFIRMED", "SUPPORTED", "POSSIBLE", "RUL
 
 
 ALLOWED_INSTRUMENTS_BY_EXPERIMENT: dict[str, frozenset[str]] = {
-    "COMPONENT_DECOMPOSITION": frozenset({"WATERFALL", "Waterfall", "component_deltas", "component_evidence", "Component Evidence Analysis"}),
+    "COMPONENT_DECOMPOSITION": frozenset({"WATERFALL", "Waterfall", "component_deltas", "component_evidence", "Component Evidence Analysis", "Component Evidence Table"}),
     "SNAPSHOT_DIFF": frozenset({"SNAPSHOT_DIFF", "Snapshot comparison", "snapshot_evidence"}),
     "DQ_MATERIALITY": frozenset({"DQ_PANEL", "DQ panel", "quality_evidence"}),
     "FORMULA_VALIDATION": frozenset({"FORMULA_CHECK", "Formula check", "semantic_evidence"}),
