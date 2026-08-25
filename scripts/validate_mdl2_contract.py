@@ -22,6 +22,16 @@ def main():
     for path in (ROOT/'sql/trusted').glob('*.sql'):
         text=path.read_text(encoding='utf-8'); checks.extend([(f'{path.name}:native-params',':case_id' not in text and ':limit' not in text),(f'{path.name}:no-private', 'mad_data_lab_private' not in text)])
     art=json.loads((ROOT/'release-report/MDL-2/art-preflight.json').read_text(encoding='utf-8')); checks.append(('art-preflight',art.get('status')=='CANDIDATES_PREFLIGHT_PASS'))
+    art_approval=ROOT/'docs/approvals/MDL-2-art-approval.json'
+    art_approved=False
+    if art_approval.is_file():
+        approval=json.loads(art_approval.read_text(encoding='utf-8'))
+        art_approved=approval.get('status')=='APPROVED' and bool(approval.get('human_reviewer'))
+        for asset_id, selection in approval.get('selected_exact_byte_hashes', {}).items():
+            path=ROOT/selection.get('path','')
+            actual=__import__('hashlib').sha256(path.read_bytes()).hexdigest() if path.is_file() else ''
+            checks.append((f'art-approval-hash:{asset_id}',actual==selection.get('sha256')))
+    checks.append(('art-approval-record', not art_approval.exists() or art_approved))
     identity=current_identity()
     live_refresh_pending=[]
     for name in ('genie-eval.json','deployed-smoke.json','deployed-soak.json'):
@@ -49,7 +59,9 @@ def main():
     checks.append(('canonical-hash-current',golden.get('sha256')==canonical_hash))
     failed=[name for name,ok in checks if not ok]
     sql_evidence=ROOT/'release-report/MDL-2/sql-integration.json'
-    pending=['human-art-approval','predecessor-mdl1', *live_refresh_pending]
+    pending=['predecessor-mdl1', *live_refresh_pending]
+    if not art_approved:
+        pending.insert(0,'human-art-approval')
     v3_record=ROOT/'docs/traceability/v3-source.json'
     if not v3_record.is_file() or json.loads(v3_record.read_text(encoding='utf-8')).get('status') != 'VERIFIED':
         pending.append('accepted-v3-source')
