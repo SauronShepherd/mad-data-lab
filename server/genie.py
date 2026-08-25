@@ -83,8 +83,9 @@ def parse_control_json(text: str, registered_ids: set[str] | None = None, expect
     control = [(end, value) for end, value in decoded if control_keys.issubset(value)]
     if expected_experiment_id:
         expected = [(end, value) for end, value in control if value.get("experiment_id") == expected_experiment_id]
-        if expected:
-            control = expected
+        if not expected:
+            raise ValueError(f"Genie returned the wrong experiment; expected {expected_experiment_id}")
+        control = expected
     if len(control) == 1:
         payload = control[0][1]
     else:

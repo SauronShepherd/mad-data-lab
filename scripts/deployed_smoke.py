@@ -33,9 +33,13 @@ def main() -> None:
     started = call(f"/api/sessions/{session_id}/start", "POST", {})
     assert started["state"] == "HYPOTHESES_READY"
     experiments = [call(f"/api/sessions/{session_id}/next", "POST", {}) for _ in range(5)]
-    assert [item["experiment_id"] for item in experiments] == [
+    actual_experiment_ids = [item["experiment_id"] for item in experiments]
+    expected_experiment_ids = [
         "COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "FORMULA_VALIDATION", "RECONCILIATION"
     ]
+    assert actual_experiment_ids == expected_experiment_ids, (
+        f"unexpected deployed experiment sequence: {actual_experiment_ids}"
+    )
     assert call(f"/api/sessions/{session_id}/evidence")["total"] >= 1
     assert call(f"/api/sessions/{session_id}/conclude", "POST", {})["status"] == "COMPLETE"
     print("deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)")
