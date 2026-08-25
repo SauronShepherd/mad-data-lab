@@ -17,6 +17,7 @@ def main() -> None:
             created = client.post("/api/sessions", json={"case_id": "CASE_0042"})
             assert created.status_code == 201
             session_id = created.json()["session_id"]
+            assert client.post(f"/api/sessions/{session_id}/start").status_code == 200
             completed: list[str] = []
             for _ in range(5):
                 response = client.post(f"/api/sessions/{session_id}/next", json={"completed_experiments": completed})

@@ -15,6 +15,7 @@ from server.main import app, genie
 def main() -> None:
     with TestClient(app) as client:
         session = client.post("/api/sessions", json={"case_id": "CASE_0042"}).json()["session_id"]
+        assert client.post(f"/api/sessions/{session}/start").status_code == 200
         with patch.object(genie, "next", side_effect=TimeoutError("synthetic timeout")):
             response = client.post(f"/api/sessions/{session}/next", json={"completed_experiments": []})
             assert response.status_code == 200 and response.json()["source"] == "generated_case_data"

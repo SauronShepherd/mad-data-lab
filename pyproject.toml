@@ -16,7 +16,7 @@ dependencies = [
 testpaths = ["tests"]
 
 [project.optional-dependencies]
-dev = ["mypy>=1.11,<2"]
+dev = ["mypy>=1.11,<2", "Pillow>=10,<12"]
 
 [tool.ruff]
 line-length = 120

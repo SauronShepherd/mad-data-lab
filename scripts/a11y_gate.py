@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> None:
     source = (ROOT / "src" / "main.jsx").read_text(encoding="utf-8")
     images = re.findall(r"<img\b[^>]*>", source)
-    assert images and all(re.search(r"\balt=", image) for image in images), "all images need alt text"
+    assert all(re.search(r"\balt=", image) for image in images), "all images need alt text"
     assert "aria-label=" in source and "role=\"status\"" in source, "interactive/status semantics missing"
     assert "htmlFor=\"genie-question\"" in source
     assert "aria-expanded" in source

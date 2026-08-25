@@ -30,6 +30,8 @@ def main() -> None:
             session = client.post("/api/sessions", json={"case_id": case.id})
             assert session.status_code == 201, (case.id, session.text)
             session_id = session.json()["session_id"]
+            started = client.post(f"/api/sessions/{session_id}/start")
+            assert started.status_code == 200, (case.id, started.text)
             experiments = client.get(f"/api/cases/{case.id}/experiments").json()["experiments"]
             completed: list[str] = []
             for _ in experiments:
