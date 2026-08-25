@@ -18,6 +18,8 @@ npm run dev
 
 The UI calls the local API at `http://localhost:8000`. Without `GENIE_SPACE_ID`, the API uses the deterministic Case #042 fixture path. In Databricks Apps, `app.yaml` maps the `genie-space` resource to `GENIE_SPACE_ID`; the backend then uses the Genie Conversation API and validates the response against the registered experiments.
 
+Runtime configuration is centralized in `server/config.py`. Local development may set `ALLOW_FIXTURE_MODE=1`; deployed Apps set it to `0` in `app.yaml`, so a missing live Genie binding fails closed. `CHALLENGE_REVIEW_MODE` is `0` by default and does not unlock secondary Cases. `DATABRICKS_APP_PORT` takes precedence over `UVICORN_PORT` when the App launcher selects its listening port.
+
 ## Live Genie smoke test
 
 Set the Databricks CLI profile and Genie Space before starting the API:
