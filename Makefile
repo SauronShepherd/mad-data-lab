@@ -1,4 +1,7 @@
-.PHONY: lint typecheck test-unit test-data test-contract test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-secondary-soak test-chaos test-web test-sql test-genie-live deploy-staging smoke-staging soak deployed-soak release-report release-gate docker-build
+.PHONY: setup lint typecheck test-unit test-data test-contract test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-secondary-soak test-chaos test-web test-sql test-genie-live deploy-staging smoke-staging soak deployed-soak release-report release-gate audit-contract docker-build docker-smoke
+
+setup:
+	python -m pip install -e ".[dev]"
 
 lint:
 	python -m compileall -q server tests scripts
@@ -56,7 +59,9 @@ release-report:
 	python scripts/release_gate.py
 
 deploy-staging:
-	databricks apps deploy mad-data-lab -p sda
+	@test -n "$(DATABRICKS_SOURCE_PATH)" || (echo "DATABRICKS_SOURCE_PATH is required" && exit 1)
+	databricks workspace import-dir . "$(DATABRICKS_SOURCE_PATH)" --overwrite -p sda
+	databricks apps deploy mad-data-lab --source-code-path "$(DATABRICKS_SOURCE_PATH)" -p sda
 
 smoke-staging:
 	python scripts/deployed_smoke.py
@@ -70,6 +75,15 @@ test-web:
 	python scripts/local_web_smoke.py
 
 release-gate: lint typecheck test-unit test-data test-contract build test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-chaos
+
+audit-contract:
+	python scripts/validate_mdl2_contract.py --strict
+
+docker-smoke: docker-build
+	docker compose up -d
+	python scripts/container_smoke.py
+	python scripts/container_shutdown_smoke.py
+	docker compose down
 
 docker-build:
 	docker build -t mad-data-lab:local .

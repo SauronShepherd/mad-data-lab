@@ -39,8 +39,10 @@ npm run build
 databricks workspace import-dir . /Workspace/Users/<user-email>/mad-data-lab --overwrite -p sda
 databricks apps deploy mad-data-lab `
   --source-code-path /Workspace/Users/<user-email>/mad-data-lab `
-  --skip-validation -p sda --timeout 20m
+  -p sda --timeout 20m
 ```
+
+For the reproducible Make target, set `DATABRICKS_SOURCE_PATH` to the workspace path and run `make deploy-staging`.
 
 The deployed app must have an App resource named `genie-space` with `CAN_RUN` permission and the Genie Space ID above. Production frontend requests are same-origin; Vite development requests use `http://localhost:8000`.
 
