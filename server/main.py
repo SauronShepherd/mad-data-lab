@@ -48,6 +48,7 @@ async def request_id_middleware(request: Request, call_next):
 genie = CanonicalGenieBoundary(GenieAdapter())
 evidence_repository = EvidenceRepository()
 SESSIONS: dict[str, dict] = {}
+PENDING_STORES: dict[str, PendingDecisionStore] = {}
 SESSION_MUTATION_LOCK = RLock()
 PROGRESSION: dict[str, Any] = {"completed_case_ids": set(), "best_scores": {}}
 
@@ -103,7 +104,7 @@ def append_event(session: dict, event_type: str, **payload: Any) -> None:
     events.append({"sequence": len(events) + 1, "type": event_type, **payload})
 
 
-def persist_pending_decision(session: dict, message: dict[str, Any], registered: tuple) -> None:
+def persist_pending_decision(session_id: str, session: dict, message: dict[str, Any], registered: tuple) -> None:
     """Persist a valid start selection without marking it as completed evidence.
 
     Legacy spaces return the older control shape and therefore do not create a
@@ -127,6 +128,17 @@ def persist_pending_decision(session: dict, message: dict[str, Any], registered:
         "protocol_sha256": message.get("protocol_sha256"),
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
+    # Preserve the same locked domain store between start and the first /next.
+    # Recreating it at claim time would bypass the atomic consume boundary.
+    PENDING_STORES.setdefault(session_id, PendingDecisionStore()).put(PendingDecision(
+        message_id=str(message.get("message_id") or ""),
+        experiment_id=str(experiment_id),
+        instrument_id=str(instrument_id),
+        target=selected.get("target_component"),
+        allowed_set_digest=allowed_set_digest(allowed),
+        protocol_sha256=str(message.get("protocol_sha256") or ""),
+        created_at=str(session["pending_decision"]["created_at"]),
+    ))
     append_event(session, "PENDING_EXPERIMENT", experiment_id=experiment_id, source="genie")
 
 
@@ -296,7 +308,7 @@ def session_start(session_id: str) -> dict:
                 if candidate:
                     by_name = {item["name"]: item for item in candidate}
                     hypotheses = [by_name.get(item["name"], item) for item in CANONICAL_HYPOTHESES]
-            persist_pending_decision(session, live["message"], registered)
+            persist_pending_decision(session_id, session, live["message"], registered)
             source = "genie"
         except Exception as exc:
             LOGGER.exception("live Genie start failed")
@@ -328,6 +340,7 @@ def restart_session(session_id: str) -> dict:
     if not session:
         raise HTTPException(status_code=404, detail="Investigation not found")
     case_id = session["case_id"]
+    PENDING_STORES.pop(session_id, None)
     diagnostic_id = session.get("diagnostic_id", uuid.uuid4().hex)
     SESSIONS[session_id] = {"case_id": case_id, "completed": [], "evidence_entitlements": [], "events": [], "state": CASE_BRIEFING_STATE, "created_at": datetime.now(timezone.utc).isoformat(), "score": 0, "score_events": [], "diagnostic_id": diagnostic_id}
     append_event(SESSIONS[session_id], "RESTART", reason="USER_REQUESTED_RESTART")
@@ -469,8 +482,11 @@ def _session_next_impl(session_id: str, request: SessionNextRequest) -> dict:
                 protocol_sha256=str(pending.get("protocol_sha256") or ""),
                 created_at=str(pending.get("created_at") or ""),
             )
-            pending_store = PendingDecisionStore()
-            pending_store.put(pending_value)
+            pending_store = PENDING_STORES.get(session_id)
+            if pending_store is None:
+                pending_store = PendingDecisionStore()
+                pending_store.put(pending_value)
+                PENDING_STORES[session_id] = pending_store
             selected_decision = DecisionOrchestrator(pending_store).claim_first_experiment(current_allowed=current_allowed)
         except ValueError as exc:
             session["state"] = "ERROR"
