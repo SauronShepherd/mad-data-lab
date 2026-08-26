@@ -78,6 +78,24 @@ def guided_prompt(prompt: str, case_id: str = "CASE_0042") -> str:
     return f"{system_prompt(case_id)}\n\nUser request:\n{prompt}"
 
 
+def extract_unfenced_control(text: str) -> dict:
+    """Find one strict control object in an otherwise prose response."""
+    decoder = json.JSONDecoder()
+    candidates = []
+    for index, character in enumerate(text):
+        if character != "{":
+            continue
+        try:
+            value, _ = decoder.raw_decode(text[index:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, dict) and value.get("schema_version") == "1.0":
+            candidates.append(value)
+    if len(candidates) != 1:
+        raise ValueError("expected exactly one strict control object")
+    return candidates[0]
+
+
 def wait_for_message(client: object, space_id: str, conversation_id: str, message_id: str, timeout_seconds: int) -> object:
     """Poll Genie explicitly so the benchmark owns the deadline."""
     deadline = time.monotonic() + timeout_seconds
@@ -194,10 +212,11 @@ def live_run(corpus: dict) -> dict:
                     # Genie query attachments commonly return the same strict
                     # object without Markdown fencing. Accept that transport
                     # representation, but still run the identical validator.
-                    decoded = json.loads(text.strip())
-                    if not isinstance(decoded, dict):
-                        raise
-                    payload = decoded
+                    try:
+                        decoded = json.loads(text.strip())
+                        payload = decoded if isinstance(decoded, dict) else extract_unfenced_control(text)
+                    except json.JSONDecodeError:
+                        payload = extract_unfenced_control(text)
                 validated = validate_control_response(payload, active_case_id="CASE_0042", allowed_experiments=allowed, instrument_for_experiment=lambda experiment: instruments[experiment])
                 record["selected_experiment"] = validated.selected_experiment.id if validated.selected_experiment else None
                 record["instrument"] = validated.instrument.id.value if validated.instrument else None

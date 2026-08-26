@@ -1,8 +1,8 @@
 {
   "status": "PASS",
-  "space_id": "01f1a11f6c281e79bd1e0c448055fbdd",
-  "profile": "mdl-new",
-  "genie_live_config_sha256": "ad8418446a24e0d1e17768ff981141027f75f9cfea4c183b030e17e6bedd8fef",
+  "space_id": "01f19eb4ac691d2c88e7b18a6da39b3b",
+  "profile": "sda",
+  "genie_live_config_sha256": "227be7e445be89903ef40c2777bbee4bd66ae8739442ca42200dac43118cb3c2",
   "serialized_space": {
     "version": 2,
     "config": {
@@ -30,49 +30,49 @@
     "data_sources": {
       "tables": [
         {
-          "identifier": "workspace.mad_data_lab_curated.component_evidence",
+          "identifier": "sda_dev.mad_data_lab_curated.component_evidence",
           "description": [
             "Curated component movements that reconcile the metric deviation."
           ]
         },
         {
-          "identifier": "workspace.mad_data_lab_curated.lineage_evidence",
+          "identifier": "sda_dev.mad_data_lab_curated.lineage_evidence",
           "description": [
             "Curated technical and value lineage evidence."
           ]
         },
         {
-          "identifier": "workspace.mad_data_lab_curated.population_evidence",
+          "identifier": "sda_dev.mad_data_lab_curated.population_evidence",
           "description": [
             "Curated population-level evidence and source-record counts."
           ]
         },
         {
-          "identifier": "workspace.mad_data_lab_curated.quality_evidence",
+          "identifier": "sda_dev.mad_data_lab_curated.quality_evidence",
           "description": [
             "Curated quality signals assessed for overlapping materiality."
           ]
         },
         {
-          "identifier": "workspace.mad_data_lab_curated.semantic_evidence",
+          "identifier": "sda_dev.mad_data_lab_curated.semantic_evidence",
           "description": [
             "Curated formula and semantic-change evidence."
           ]
         },
         {
-          "identifier": "workspace.mad_data_lab_curated.snapshot_evidence",
+          "identifier": "sda_dev.mad_data_lab_curated.snapshot_evidence",
           "description": [
             "Curated source snapshot differences for Case #042."
           ]
         },
         {
-          "identifier": "workspace.mad_data_lab_public.case_definition",
+          "identifier": "sda_dev.mad_data_lab_public.case_definition",
           "description": [
             "Canonical public Case #042 definition and observed deviation."
           ]
         },
         {
-          "identifier": "workspace.mad_data_lab_public.datapoint_result",
+          "identifier": "sda_dev.mad_data_lab_public.datapoint_result",
           "description": [
             "Canonical public metric results, formula identity, and population hashes."
           ]
@@ -84,7 +84,7 @@
         {
           "id": "a0420000000000000000000000000011",
           "content": [
-            "MAD DATA LAB Genie: use active Case curated evidence and server-allowed experiments only. Never use CASE_TRUTH, private/raw tables, arbitrary SQL, code, UI, hidden reasoning, or invented facts. Return exactly one JSON object, no prose or fences, with schema_version \"1.0\", case_id, hypotheses (H1/H2/H3), selected_experiment {id,question,target_component}, instrument {id,title}, observation, next_action, scientist_line. IDs allowed: COMPONENT_DECOMPOSITION, SNAPSHOT_DIFF, DQ_MATERIALITY, FORMULA_VALIDATION, RECONCILIATION; instruments: WATERFALL, SNAPSHOT_DIFF, DQ_PANEL, FORMULA_CHECK, RECONCILIATION. Never use EXP_ or INSTR_ IDs."
+            "MAD DATA LAB Genie: use active Case curated evidence and server-allowed experiments only. Never use CASE_TRUTH, private/raw tables, arbitrary SQL, code, UI, hidden reasoning, or invented facts. Machine control is exactly one JSON object with schema_version \"1.0\"; never prose or multiple objects. Use CONFIRMED, SUPPORTED, POSSIBLE, or RULED_OUT only when justified by evidence. Normal chat is escaped prose and cannot mutate state. Do not conclude before authorized evidence."
           ]
         }
       ],
@@ -95,7 +95,7 @@
             "Which component explains most of the deviation?"
           ],
           "sql": [
-            "SELECT * FROM workspace.mad_data_lab_curated.component_evidence WHERE case_id = 'CASE_0042' ORDER BY abs_contribution_rank;"
+            "SELECT * FROM sda_dev.mad_data_lab_curated.component_evidence WHERE case_id = 'CASE_0042' ORDER BY abs_contribution_rank;"
           ]
         },
         {
@@ -104,7 +104,7 @@
             "What changed in V2 between snapshots?"
           ],
           "sql": [
-            "SELECT * FROM workspace.mad_data_lab_curated.snapshot_evidence WHERE case_id = 'CASE_0042' ORDER BY component, change_type;"
+            "SELECT * FROM sda_dev.mad_data_lab_curated.snapshot_evidence WHERE case_id = 'CASE_0042' ORDER BY component, change_type;"
           ]
         },
         {
@@ -113,7 +113,7 @@
             "Did the formula change?"
           ],
           "sql": [
-            "SELECT * FROM workspace.mad_data_lab_curated.semantic_evidence WHERE case_id = 'CASE_0042' AND semantic_type = 'FORMULA';"
+            "SELECT * FROM sda_dev.mad_data_lab_curated.semantic_evidence WHERE case_id = 'CASE_0042' AND semantic_type = 'FORMULA';"
           ]
         }
       ]
@@ -129,7 +129,7 @@
             {
               "format": "SQL",
               "content": [
-                "SELECT previous_id, current_id, previous_hash, current_hash FROM workspace.mad_data_lab_curated.semantic_evidence WHERE case_id = 'CASE_0042' AND semantic_type = 'FORMULA';"
+                "SELECT previous_id, current_id, previous_hash, current_hash FROM sda_dev.mad_data_lab_curated.semantic_evidence WHERE case_id = 'CASE_0042' AND semantic_type = 'FORMULA';"
               ]
             }
           ]
@@ -143,7 +143,7 @@
             {
               "format": "SQL",
               "content": [
-                "SELECT component, change_type, record_count, net_impact FROM workspace.mad_data_lab_curated.snapshot_evidence WHERE case_id = 'CASE_0042' ORDER BY component, change_type;"
+                "SELECT component, change_type, record_count, net_impact FROM sda_dev.mad_data_lab_curated.snapshot_evidence WHERE case_id = 'CASE_0042' ORDER BY component, change_type;"
               ]
             }
           ]
@@ -157,7 +157,7 @@
             {
               "format": "SQL",
               "content": [
-                "SELECT component, contribution_delta, share_of_abs_deviation FROM workspace.mad_data_lab_curated.component_evidence WHERE case_id = 'CASE_0042' ORDER BY abs_contribution_rank LIMIT 1;"
+                "SELECT component, contribution_delta, share_of_abs_deviation FROM sda_dev.mad_data_lab_curated.component_evidence WHERE case_id = 'CASE_0042' ORDER BY abs_contribution_rank LIMIT 1;"
               ]
             }
           ]

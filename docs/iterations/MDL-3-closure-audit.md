@@ -12,7 +12,7 @@ Generated: 2026-08-26
 |---|---|---|
 | Strict MDL-3 contract gate | 29/29 checks pass against current runtime digest, including art preflight and production derivatives | PASS |
 | Local Python suite | 152 passed, 1 warning | PASS |
-| Genie configuration read-back | Authenticated export captured; digest `ad8418446a24e0d1e17768ff981141027f75f9cfea4c183b030e17e6bedd8fef` | PASS |
+| Genie configuration read-back | Authenticated export captured from the current `sda` workspace; digest `227be7e445be89903ef40c2777bbee4bd66ae8739442ca42200dac43118cb3c2` | PASS |
 | Deployment | Databricks deployment `01f1a13e70ea15119a15e59c93c04fad` succeeded | PASS, identity reconciliation required |
 | Deployed smoke | PASS | PASS |
 | Deployed soak | 10/10 PASS | PASS |
