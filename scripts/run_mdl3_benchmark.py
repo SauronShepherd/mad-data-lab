@@ -188,7 +188,16 @@ def live_run(corpus: dict) -> dict:
             record["response_preview"] = text[:500]
             if item["turn_type"] in {"fresh-control", "fresh-2-turn"}:
                 from backend.genie.protocol import extract_control_object
-                payload = extract_control_object(text)
+                try:
+                    payload = extract_control_object(text)
+                except ValueError:
+                    # Genie query attachments commonly return the same strict
+                    # object without Markdown fencing. Accept that transport
+                    # representation, but still run the identical validator.
+                    decoded = json.loads(text.strip())
+                    if not isinstance(decoded, dict):
+                        raise
+                    payload = decoded
                 validated = validate_control_response(payload, active_case_id="CASE_0042", allowed_experiments=allowed, instrument_for_experiment=lambda experiment: instruments[experiment])
                 record["selected_experiment"] = validated.selected_experiment.id if validated.selected_experiment else None
                 record["instrument"] = validated.instrument.id.value if validated.instrument else None
