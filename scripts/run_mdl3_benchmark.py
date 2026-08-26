@@ -43,12 +43,33 @@ def current_evidence_identity() -> dict[str, str]:
     }
 
 
-def response_text(response: object) -> str:
+def response_text(response: object, client: object | None = None, space_id: str | None = None) -> str:
     parts = [getattr(response, "content", "") or ""]
     for attachment in getattr(response, "attachments", []) or []:
         text = getattr(getattr(attachment, "text", None), "content", None)
         if text:
             parts.append(text)
+        query = getattr(getattr(attachment, "query", None), "query", None)
+        if query:
+            parts.append(query)
+            if client is not None and space_id and getattr(attachment, "attachment_id", None):
+                call_with_timeout(lambda: client.genie.execute_message_attachment_query(
+                    space_id=space_id,
+                    conversation_id=str(getattr(response, "conversation_id")),
+                    message_id=str(getattr(response, "message_id")),
+                    attachment_id=attachment.attachment_id,
+                ), 30)
+                result = call_with_timeout(lambda: client.genie.get_message_attachment_query_result(
+                    space_id=space_id,
+                    conversation_id=str(getattr(response, "conversation_id")),
+                    message_id=str(getattr(response, "message_id")),
+                    attachment_id=attachment.attachment_id,
+                ), 30)
+                statement = getattr(result, "statement_response", None)
+                rows = getattr(getattr(statement, "result", None), "data_array", None) or []
+                for row in rows:
+                    if row:
+                        parts.append(str(row[0]))
     return "\n".join(parts)
 
 
@@ -156,11 +177,11 @@ def live_run(corpus: dict) -> dict:
                 start_prompt = guided_prompt(start_prompt)
             started = start_and_wait(client, space_id, start_prompt, timeout_seconds)
             record["conversation_id"] = str(started.conversation_id)
-            text = response_text(started)
+            text = response_text(started, client, space_id)
             if item["turn_type"] == "fresh-2-turn":
                 second_prompt = guided_prompt(item["prompt"])
                 second = message_and_wait(client, space_id, str(started.conversation_id), second_prompt, timeout_seconds)
-                text = response_text(second)
+                text = response_text(second, client, space_id)
                 record["turns"] = 2
             else:
                 record["turns"] = 1
