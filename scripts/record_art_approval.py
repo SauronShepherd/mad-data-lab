@@ -14,6 +14,13 @@ def _plan(iteration: str) -> dict:
     return json.loads((ROOT / f"assets/review/{iteration}/art-generation-plan.json").read_text(encoding="utf-8"))
 
 
+def _enforce_pixel_art(plan: dict) -> None:
+    constraints = {str(item).lower() for item in plan.get("global_constraints", [])}
+    required = {"pixel art only", "funny comedic pixel-art style"}
+    if not required.issubset(constraints):
+        raise SystemExit("art plan must require funny pixel art for every asset")
+
+
 def _parse_selection(values: list[str]) -> dict[str, str]:
     result: dict[str, str] = {}
     for value in values:
@@ -36,6 +43,7 @@ def main() -> None:
         raise SystemExit("a real human reviewer identity is required")
 
     plan = _plan(args.iteration)
+    _enforce_pixel_art(plan)
     selections = _parse_selection(args.selection)
     slots = {slot["asset_id"]: slot for slot in plan["slots"]}
     if set(selections) != set(slots):

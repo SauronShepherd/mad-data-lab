@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "case_id": "CASE_0042",
+  "source_kind": "serialized_space",
+  "curated_sources": [
+    {"identifier": "${CATALOG}.${SCHEMA}_curated.component_evidence", "description": "Curated component movements that reconcile the metric deviation."},
+    {"identifier": "${CATALOG}.${SCHEMA}_curated.lineage_evidence", "description": "Curated technical and value lineage evidence."},
+    {"identifier": "${CATALOG}.${SCHEMA}_curated.population_evidence", "description": "Curated population-level evidence and source-record counts."},
+    {"identifier": "${CATALOG}.${SCHEMA}_curated.quality_evidence", "description": "Curated quality signals assessed for overlapping materiality."},
+    {"identifier": "${CATALOG}.${SCHEMA}_curated.semantic_evidence", "description": "Curated formula and semantic-change evidence."},
+    {"identifier": "${CATALOG}.${SCHEMA}_curated.snapshot_evidence", "description": "Curated source snapshot differences for Case #042."}
+  ],
+  "forbidden_sources": ["case_truth", "raw", "private", "source_snapshot"],
+  "sort_key": "identifier"
+}

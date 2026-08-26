@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          python -m pytest -q --maxfail=1 > pytest-report.txt 2>&1
+          python scripts/pytest_gate.py --maxfail=1 > pytest-report.txt 2>&1
           status=$?
           if [ "$status" -ne 0 ]; then
             detail=$(tail -c 8000 pytest-report.txt | tr '\n' ' ' | tr '\r' ' ')
@@ -37,6 +37,8 @@ jobs:
       - run: python scripts/production_architecture_gate.py
       - run: python scripts/run_iteration_gate.py
       - run: python scripts/validate_mdl2_contract.py
+      - run: python scripts/validate_mdl3_contract.py --strict
+      - run: python scripts/run_mdl3_benchmark.py
       - name: Upload local contract evidence
         if: always()
         uses: actions/upload-artifact@v4

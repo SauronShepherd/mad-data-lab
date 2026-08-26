@@ -1,0 +1,10 @@
+{
+  "registry_version": 2,
+  "experiments": [
+    {"id": "COMPONENT_DECOMPOSITION", "instrument": "WATERFALL", "query_id": "component_evidence", "requires_target": false, "row_cap": 50},
+    {"id": "SNAPSHOT_DIFF", "instrument": "SNAPSHOT_DIFF", "query_id": "snapshot_evidence", "requires_target": true, "row_cap": 50},
+    {"id": "DQ_MATERIALITY", "instrument": "DQ_PANEL", "query_id": "quality_evidence", "requires_target": false, "row_cap": 20},
+    {"id": "FORMULA_VALIDATION", "instrument": "FORMULA_CHECK", "query_id": "semantic_evidence", "requires_target": false, "row_cap": 20},
+    {"id": "RECONCILIATION", "instrument": "RECONCILIATION", "query_id": "case_summary", "requires_target": false, "row_cap": 20}
+  ]
+}

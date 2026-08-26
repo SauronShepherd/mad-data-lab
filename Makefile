@@ -1,4 +1,4 @@
-.PHONY: setup lint typecheck test-unit test-data test-contract test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-secondary-soak test-chaos test-web test-sql test-genie-live deploy-staging smoke-staging soak deployed-soak release-report release-gate audit-contract docker-build docker-smoke
+.PHONY: setup lint typecheck test-unit test-data test-contract test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-secondary-soak test-chaos test-web test-sql test-genie-live test-genie-contract test-genie-benchmark validate-live-evidence deploy-staging smoke-staging soak deployed-soak release-report release-gate audit-contract docker-build docker-smoke
 
 setup:
 	python -m pip install -e ".[dev]"
@@ -10,7 +10,7 @@ typecheck:
 	python -m mypy server --ignore-missing-imports --follow-imports=skip --no-site-packages
 
 test-unit:
-	python -m pytest -q
+	python scripts/pytest_gate.py -q
 
 test-data:
 	python -m pytest -q tests/test_domain.py tests/test_mutation.py
@@ -55,6 +55,17 @@ test-sql:
 test-genie-live:
 	python scripts/live_genie_check.py
 
+test-genie-contract:
+	python scripts/validate_mdl3_contract.py --strict
+
+test-genie-benchmark:
+	python scripts/run_mdl3_benchmark.py
+
+validate-live-evidence:
+	@test -n "$(LIVE_EVIDENCE)" || (echo "LIVE_EVIDENCE is required" && exit 1)
+	@test -n "$(IMPLEMENTATION_SHA)" || (echo "IMPLEMENTATION_SHA is required" && exit 1)
+	python scripts/validate_mdl3_evidence.py "$(LIVE_EVIDENCE)" --implementation-sha "$(IMPLEMENTATION_SHA)" --genie-contract-digest "$(GENIE_CONTRACT_DIGEST)" --genie-live-config-sha256 "$(GENIE_LIVE_CONFIG_SHA256)" --mdl2-data-contract-digest "$(MDL2_DATA_CONTRACT_DIGEST)" --case-hash "$(CASE_HASH)"
+
 release-report:
 	python scripts/release_gate.py
 
@@ -74,7 +85,7 @@ soak: deployed-soak
 test-web:
 	python scripts/local_web_smoke.py
 
-release-gate: lint typecheck test-unit test-data test-contract build test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-chaos
+release-gate: lint typecheck test-unit test-data test-contract build test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-chaos test-genie-contract test-genie-benchmark
 
 audit-contract:
 	python scripts/validate_mdl2_contract.py --strict

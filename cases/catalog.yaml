@@ -1,0 +1,31 @@
+version: 1
+brand: MAD DATA LAB
+track: Track B - Creative Thinking
+cases:
+  - id: CASE_0042
+    number: 42
+    title: The Missing €6.8M
+    metric: Capital Available
+    state: CORE
+    playable: true
+    expected: 125.0
+    observed: 118.2
+    deviation: -6.8
+    hypotheses: [H1, H2, H3]
+    required_experiments:
+      - COMPONENT_DECOMPOSITION
+      - SNAPSHOT_DIFF
+      - DQ_MATERIALITY
+      - FORMULA_VALIDATION
+      - RECONCILIATION
+  - id: CASE_0107
+    number: 107
+    title: Attack of the Clones
+    metric: Net Revenue
+    state: COMING_SOON
+    playable: false
+    expected: 42.0
+    observed: 43.8
+    deviation: 1.8
+    hypotheses: [H1, H2, H3]
+    required_experiments: [ROW_COUNT_ANALYSIS, DUPLICATE_KEY_ANALYSIS, PIPELINE_RUN_COMPARISON, RECONCILIATION]

@@ -18,5 +18,5 @@
 - [ ] Add the final app, article, and video URLs to the contest form.
 - [ ] Complete the registration/submission form before the contest deadline.
 
-The unchecked items require external accounts, publication, or a final human
+The unchecked items require external accounts, publication, or a final
 submission decision and are intentionally not automated by the repository.

@@ -1,14 +1,4 @@
 {
-  "status": "PASS",
-  "command": [
-    "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
-    "scripts/live_genie_check.py"
-  ],
-  "output": "live Genie gate: PASS (analytical benchmark and injection refusal)\n",
-  "source_identity": {
-    "git_head": "617f9d07b29a4315ef4aaa2a185ef801f646acff",
-    "runtime_digest": "103d4602e75b9de0eb1c10438d941081dcee8aae04f2f564f2c4bb9da55fd371",
-    "data_contract_digest": "ec669e9e6ff8d443bc7fbd3171fcf6c1ec693f18e575fa1ffafb464ca8ace7c7"
-  },
-  "generated_at_utc": "2026-08-25T09:27:41.560574+00:00"
+  "status": "NOT_RUN",
+  "reason": "requires authenticated live Genie"
 }

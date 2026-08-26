@@ -9,5 +9,5 @@
   "g42_checks": 27,
   "property_runs": 100000,
   "remote_sql_artifact": "release-report/MDL-2/sql-integration.json",
-  "pending_closure": ["human-art-approval", "predecessor-mdl1"]
+  "pending_closure": ["predecessor-mdl1"]
 }

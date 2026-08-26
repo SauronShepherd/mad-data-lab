@@ -7,6 +7,7 @@ from __future__ import annotations
 import argparse, json, os, time, sys
 from decimal import Decimal
 from pathlib import Path
+from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from backend.data.sql_client import connect_from_env, execute_native, validate_case_id, SqlAdapterError
 from backend.data.queries import QUERIES
@@ -22,8 +23,8 @@ class SdkCursor:
     def __init__(self, client, warehouse_id: str):
         self.client = client
         self.warehouse_id = warehouse_id
-        self.rows = []
-        self.description = []
+        self.rows: list[tuple[Any, ...]] = []
+        self.description: list[Any] = []
 
     def execute(self, sql: str, params=()):
         # Statement Execution currently exposes named parameters, while the

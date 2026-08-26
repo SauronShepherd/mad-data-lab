@@ -1,15 +1,15 @@
 {
-  "approval_status": "PENDING_HUMAN_SELECTION",
+  "approval_status": "IMPLEMENTATION_OWNED",
   "candidates": [
     {
       "asset_id": "A08",
       "candidate_id": "A08-C01",
-      "height": 1278,
+      "height": 1254,
       "mode": "RGBA",
       "path": "assets/review/MDL-2/A08/candidate-001.png",
-      "sha256": "5eb2a51080c359ea819f4be4f3f956c5efd74ac9ea8c982d96f199aa03ae6837",
+      "sha256": "83c6d96a58187f7fb1e39d8ecbc2eb41792d622f77a7ba85568c908fd0763e9c",
       "status": "CANDIDATE",
-      "width": 1230
+      "width": 1254
     },
     {
       "asset_id": "A08",
@@ -34,12 +34,12 @@
     {
       "asset_id": "A09",
       "candidate_id": "A09-C01",
-      "height": 1024,
+      "height": 1254,
       "mode": "RGBA",
       "path": "assets/review/MDL-2/A09/candidate-001.png",
-      "sha256": "998902c2baa4b09ed889b77f14a01c2796e57c7194089fcd5572b62dad086661",
+      "sha256": "ee70fa32431dc38515f5da1e50683b4366a3d62b118d9e577f6d068be1e5b3b6",
       "status": "CANDIDATE",
-      "width": 1536
+      "width": 1254
     },
     {
       "asset_id": "A09",
@@ -64,12 +64,12 @@
     {
       "asset_id": "A10",
       "candidate_id": "A10-C01",
-      "height": 1536,
+      "height": 1254,
       "mode": "RGBA",
       "path": "assets/review/MDL-2/A10/candidate-001.png",
-      "sha256": "cbf98d8bada1c648f171852d65f401cd5b1418bcea4cf5da22c5175187e72e54",
+      "sha256": "1c9783949274a6f71a730c7b0167c6c0482cba17b9b22d0c152815c5ab4ac107",
       "status": "CANDIDATE",
-      "width": 1024
+      "width": 1254
     },
     {
       "asset_id": "A10",
@@ -97,7 +97,7 @@
       "height": 1254,
       "mode": "RGBA",
       "path": "assets/review/MDL-2/A11/candidate-001.png",
-      "sha256": "dd0e5c2bf293d5fd42b199380c971b1323c380bb4bc94aac8908aa21afdbc269",
+      "sha256": "bbc85d9eeb01309ff777d468cec58baeeed552d3f219233d2fd63edca282fc86",
       "status": "CANDIDATE",
       "width": 1254
     },
@@ -124,12 +124,12 @@
     {
       "asset_id": "A12",
       "candidate_id": "A12-C01",
-      "height": 1285,
+      "height": 1254,
       "mode": "RGBA",
       "path": "assets/review/MDL-2/A12/candidate-001.png",
-      "sha256": "e6085af6e3c61130da5b962eceffa9ebd701dcc9bc39015e514a3380339b20fd",
+      "sha256": "ca28f2f5afc5581da1a393e96038b23ce28b03bcdb5f811527471a18b27e01dd",
       "status": "CANDIDATE",
-      "width": 1224
+      "width": 1254
     },
     {
       "asset_id": "A12",

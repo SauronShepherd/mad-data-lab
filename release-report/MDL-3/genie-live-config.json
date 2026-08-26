@@ -1,0 +1,168 @@
+{
+  "status": "PASS",
+  "space_id": "01f1a11f6c281e79bd1e0c448055fbdd",
+  "profile": "mdl-new",
+  "genie_live_config_sha256": "ad8418446a24e0d1e17768ff981141027f75f9cfea4c183b030e17e6bedd8fef",
+  "serialized_space": {
+    "version": 2,
+    "config": {
+      "sample_questions": [
+        {
+          "id": "a0420000000000000000000000000001",
+          "question": [
+            "Why is Capital Available \u20ac6.8M below expectation?"
+          ]
+        },
+        {
+          "id": "a0420000000000000000000000000002",
+          "question": [
+            "Which component explains most of the deviation?"
+          ]
+        },
+        {
+          "id": "a0420000000000000000000000000003",
+          "question": [
+            "Which V2 records changed between snapshots?"
+          ]
+        }
+      ]
+    },
+    "data_sources": {
+      "tables": [
+        {
+          "identifier": "workspace.mad_data_lab_curated.component_evidence",
+          "description": [
+            "Curated component movements that reconcile the metric deviation."
+          ]
+        },
+        {
+          "identifier": "workspace.mad_data_lab_curated.lineage_evidence",
+          "description": [
+            "Curated technical and value lineage evidence."
+          ]
+        },
+        {
+          "identifier": "workspace.mad_data_lab_curated.population_evidence",
+          "description": [
+            "Curated population-level evidence and source-record counts."
+          ]
+        },
+        {
+          "identifier": "workspace.mad_data_lab_curated.quality_evidence",
+          "description": [
+            "Curated quality signals assessed for overlapping materiality."
+          ]
+        },
+        {
+          "identifier": "workspace.mad_data_lab_curated.semantic_evidence",
+          "description": [
+            "Curated formula and semantic-change evidence."
+          ]
+        },
+        {
+          "identifier": "workspace.mad_data_lab_curated.snapshot_evidence",
+          "description": [
+            "Curated source snapshot differences for Case #042."
+          ]
+        },
+        {
+          "identifier": "workspace.mad_data_lab_public.case_definition",
+          "description": [
+            "Canonical public Case #042 definition and observed deviation."
+          ]
+        },
+        {
+          "identifier": "workspace.mad_data_lab_public.datapoint_result",
+          "description": [
+            "Canonical public metric results, formula identity, and population hashes."
+          ]
+        }
+      ]
+    },
+    "instructions": {
+      "text_instructions": [
+        {
+          "id": "a0420000000000000000000000000011",
+          "content": [
+            "MAD DATA LAB Genie: use active Case curated evidence and server-allowed experiments only. Never use CASE_TRUTH, private/raw tables, arbitrary SQL, code, UI, hidden reasoning, or invented facts. Return exactly one JSON object, no prose or fences, with schema_version \"1.0\", case_id, hypotheses (H1/H2/H3), selected_experiment {id,question,target_component}, instrument {id,title}, observation, next_action, scientist_line. IDs allowed: COMPONENT_DECOMPOSITION, SNAPSHOT_DIFF, DQ_MATERIALITY, FORMULA_VALIDATION, RECONCILIATION; instruments: WATERFALL, SNAPSHOT_DIFF, DQ_PANEL, FORMULA_CHECK, RECONCILIATION. Never use EXP_ or INSTR_ IDs."
+          ]
+        }
+      ],
+      "example_question_sqls": [
+        {
+          "id": "a0420000000000000000000000000021",
+          "question": [
+            "Which component explains most of the deviation?"
+          ],
+          "sql": [
+            "SELECT * FROM workspace.mad_data_lab_curated.component_evidence WHERE case_id = 'CASE_0042' ORDER BY abs_contribution_rank;"
+          ]
+        },
+        {
+          "id": "a0420000000000000000000000000022",
+          "question": [
+            "What changed in V2 between snapshots?"
+          ],
+          "sql": [
+            "SELECT * FROM workspace.mad_data_lab_curated.snapshot_evidence WHERE case_id = 'CASE_0042' ORDER BY component, change_type;"
+          ]
+        },
+        {
+          "id": "a0420000000000000000000000000023",
+          "question": [
+            "Did the formula change?"
+          ],
+          "sql": [
+            "SELECT * FROM workspace.mad_data_lab_curated.semantic_evidence WHERE case_id = 'CASE_0042' AND semantic_type = 'FORMULA';"
+          ]
+        }
+      ]
+    },
+    "benchmarks": {
+      "questions": [
+        {
+          "id": "a0420000000000000000000000000033",
+          "question": [
+            "Did the capital available formula change?"
+          ],
+          "answer": [
+            {
+              "format": "SQL",
+              "content": [
+                "SELECT previous_id, current_id, previous_hash, current_hash FROM workspace.mad_data_lab_curated.semantic_evidence WHERE case_id = 'CASE_0042' AND semantic_type = 'FORMULA';"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "a0420000000000000000000000000032",
+          "question": [
+            "How many V2 records changed and what was their net impact?"
+          ],
+          "answer": [
+            {
+              "format": "SQL",
+              "content": [
+                "SELECT component, change_type, record_count, net_impact FROM workspace.mad_data_lab_curated.snapshot_evidence WHERE case_id = 'CASE_0042' ORDER BY component, change_type;"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "a0420000000000000000000000000031",
+          "question": [
+            "Which component explains most of the \u20ac6.8M loss?"
+          ],
+          "answer": [
+            {
+              "format": "SQL",
+              "content": [
+                "SELECT component, contribution_delta, share_of_abs_deviation FROM workspace.mad_data_lab_curated.component_evidence WHERE case_id = 'CASE_0042' ORDER BY abs_contribution_rank LIMIT 1;"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

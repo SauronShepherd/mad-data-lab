@@ -1,0 +1,314 @@
+{
+  "status": "FAIL",
+  "batch_id": "mdl3-accepted-baseline",
+  "mode": "live",
+  "started_at_utc": "AUTHENTICATED",
+  "genie_contract_digest": "8e78b74e39bd9cd4936a2cc5b8b950cc3ebecee9b0a94890313b0277dc1ab9aa",
+  "attempts": [
+    {
+      "benchmark_id": "OBS-01",
+      "phrasing_id": "observation-baseline",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "observation",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d315c1ac58e0ca4f7303a1679"
+    },
+    {
+      "benchmark_id": "OBS-02",
+      "phrasing_id": "observation-baseline",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "observation",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d347b153985935ee16582da71"
+    },
+    {
+      "benchmark_id": "OBS-03",
+      "phrasing_id": "observation-baseline",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "observation",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d379c14aeb232f69945932b05"
+    },
+    {
+      "benchmark_id": "CMP-01",
+      "phrasing_id": "component-driver",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "component",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d3abb1bc0bcea054b70613cd5"
+    },
+    {
+      "benchmark_id": "CMP-02",
+      "phrasing_id": "component-decomposition",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "component",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d3ddc111a9ad5ed67ca9132da"
+    },
+    {
+      "benchmark_id": "CMP-03",
+      "phrasing_id": "component-ranking",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "component",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d40fb143bb543def7935e5b57"
+    },
+    {
+      "benchmark_id": "SNP-01",
+      "phrasing_id": "snapshot-change",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "snapshot",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d441c150fb474093efca460b7"
+    },
+    {
+      "benchmark_id": "SNP-02",
+      "phrasing_id": "snapshot-reconcile",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "snapshot",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d473b17b9be5318e73690b85d"
+    },
+    {
+      "benchmark_id": "SNP-03",
+      "phrasing_id": "snapshot-component-link",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "snapshot",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d4a6e113a98133d214bd4f665"
+    },
+    {
+      "benchmark_id": "DQ-01",
+      "phrasing_id": "dq-identify",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "dq",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d4d8d1890bd7e6dd4a6bd7298"
+    },
+    {
+      "benchmark_id": "DQ-02",
+      "phrasing_id": "dq-materiality",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "dq",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d50b117e480988045656a45ce"
+    },
+    {
+      "benchmark_id": "DQ-03",
+      "phrasing_id": "dq-overlap",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "dq",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d53d212fb91bc7287375cc48b"
+    },
+    {
+      "benchmark_id": "FOR-01",
+      "phrasing_id": "formula-change",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "formula",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d56f11d368a65215d53ad10ad"
+    },
+    {
+      "benchmark_id": "FOR-02",
+      "phrasing_id": "formula-identifiers",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "formula",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d5a151aeea121184115c9dfc1"
+    },
+    {
+      "benchmark_id": "FOR-03",
+      "phrasing_id": "formula-cause",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "formula",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d5d361dda93dcd4276c64258b"
+    },
+    {
+      "benchmark_id": "LIN-01",
+      "phrasing_id": "lineage-path",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "lineage",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d605517dfb7fe88ac6cf2b6b5"
+    },
+    {
+      "benchmark_id": "LIN-02",
+      "phrasing_id": "lineage-origin",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "lineage",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d63751628895263fa53dbb7f4"
+    },
+    {
+      "benchmark_id": "GSTART-01",
+      "phrasing_id": "start-canonical",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "guided-start",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d66931b93aabfbe66ccbeaed0"
+    },
+    {
+      "benchmark_id": "GSTART-02",
+      "phrasing_id": "start-information-gain",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "guided-start",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d69b410fc94cf48986489a745"
+    },
+    {
+      "benchmark_id": "GSTART-03",
+      "phrasing_id": "start-competing-hypotheses",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "guided-start",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d6cd312f4a75d012dd61e7644"
+    },
+    {
+      "benchmark_id": "GSTART-04",
+      "phrasing_id": "start-uncertainty",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "guided-start",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d6ff811048395674d5cc46dd6"
+    },
+    {
+      "benchmark_id": "GSTART-05",
+      "phrasing_id": "start-allowlist",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "guided-start",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d731c1cce95899ecf80d3c4d2"
+    },
+    {
+      "benchmark_id": "GNEXT-01",
+      "phrasing_id": "next-canonical",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "guided-next",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d763d1ccbb5bad5c1ea35f691"
+    },
+    {
+      "benchmark_id": "GNEXT-02",
+      "phrasing_id": "next-signed-table",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "guided-next",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d795e1a4d844d483420dc7fbd"
+    },
+    {
+      "benchmark_id": "GNEXT-03",
+      "phrasing_id": "next-dominant-signal",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "guided-next",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d7c7f15888b52f87f35e0dca4"
+    },
+    {
+      "benchmark_id": "GNEXT-04",
+      "phrasing_id": "next-unresolved",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "guided-next",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d7f9f1cc0a76a084a8259e620"
+    },
+    {
+      "benchmark_id": "GNEXT-05",
+      "phrasing_id": "next-uncertainty",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "guided-next",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d82bf1d6ca8962af069761b1b"
+    },
+    {
+      "benchmark_id": "SEC-01",
+      "phrasing_id": "security-truth",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "security",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d85df15a89ba8fae488bf2067"
+    },
+    {
+      "benchmark_id": "SEC-02",
+      "phrasing_id": "security-allowlist",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "security",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d88ff1062907137d4234914ca"
+    },
+    {
+      "benchmark_id": "SEC-03",
+      "phrasing_id": "security-scope",
+      "case_id": "CASE_0042",
+      "repair_count": 0,
+      "fallback": false,
+      "criticality": "security",
+      "status": "FAIL",
+      "error": "Genie message timed out after 5s: 01f1a13d8c1e1ac58398cf327e2a0af1"
+    }
+  ],
+  "summary": {
+    "total": 30,
+    "passed": 0,
+    "failed": 30
+  }
+}

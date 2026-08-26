@@ -4,7 +4,7 @@
     {
       "name": "generate",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
         "scripts/generate_cases.py"
       ],
       "status": "PASS",
@@ -13,7 +13,7 @@
     {
       "name": "public-fixtures",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
         "scripts/materialize_public_fixtures.py"
       ],
       "status": "PASS",
@@ -22,7 +22,7 @@
     {
       "name": "data-contract",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
         "scripts/verify_databricks_data.py",
         "--target",
         "local"
@@ -33,7 +33,7 @@
     {
       "name": "property-suite",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
         "scripts/mdl2_property_suite.py"
       ],
       "status": "PASS",
@@ -42,7 +42,7 @@
     {
       "name": "sql-preflight",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
         "scripts/mdl2_sql_preflight.py"
       ],
       "status": "PASS",
@@ -51,7 +51,7 @@
     {
       "name": "traceability",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
         "scripts/validate_traceability.py"
       ],
       "status": "PASS",
@@ -60,11 +60,11 @@
     {
       "name": "contract",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
         "scripts/validate_mdl2_contract.py"
       ],
       "status": "PASS",
-      "output": "{\n  \"status\": \"IN_PROGRESS\",\n  \"checks\": 63,\n  \"failed\": [],\n  \"pending\": [\n    \"human-art-approval\",\n    \"predecessor-mdl1\",\n    \"live-evidence-refresh:genie-eval.json\",\n    \"live-evidence-refresh:deployed-smoke.json\",\n    \"live-evidence-refresh:deployed-soak.json\"\n  ],\n  \"diagnostics\": {\n    \"current_identity\": {\n      \"git_head\": \"4f008bdc76f4f046eaa1e532fe05dd00d2abf9c2\",\n      \"runtime_digest\": \"103d4602e75b9de0eb1c10438d941081dcee8aae04f2f564f2c4bb9da55fd371\",\n      \"data_contract_digest\": \"ec669e9e6ff8d443bc7fbd3171fcf6c1ec693f18e575fa1ffafb464ca8ace7c7\"\n    },\n    \"expected_data_digest\": \"ec669e9e6ff8d443bc7fbd3171fcf6c1ec693f18e575fa1ffafb464ca8ace7c7\",\n    \"recorded_data_digest\": \"ec669e9e6ff8d443bc7fbd3171fcf6c1ec693f18e575fa1ffafb464ca8ace7c7\"\n  }\n}\n"
+      "output": "{\n  \"status\": \"IN_PROGRESS\",\n  \"checks\": 63,\n  \"failed\": [],\n  \"pending\": [\n    \"predecessor-mdl1\",\n    \"live-evidence-refresh:deployed-soak.json\"\n  ],\n  \"diagnostics\": {\n    \"current_identity\": {\n      \"git_head\": \"d7f1568d88dd14d8252877da251aebbbc2f7e890\",\n      \"runtime_digest\": \"6b516e91100ee4cb9c9486be1adc9cfcdc6573afa0466d035751037b13b27019\",\n      \"data_contract_digest\": \"11b6585772fbb7b1e1094a0a4dce7743ce6973496c8399e289d3ddfe6df61eb3\"\n    },\n    \"expected_data_digest\": \"11b6585772fbb7b1e1094a0a4dce7743ce6973496c8399e289d3ddfe6df61eb3\",\n    \"recorded_data_digest\": \"11b6585772fbb7b1e1094a0a4dce7743ce6973496c8399e289d3ddfe6df61eb3\"\n  }\n}\n"
     }
   ]
 }

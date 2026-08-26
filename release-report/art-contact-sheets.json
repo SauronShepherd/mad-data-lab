@@ -8,22 +8,22 @@
       "A01": {
         "candidate_count": 4,
         "path": "assets/review/MDL-1/contact-sheets/A01.png",
-        "sha256": "06186739400cae45bf2104b6c00c6c6ca1619a697868b02bb0f1735f1ba6433f"
+        "sha256": "9e2cddc6178bb441f9c5799f6b684b7be72a68f32fc40302516fc95c16338898"
       },
       "A02": {
         "candidate_count": 6,
         "path": "assets/review/MDL-1/contact-sheets/A02.png",
-        "sha256": "58f1854938cf9621fe53110092c85a0762e897a40c30a2b994f682f0e6c3a836"
+        "sha256": "e829eac891744e095a4d6d45762b38bd90c3f79f50c54c5e8525d967bcf557a7"
       },
       "A21": {
         "candidate_count": 4,
         "path": "assets/review/MDL-1/contact-sheets/A21.png",
-        "sha256": "ed2e63275b17cd4e303817e9fe91d7f22001571f96ce554bea323b188f0dca17"
+        "sha256": "10223f2fa565b51b1d9a0d9c75586c1692f9da9f90e79ac26f3d965cfeef9313"
       },
       "A28": {
         "candidate_count": 4,
         "path": "assets/review/MDL-1/contact-sheets/A28.png",
-        "sha256": "e7a50b3f5406aa54500b90d1ad5b004166f352d9f07aee2e3861cee9fdd4af7f"
+        "sha256": "f01471fa445c68b97b91e257a93f1f23bf2d295457723646f244dae988e42dbd"
       }
     },
     "status": "PASS",
@@ -38,27 +38,27 @@
       "A08": {
         "candidate_count": 3,
         "path": "assets/review/MDL-2/contact-sheets/A08.png",
-        "sha256": "e974400be4e815f8990914208f5bcb31631f21508326f2e44343618dcadb859f"
+        "sha256": "a46b6edb2f05ce02902d01e031805791daf842ac30949ec7b93803571f495208"
       },
       "A09": {
         "candidate_count": 3,
         "path": "assets/review/MDL-2/contact-sheets/A09.png",
-        "sha256": "0e3f3986ffafb2ae264f354749cc5eb381534166d096c82522f2b4ff36150335"
+        "sha256": "ff1e196be32e96d55cb303f75190651e910d96396fd87849e016096ae1444b1c"
       },
       "A10": {
         "candidate_count": 3,
         "path": "assets/review/MDL-2/contact-sheets/A10.png",
-        "sha256": "53db0d700e34da91c9263240305bcaa5751e1d5188bc52f856b4c59d21dd60fe"
+        "sha256": "2c9aec53e010211c5149f70dfb4e0a98a0952d21bb13284b719619a784521e90"
       },
       "A11": {
         "candidate_count": 3,
         "path": "assets/review/MDL-2/contact-sheets/A11.png",
-        "sha256": "3fe753a25f44a8ccd6441c1c18083629c6f74a1dfe3893683489d66b6dd143c5"
+        "sha256": "2f900b98a092c5e5287fde166b1301ce2fd66d6a364fc491ff2aa074f12f80eb"
       },
       "A12": {
         "candidate_count": 3,
         "path": "assets/review/MDL-2/contact-sheets/A12.png",
-        "sha256": "d573284ff79b73c384027cf34e0f8fae276f214971526d07c218a84dd765afa1"
+        "sha256": "4fc1e06856682ff197e9ab20f07b282dd9608fee7c3bc0a5ce1af274188aacab"
       }
     },
     "status": "PASS",

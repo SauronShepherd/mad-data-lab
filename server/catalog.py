@@ -3,6 +3,15 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 import re
 
+from backend.domain.catalog import load_catalog
+
+
+# Validate the canonical public artifact at the runtime boundary.  The legacy
+# Python records below remain a compatibility projection until all secondary
+# cases carry the complete accepted contract.
+CANONICAL_PUBLIC_CATALOG = load_catalog()
+DEFAULT_CASE_ID = next(item["id"] for item in CANONICAL_PUBLIC_CATALOG["cases"] if item["playable"])
+
 
 CASE_CONTRACT_METADATA = {
     "CASE_0042": {
@@ -102,6 +111,21 @@ FULL_CASE_CATALOG = CASE_CATALOG + (
 
 CASE_BY_ID = {case.id: case for case in CASE_CATALOG}
 ALL_CASE_BY_ID = {case.id: case for case in FULL_CASE_CATALOG}
+
+
+def _assert_canonical_projection() -> None:
+    """Fail closed if the runtime compatibility projection drifts from YAML."""
+    canonical = {item["id"]: item for item in CANONICAL_PUBLIC_CATALOG["cases"]}
+    for case_id, item in canonical.items():
+        projected = ALL_CASE_BY_ID.get(case_id)
+        if projected is None:
+            continue
+        for field in ("number", "title", "metric", "state", "expected", "observed", "deviation"):
+            if getattr(projected, field) != item[field]:
+                raise RuntimeError(f"canonical catalog drift for {case_id}: {field}")
+
+
+_assert_canonical_projection()
 
 
 def get_case(case_id: str) -> CaseContract:

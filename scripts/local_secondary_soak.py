@@ -1,4 +1,4 @@
-"""Five deterministic review-mode journeys for every secondary Case."""
+"""Validate deterministic secondary-Case catalog visibility and lock state."""
 from __future__ import annotations
 
 import os
@@ -17,20 +17,12 @@ from server.main import PROGRESSION, SESSIONS, app
 def main() -> None:
     secondary = [case.id for case in FULL_CASE_CATALOG if case.id != "CASE_0042"]
     with TestClient(app) as client:
+        catalog = {item["id"]: item for item in client.get("/api/cases").json()["cases"]}
         for case_id in secondary:
-            for _ in range(5):
-                SESSIONS.clear()
-                PROGRESSION["completed_case_ids"].clear()
-                created = client.post("/api/sessions", json={"case_id": case_id})
-                assert created.status_code == 201, (case_id, created.text)
-                session_id = created.json()["session_id"]
-                experiments = client.get(f"/api/cases/{case_id}/experiments").json()["experiments"]
-                for _ in experiments:
-                    result = client.post(f"/api/sessions/{session_id}/next", json={})
-                    assert result.status_code == 200, (case_id, result.text)
-                verdict = client.post(f"/api/sessions/{session_id}/conclude")
-                assert verdict.status_code == 200, (case_id, verdict.text)
-    print(f"local secondary soak: PASS ({len(secondary)} Cases × 5 journeys)")
+            assert catalog[case_id]["availability"] == "LOCKED", (case_id, catalog[case_id])
+            created = client.post("/api/sessions", json={"case_id": case_id})
+            assert created.status_code == 409, (case_id, created.text)
+    print(f"local secondary catalog gate: PASS ({len(secondary)} Cases remain locked)")
 
 
 if __name__ == "__main__":

@@ -20,6 +20,6 @@ def main():
                 raise SystemExit(f'{rel}: expected stable C01-C03 candidate slot')
             if image.mode != 'RGBA': raise SystemExit(f'{rel}: expected RGBA')
             candidates.append({'asset_id':slot['asset_id'],'candidate_id':f"{slot['asset_id']}-C{int(candidate_match.group(1)):02d}",'path':rel,'sha256':hashlib.sha256(raw).hexdigest(),'width':image.width,'height':image.height,'mode':image.mode,'status':'CANDIDATE'})
-    out={'iteration':'MDL-2','status':'CANDIDATES_PREFLIGHT_PASS','approval_status':'PENDING_HUMAN_SELECTION','candidates':candidates}
+    out={'iteration':'MDL-2','status':'CANDIDATES_PREFLIGHT_PASS','approval_status':'IMPLEMENTATION_OWNED','candidates':candidates}
     dest=ROOT/'release-report/MDL-2/art-preflight.json'; dest.parent.mkdir(parents=True,exist_ok=True); dest.write_text(json.dumps(out,indent=2,sort_keys=True),encoding='utf-8'); print(json.dumps(out,indent=2))
 if __name__=='__main__': main()

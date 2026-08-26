@@ -110,6 +110,10 @@ select {
   border-radius: 50%;
   background: radial-gradient(circle at center, rgba(126, 211, 255, 0.25) 0 5%, transparent 6% 24%, rgba(126, 211, 255, 0.12) 25% 26%, transparent 27% 48%, rgba(255, 187, 92, 0.2) 49% 50%, transparent 51%), conic-gradient(from 20deg, transparent, rgba(126, 211, 255, 0.32), transparent 30%, rgba(255, 187, 92, 0.25), transparent 70%);
   box-shadow: 0 0 48px rgba(126, 211, 255, 0.18), inset 0 0 32px rgba(126, 211, 255, 0.08);
+  background-image: url('/assets/pixelart/lab-mark.png');
+  background-size: cover;
+  background-position: center;
+  image-rendering: pixelated;
 }
 .hero:after {
   content: "";
@@ -255,6 +259,11 @@ h1 {
   min-height: 300px;
   background: radial-gradient(circle at 50% 45%, rgba(126, 211, 255, 0.22) 0 3%, transparent 4% 18%, rgba(126, 211, 255, 0.12) 19% 20%, transparent 21%), repeating-linear-gradient(90deg, transparent 0 54px, rgba(126, 211, 255, 0.08) 55px 56px), repeating-linear-gradient(0deg, transparent 0 54px, rgba(126, 211, 255, 0.08) 55px 56px), linear-gradient(135deg, #101d2d, #071019 65%, #1b1820);
   box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.4);
+  background-image: url('/assets/pixelart/dr-genie.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  image-rendering: pixelated;
 }
 .brief-panel {
   padding: 45px 35px;
@@ -328,6 +337,10 @@ h1 {
   width: 100%;
   height: 100%;
   opacity: 0.48;
+  background-image: url('/assets/pixelart/case-042.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 .overlay {
   position: relative;
@@ -409,7 +422,10 @@ h1 {
   padding-bottom: 15px;
 }
 .genie-avatar {
-  font-size: 43px;
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  image-rendering: pixelated;
 }
 .genie p {
   font-size: 14px;
@@ -460,6 +476,18 @@ h1 {
 .hypothesis b {
   font-size: 10px;
 }
+
+.experiment-rationale {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(129, 221, 255, .35);
+  background: rgba(8, 35, 54, .72);
+}
+
+.experiment-rationale h2 { margin-top: 0; }
+.experiment-rationale dl { display: flex; gap: 1rem; flex-wrap: wrap; margin: .75rem 0 0; }
+.experiment-rationale dt { color: #81ddff; font-size: .7rem; letter-spacing: .08em; }
+.experiment-rationale dd { margin: .15rem 0 0; }
 .open {
   color: #aebbd0;
 }

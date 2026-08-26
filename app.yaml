@@ -6,3 +6,7 @@ env:
     value: "0"
   - name: CHALLENGE_REVIEW_MODE
     value: "0"
+  - name: GENIE_REQUEST_TIMEOUT_SECONDS
+    value: "75"
+  - name: GENIE_POLL_INTERVAL_MS
+    value: "1000"

@@ -7,8 +7,10 @@ from datetime import timedelta
 from typing import Any
 
 from .case_data import CASE042_EXPERIMENTS, EXPERIMENTS_BY_CASE, PLANNED_EXPERIMENTS_BY_CASE
-from .catalog import get_any_case
+from .catalog import DEFAULT_CASE_ID, get_any_case
 from .config import load_settings
+from backend.genie.protocol import validate_control_response
+from backend.genie.query_registry import render_query
 
 
 # The Genie protocol is a runtime contract. Keep it independent from the
@@ -26,9 +28,15 @@ ALLOWED_INSTRUMENTS_BY_EXPERIMENT: dict[str, frozenset[str]] = {
 }
 
 
-def system_prompt(case_id: str = "CASE_0042") -> str:
+def system_prompt(case_id: str = DEFAULT_CASE_ID) -> str:
     case_label = "Case 042" if case_id == "CASE_0042" else case_id
-    return f"Return ONLY JSON with experiment_id, name, instrument, rationale, evidence, hypothesis_updates for the initial {case_label} investigation. Use H1 H2 H3 and a canonical experiment."
+    return (
+        f"For the {case_label} investigation, return exactly one MAD DATA LAB schema_version 1.0 JSON object. "
+        "Use hypotheses with IDs H1, H2, H3 and statuses CONFIRMED, SUPPORTED, POSSIBLE, or RULED_OUT. "
+        "For RUN_EXPERIMENT, include selected_experiment {id, question, target_component} and instrument {id, title}; "
+        "choose only a currently allowed registered Experiment/Instrument and never use hidden truth or arbitrary SQL. "
+        "Include observation, next_action, and a concise scientist_line. Do not return multiple JSON objects."
+    )
 
 
 SYSTEM_PROMPT = system_prompt()
@@ -147,9 +155,11 @@ def normalise_control_response(text: str, expected_experiment_id: str, registere
 
 
 class GenieAdapter:
-    def __init__(self) -> None:
+    def __init__(self, *, clock=time.monotonic, sleeper=time.sleep) -> None:
         self.space_id = load_settings().genie_space_id
         self._client = None
+        self._clock = clock
+        self._sleeper = sleeper
 
     @property
     def enabled(self) -> bool:
@@ -164,9 +174,10 @@ class GenieAdapter:
     def _wait_for_message(self, conversation_id: str, message_id: str) -> Any:
         """Poll Genie without the SDK waiter, which can reject transient FAILED states."""
         workspace = self._workspace()
-        deadline = time.monotonic() + 120
+        settings = load_settings()
+        deadline = self._clock() + settings.genie_request_timeout_seconds
         last = None
-        while time.monotonic() < deadline:
+        while self._clock() < deadline:
             last = workspace.genie.get_message(
                 space_id=self.space_id,
                 conversation_id=conversation_id,
@@ -181,9 +192,11 @@ class GenieAdapter:
             )
             if status.endswith("COMPLETED") or (status.endswith("ASKING_AI") and has_answer):
                 return last
-            # Genie has been observed to report FAILED while transitioning
-            # through context filtering. Keep polling until the deadline.
-            time.sleep(2)
+            if status.endswith("FAILED"):
+                raise RuntimeError("Genie message failed")
+            if status.endswith("CANCELED") or status.endswith("CANCELLED"):
+                raise RuntimeError("Genie message was canceled")
+            self._sleeper(max(0.05, settings.genie_poll_interval_ms / 1000))
         raise TimeoutError(f"Genie message did not complete: {status or last}")
 
     def _control_message(self, response: Any, case_id: str, expected_experiment_id: str) -> dict:
@@ -191,6 +204,46 @@ class GenieAdapter:
         workspace = self._workspace()
         conversation_id = getattr(response, "conversation_id", None)
         message_id = getattr(response, "message_id", None)
+        # V3 protocol responses are validated before any legacy attachment or
+        # compatibility extraction. This makes strict control the live path
+        # while preserving the older fixture-space response shape during
+        # migration.
+        # ``response.content`` is the prompt sent to Genie, not an answer.
+        # It contains the schema marker by design, so inspecting it would
+        # misclassify every live turn as a V3 response and bypass managed
+        # attachment handling.
+        answer_parts: list[str] = []
+        for answer_attachment in getattr(response, "attachments", []) or []:
+            answer_text = getattr(getattr(answer_attachment, "text", None), "content", None)
+            if answer_text:
+                answer_parts.append(str(answer_text))
+            answer_query = getattr(getattr(answer_attachment, "query", None), "query", None)
+            if answer_query:
+                answer_parts.append(str(answer_query))
+        v3_text = "\n".join(answer_parts)
+        if not v3_text:
+            candidate_content = str(getattr(response, "content", "") or "").strip()
+            if candidate_content.startswith("{") or candidate_content.startswith("```json"):
+                v3_text = candidate_content
+        if "schema_version" in v3_text:
+            try:
+                v3 = validate_control_response(
+                    v3_text,
+                    active_case_id=case_id,
+                    allowed_experiments=registered_ids_for_case(case_id),
+                    instrument_for_experiment=lambda experiment: {
+                        "COMPONENT_DECOMPOSITION": {"WATERFALL"},
+                        "SNAPSHOT_DIFF": {"SNAPSHOT_DIFF"},
+                        "DQ_MATERIALITY": {"DQ_PANEL"},
+                        "FORMULA_VALIDATION": {"FORMULA_CHECK"},
+                        "RECONCILIATION": {"RECONCILIATION"},
+                    }.get(experiment, set()),
+                    valid_targets=lambda experiment: {"V1", "V2", "V3", "V4"} if experiment == "SNAPSHOT_DIFF" else set(),
+                    allowed_hypothesis_ids={"H1", "H2", "H3"},
+                )
+                return v3.model_dump(mode="json") | {"message_id": message_id, "conversation_id": conversation_id, "source": "genie"}
+            except (TypeError, ValueError) as exc:
+                raise ValueError(f"invalid V3 Genie control response: {exc}") from exc
         for attachment in getattr(response, "attachments", []) or []:
             if not getattr(attachment, "query", None) or not getattr(attachment, "attachment_id", None):
                 continue
@@ -251,44 +304,23 @@ class GenieAdapter:
                 state = getattr(getattr(statement, "status", None), "state", None)
                 if str(state).endswith("FAILED") or str(state).endswith("CANCELED"):
                     break
-                time.sleep(1)
+                self._sleeper(max(0.05, load_settings().genie_poll_interval_ms / 1000))
         text = _text_from_response(response)
-        # Some App-runtime Genie responses expose the SQL text but omit the
-        # attachment identifier. Execute only the canonical curated query in
-        # that narrow case; arbitrary generated SQL is never accepted.
-        query_start = text.upper().find("SELECT ")
-        query_text = text[query_start:].strip() if query_start >= 0 else ""
-        if query_text.endswith(";"):
-            query_text = query_text[:-1].rstrip()
-        if query_text and "sda_dev.mad_data_lab_curated." in query_text and ";" not in query_text:
-            from databricks.sdk.service.sql import Disposition, Format
-            space = workspace.genie.get_space(self.space_id)
-            statement = workspace.statement_execution.execute_statement(
-                statement=query_text,
-                warehouse_id=space.warehouse_id,
-                disposition=Disposition.INLINE,
-                format=Format.JSON_ARRAY,
-                wait_timeout="30s",
-            )
-            data = getattr(getattr(statement, "result", None), "data_array", None) or []
-            if data and data[0]:
-                try:
-                    return normalise_control_response(str(data[0][0]), expected_experiment_id, registered_ids_for_case(case_id))
-                except ValueError:
-                    pass
+        # Never execute SQL copied from model prose. If the managed attachment
+        # is unavailable, only the server-owned trusted template below may run.
         if expected_experiment_id:
-            view_by_experiment = {
+            query_by_experiment = {
                 "COMPONENT_DECOMPOSITION": ("component_evidence", "component_evidence"),
                 "SNAPSHOT_DIFF": ("snapshot_evidence", "snapshot_evidence"),
                 "DQ_MATERIALITY": ("quality_evidence", "quality_evidence"),
                 "FORMULA_VALIDATION": ("semantic_evidence", "semantic_evidence"),
                 "RECONCILIATION": ("case_summary", "case_summary"),
             }
-            view, instrument = view_by_experiment[expected_experiment_id]
+            query_id, instrument = query_by_experiment[expected_experiment_id]
             from databricks.sdk.service.sql import Disposition, Format
             space = workspace.genie.get_space(self.space_id)
             statement = workspace.statement_execution.execute_statement(
-                statement=f"SELECT * FROM sda_dev.mad_data_lab_curated.{view} WHERE case_id = '{case_id}' LIMIT 100",
+                statement=render_query(query_id, case_id=case_id),
                 warehouse_id=space.warehouse_id,
                 disposition=Disposition.INLINE,
                 format=Format.JSON_ARRAY,
@@ -301,7 +333,7 @@ class GenieAdapter:
                 evidence = [dict(zip(columns, row)) for row in data]
                 return validate_control_payload({
                     "experiment_id": expected_experiment_id,
-                    "name": dict(view_by_experiment)[expected_experiment_id][0].replace("_", " ").title(),
+                    "name": query_id.replace("_", " ").title(),
                     "instrument": instrument,
                     "rationale": "Canonical curated evidence returned for the live-selected experiment.",
                     "evidence": json.dumps(evidence, ensure_ascii=False, default=str)[:1200],
@@ -312,10 +344,11 @@ class GenieAdapter:
         except ValueError as exc:
             raise ValueError(f"Genie answer did not contain a control payload: {text[:1200]}") from exc
 
-    def start(self, case_id: str = "CASE_0042") -> dict:
+    def start(self, case_id: str = DEFAULT_CASE_ID) -> dict:
         registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
         last_error = None
-        for _ in range(3):
+        # One original response plus exactly one protocol repair attempt.
+        for _ in range(2):
             waiter = self._workspace().genie.start_conversation(space_id=self.space_id, content=system_prompt(case_id))
             response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
             try:
@@ -324,7 +357,7 @@ class GenieAdapter:
                 last_error = exc
         raise ValueError("Genie did not produce a valid initial control response after retries") from last_error
 
-    def next(self, conversation_id: str, context: str, case_id: str = "CASE_0042") -> dict:
+    def next(self, conversation_id: str, context: str, case_id: str = DEFAULT_CASE_ID) -> dict:
         completed_ids = set(re.findall(r"[A-Z_]+-?[A-Z0-9_]*", context))
         registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
         expected = next((item.id for item in registered if item.id not in completed_ids), registered[-1].id)
@@ -346,6 +379,6 @@ class GenieAdapter:
             space_id=self.space_id,
             conversation_id=conversation_id,
             content=content[:2000],
-            timeout=timedelta(seconds=120),
+            timeout=timedelta(seconds=load_settings().genie_request_timeout_seconds),
         )
         return _text_from_response(response)

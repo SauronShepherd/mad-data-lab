@@ -7,12 +7,13 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "release-report"
 NPM = "npm.cmd" if os.name == "nt" else "npm"
 
-def source_identity() -> dict:
+def source_identity() -> dict[str, Any]:
     """Bind local evidence to the source tree that produced it."""
     head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
     dirty = bool(subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, capture_output=True, text=True).stdout.strip())
@@ -23,7 +24,7 @@ def source_identity() -> dict:
 GATES = {
     "lint": [sys.executable, "-m", "compileall", "-q", "server", "tests", "scripts"],
     "typecheck": [sys.executable, "-m", "mypy", "server", "--ignore-missing-imports", "--follow-imports=skip", "--no-site-packages"],
-    "unit": [sys.executable, "-m", "pytest", "-q", "--junitxml=release-report/pytest-results.xml"],
+    "unit": [sys.executable, "scripts/pytest_gate.py", "--junitxml=release-report/pytest-results.xml", "-q"],
     "data": [sys.executable, "-m", "pytest", "-q", "tests/test_domain.py", "tests/test_mutation.py"],
     "mdl2_property": [sys.executable, "scripts/mdl2_property_suite.py"],
     "mdl2_data_deploy_local": [sys.executable, "scripts/verify_databricks_data.py", "--target", "local"],
@@ -65,13 +66,22 @@ def main() -> None:
             encoding="utf-8",
         )
     (REPORT / "golden-case.json").write_text(json.dumps({"status": "PASS" if not failed else "FAIL", "source_identity": source_identity(), "gates": results}, indent=2), encoding="utf-8")
-    live_payloads = {
+    live_payloads: dict[str, dict[str, Any]] = {
         "genie-eval.json": {"status": "NOT_RUN", "reason": "requires authenticated live Genie"},
         "deployed-smoke.json": {"status": "NOT_RUN", "reason": "requires authenticated deployed app"},
         "deployed-soak.json": {"status": "NOT_RUN", "reason": "requires authenticated deployed app"},
     }
-    # Never reuse a previous PASS: evidence is valid only for the invocation
-    # that produced it and must be explicitly rerun for live/deployed checks.
+    # Preserve recorded failures for auditability, but never reuse a PASS:
+    # live evidence is valid only for the invocation that produced it.
+    for name in live_payloads:
+        prior = REPORT / name
+        if prior.exists():
+            try:
+                candidate = json.loads(prior.read_text(encoding="utf-8"))
+                if isinstance(candidate, dict) and candidate.get("status") == "FAIL":
+                    live_payloads[name] = candidate
+            except (OSError, json.JSONDecodeError):
+                pass
     if os.getenv("RUN_LIVE_GATES") == "1":
         live_identity = source_identity()
         live_commands = {

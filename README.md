@@ -74,3 +74,26 @@ Submission support artifacts are in `docs/architecture.md`,
 ## Audio assets
 
 The source audio pack contains five music themes, each with A/B variants. The current challenge build bundles the lightweight `mad_data_lab_curiosity.mp3` track and keeps playback muted until the player opts in. The remaining source tracks stay outside the deployment payload until a soundtrack selector is added.
+# MDL-3 local contract and evidence commands
+
+The deterministic local checks for the Genie-at-the-core boundary are:
+
+```text
+python scripts/validate_mdl3_contract.py --strict
+python scripts/run_mdl3_benchmark.py
+python scripts/configure_genie.py --catalog sda_dev --schema mad_data_lab
+```
+
+`run_mdl3_benchmark.py` is a fixture contract check, not live Genie evidence.
+Authenticated evidence must be validated with explicit identities:
+
+```text
+make validate-live-evidence LIVE_EVIDENCE=release-report/MDL-3/live.json \
+  IMPLEMENTATION_SHA=<sha> \
+  GENIE_CONTRACT_DIGEST=<digest> \
+  GENIE_LIVE_CONFIG_SHA256=<digest> \
+  MDL2_DATA_CONTRACT_DIGEST=<digest> \
+  CASE_HASH=<sha256>
+```
+
+The release gate includes the strict contract and fixture benchmark checks.

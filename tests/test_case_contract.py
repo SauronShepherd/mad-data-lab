@@ -1,10 +1,12 @@
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from uuid import UUID
 from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
 from server.main import PROGRESSION, SESSIONS, app
+import server.main as main_module
 from server.genie import normalise_control_response, parse_control_json, registered_ids_for_case, system_prompt
 from server.catalog import CASE_CATALOG, get_case
 
@@ -64,6 +66,43 @@ class Case042ContractTests(unittest.TestCase):
     def test_fixture_payload_preserves_requested_case_id(self):
         response = self.client.post('/api/experiments/next', json={'case_id': 'CASE_0042', 'completed_experiments': []})
         self.assertEqual(response.json()['case_id'], 'CASE_0042')
+
+    def test_invalid_live_reselection_continues_only_remaining_server_experiment(self):
+        completed = ['COMPONENT_DECOMPOSITION', 'SNAPSHOT_DIFF', 'DQ_MATERIALITY', 'FORMULA_VALIDATION']
+        with patch.object(type(main_module.genie), 'enabled', new_callable=unittest.mock.PropertyMock, return_value=True), \
+             patch('server.main.genie.next', side_effect=RuntimeError('invalid Genie response')):
+            response = self.client.post('/api/experiments/next', json={
+                'case_id': 'CASE_0042',
+                'completed_experiments': completed,
+                'conversation_id': 'conversation-1',
+            })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['experiment_id'], 'RECONCILIATION')
+        self.assertEqual(response.json()['source'], 'genie-singleton-continuation')
+
+    def test_invalid_live_reselection_with_multiple_remaining_fails_closed(self):
+        with patch.object(type(main_module.genie), 'enabled', new_callable=unittest.mock.PropertyMock, return_value=True), \
+             patch('server.main.genie.next', side_effect=RuntimeError('invalid Genie response')):
+            response = self.client.post('/api/experiments/next', json={
+                'case_id': 'CASE_0042',
+                'completed_experiments': [],
+                'conversation_id': 'conversation-1',
+            })
+        self.assertEqual(response.status_code, 503)
+
+    def test_failed_genie_start_can_be_retried_without_duplicate_experiment(self):
+        created = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'})
+        self.assertEqual(created.status_code, 201)
+        session_id = created.json()['session_id']
+        # Model the state left by a failed live Genie turn.  A retry must be
+        # admitted; it must not be treated as a completed start.
+        SESSIONS[session_id]['state'] = 'WAITING_FOR_GENIE'
+        with patch('server.main.fixture_mode_enabled', return_value=True):
+            retried = self.client.post(f'/api/sessions/{session_id}/start')
+        self.assertEqual(retried.status_code, 200)
+        self.assertEqual(retried.json()['state'], 'HYPOTHESES_READY')
+        self.assertEqual(SESSIONS[session_id]['completed'], [])
+        self.assertEqual(sum(event['type'] == 'EXPERIMENT' for event in SESSIONS[session_id]['events']), 0)
 
     def test_invalid_case_is_rejected(self):
         response = self.client.post('/api/experiments/next', json={'case_id': 'CASE_9999', 'completed_experiments': []})
@@ -225,6 +264,10 @@ class Case042ContractTests(unittest.TestCase):
         self.assertEqual(next_response.json()['experiment_id'], 'COMPONENT_DECOMPOSITION')
         chat = self.client.post(f'/api/sessions/{session_id}/chat', json={'question': 'What is the strongest signal?'})
         self.assertEqual(chat.status_code, 200)
+        self.assertEqual(self.client.post(f'/api/sessions/{session_id}/chat', json={'question': 'x' * 1001}).status_code, 422)
+        for _ in range(9):
+            self.assertEqual(self.client.post(f'/api/sessions/{session_id}/chat', json={'question': 'bounded'}).status_code, 200)
+        self.assertEqual(self.client.post(f'/api/sessions/{session_id}/chat', json={'question': 'bounded'}).status_code, 429)
 
     def test_completion_records_best_score_and_hints_reduce_score(self):
         session_id = self.new_session()
@@ -291,6 +334,17 @@ class Case042ContractTests(unittest.TestCase):
         second = self.client.post(f'/api/sessions/{session_id}/next', json={'completed_experiments': []})
         self.assertEqual(second.json()['experiment_id'], 'SNAPSHOT_DIFF')
         UUID(session_id)
+
+    def test_concurrent_next_requests_append_only_one_experiment_per_action(self):
+        session_id = self.new_session()
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            responses = list(pool.map(lambda _: self.client.post(f'/api/sessions/{session_id}/next', json={}), range(2)))
+        successful = [response for response in responses if response.status_code == 200]
+        self.assertEqual(len(successful), 2)
+        events = self.client.get(f'/api/sessions/{session_id}').json()['events']
+        experiments = [event for event in events if event['type'] == 'EXPERIMENT']
+        self.assertEqual(len(experiments), 2)
+        self.assertEqual({event['experiment_id'] for event in experiments}, {'COMPONENT_DECOMPOSITION', 'SNAPSHOT_DIFF'})
 
 
 if __name__ == '__main__':

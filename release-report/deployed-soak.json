@@ -1,14 +1,4 @@
 {
-  "status": "PASS",
-  "command": [
-    "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
-    "scripts/deployed_soak.py"
-  ],
-  "output": "deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 1/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 2/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 3/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 4/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 5/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 6/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 7/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 8/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 9/10\ndeployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)\ndeployed soak: completed 10/10\ndeployed soak: PASS (10 authenticated Case #042 journeys)\n",
-  "source_identity": {
-    "git_head": "927ab12d1b05752d118a4571fe21a095a4004e73",
-    "runtime_digest": "ee71ee0ae673dfa2baa97208bf7ae175f558faebbfce9e8482754c2cad1ea7f5",
-    "data_contract_digest": "e7264cff637660f4b7782104dd7bf4f2d7669ec7f6c5dca0dc83e7a45e887987"
-  },
-  "generated_at_utc": "2026-08-25T05:42:42.530155+00:00"
+  "status": "NOT_RUN",
+  "reason": "requires authenticated deployed app"
 }

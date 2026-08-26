@@ -1,0 +1,52 @@
+"""Closed trusted-query registry for validated Genie Experiment selections."""
+from __future__ import annotations
+
+from dataclasses import dataclass
+import re
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[2]
+
+
+@dataclass(frozen=True)
+class TrustedQuery:
+    query_id: str
+    view: str
+    row_cap: int
+    required_case_filter: bool = True
+
+
+TRUSTED_QUERIES = {
+    "component_evidence": TrustedQuery("component_evidence", "component_evidence", 50),
+    "snapshot_evidence": TrustedQuery("snapshot_evidence", "snapshot_evidence", 50),
+    "quality_evidence": TrustedQuery("quality_evidence", "quality_evidence", 20),
+    "semantic_evidence": TrustedQuery("semantic_evidence", "semantic_evidence", 20),
+    "case_summary": TrustedQuery("case_summary", "case_summary", 20),
+}
+
+
+def resolve_query(query_id: str) -> TrustedQuery:
+    try:
+        return TRUSTED_QUERIES[query_id]
+    except KeyError as exc:
+        raise ValueError("query is not trusted") from exc
+
+
+def render_query(query_id: str, *, case_id: str) -> str:
+    query = resolve_query(query_id)
+    if not re.fullmatch(r"CASE_[0-9]{4}", case_id):
+        raise ValueError("invalid Case ID")
+    # The view and query ID come exclusively from the closed registry; the
+    # only interpolated value is a validated Case identifier.
+    return f"SELECT * FROM sda_dev.mad_data_lab_curated.{query.view} WHERE case_id = '{case_id}' LIMIT {query.row_cap}"
+
+
+def validate_result(query_id: str, *, case_id: str, rows: list[dict]) -> list[dict]:
+    query = resolve_query(query_id)
+    if len(rows) > query.row_cap:
+        raise ValueError("trusted query result exceeds row cap")
+    for row in rows:
+        if row.get("case_id") != case_id:
+            raise ValueError("trusted query result crossed Case boundary")
+    return rows

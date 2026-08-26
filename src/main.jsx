@@ -307,7 +307,7 @@ function App() {
       {screen === "board" && (
         <main className="hub">
           <div className="hero">
-            <div className="lab-mark" role="img" aria-label="MAD DATA LAB laboratory mark" />
+            <div className="lab-mark" role="img" aria-label="Pixel-art MAD DATA LAB laboratory flask mark" />
             <div className="hero-copy">
               <p className="eyebrow">
                 DR. GENIE'S EXPERIMENTAL DATA LABORATORY
@@ -355,7 +355,7 @@ function App() {
       {screen === "briefing" && (
         <main className="briefing">
           <div className="brief-art">
-            <div className="lab-visual briefing-visual" role="img" aria-label="Abstract data laboratory instrument" />
+            <div className="lab-visual briefing-visual" role="img" aria-label="Pixel-art Dr. Genie laboratory scientist" />
           </div>
           <div className="brief-panel">
             <p className="eyebrow">
@@ -390,7 +390,7 @@ function App() {
         <main className="investigation">
           <section className="stage">
             <div className="stage-image">
-              <div className="lab-visual stage-visual" role="img" aria-label="Abstract experiment instrument field" />
+              <div className="lab-visual stage-visual" role="img" aria-label="Pixel-art data investigation instrument" />
             </div>
             <div className="overlay">
               <div className="observation">
@@ -419,7 +419,7 @@ function App() {
           </section>
           <aside className="side">
             <div className="genie">
-              <div className="genie-avatar">🧞‍♂️</div>
+              <img className="genie-avatar" src="/assets/pixelart/dr-genie.png" alt="Dr. Genie" />
               <div>
                 <p className="eyebrow">DR. GENIE</p>
                 <p>
@@ -523,6 +523,16 @@ function App() {
                     {evidenceRecords.length} curated source records available in the server ledger.
                   </small>
                 )}
+              </section>
+            )}
+            {exp >= 0 && current && (
+              <section className="experiment-rationale" aria-labelledby="experiment-rationale-heading">
+                <h2 id="experiment-rationale-heading">WHY THIS EXPERIMENT?</h2>
+                <p>{current.question || "This registered Experiment tests the next allowed evidence claim."}</p>
+                <dl>
+                  <div><dt>INSTRUMENT</dt><dd>{current.instrument || "Registered evidence instrument"}</dd></div>
+                  {current.target && <div><dt>TARGET</dt><dd>{current.target}</dd></div>}
+                </dl>
               </section>
             )}
             <div className="prediction">

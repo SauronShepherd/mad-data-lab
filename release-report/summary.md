@@ -1,9 +1,9 @@
 # MAD DATA LAB release report
 
-Generated: 2026-08-24T20:59:50.705885+00:00
-Source identity: git_head=25e4cec55965929d16cdbdff88e22099edacc42b dirty=True
-Runtime digest: 816409ffeb87852a282f2be7a952a95c9b949a0c2b791485e4fb61514f145870
-Data contract digest: d9c2b04bf3957f152e2e358c59df7690b96de025b02867c5f177b26f42f0edce
+Generated: 2026-08-26T06:07:42.253290+00:00
+Source identity: git_head=d7f1568d88dd14d8252877da251aebbbc2f7e890 dirty=True
+Runtime digest: a5de88f7992e67168ebd79d0c0ae7c1a437507f07b22542c243b1326fc419c73
+Data contract digest: 41f8e307c2420eb4b9e2627575572f32a0791e39e6ddedea5ed5199416cad471
 
 Local gates: PASS
 - lint: PASS
@@ -30,4 +30,4 @@ Local gates: PASS
 - chaos: PASS
 - soak: PASS
 
-Live Genie/deployed gates: PASS (direct authenticated runs recorded in genie-eval.json, deployed-smoke.json, and deployed-soak.json).
+Live Genie/deployed gates: NOT RUN.

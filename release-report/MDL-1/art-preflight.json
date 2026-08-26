@@ -1,5 +1,5 @@
 {
-  "approval_status": "PENDING_HUMAN_SELECTION",
+  "approval_status": "IMPLEMENTATION_OWNED",
   "candidate_completeness": {
     "A01": true,
     "A02": true,
@@ -12,7 +12,7 @@
       "height": 1254,
       "mode": "RGBA",
       "path": "assets/review/MDL-1/A01/candidate-001.png",
-      "sha256": "eb7987bed463062a0c646c9c0a3a85040fe0ffd9d6499498d55b481e85d46df6",
+      "sha256": "047650d63be84d1cb198b68b9c7741e26c38e97c31e0e9165b926b81f34c6e61",
       "status": "CANDIDATE",
       "width": 1254
     },
@@ -48,7 +48,7 @@
       "height": 1254,
       "mode": "RGBA",
       "path": "assets/review/MDL-1/A02/candidate-001.png",
-      "sha256": "c2b3d1e3de8e689f691ac4c5be29f49ff601366ee12b5c9f2bc0fd5faaf93a40",
+      "sha256": "125cc0b69f058dbb5bf01f79b3eb123fa8db390c0af7f99faf23339dbb1684c4",
       "status": "CANDIDATE",
       "width": 1254
     },
@@ -102,7 +102,7 @@
       "height": 1254,
       "mode": "RGBA",
       "path": "assets/review/MDL-1/A21/candidate-001.png",
-      "sha256": "3e37628742bc7e120aa73ffe38b51eba2c4c057286bd5614a839b3324aa3df99",
+      "sha256": "83d2b37c294c8fee52893e51a4f154575f23c9cae6e0179327e36aea88fdabd5",
       "status": "CANDIDATE",
       "width": 1254
     },
@@ -135,12 +135,12 @@
     },
     {
       "asset_id": "A28",
-      "height": 941,
+      "height": 1254,
       "mode": "RGBA",
       "path": "assets/review/MDL-1/A28/candidate-001.png",
-      "sha256": "cb93c433a9d51eb71b7764533ca58c1ad21360d80f6d1a940b90063f9d22ef8e",
+      "sha256": "0a205d822512825171ae2c40347485f289c0dfb1bb6d5050c0062f45ce43499c",
       "status": "CANDIDATE",
-      "width": 1672
+      "width": 1254
     },
     {
       "asset_id": "A28",

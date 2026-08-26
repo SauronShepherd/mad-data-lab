@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import logging
 import os
+import time
+from threading import RLock
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -15,8 +17,9 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from .case_data import EXPERIMENTS_BY_CASE, PLANNED_EXPERIMENTS_BY_CASE, experiment_payload
-from .catalog import FULL_CASE_CATALOG, case_availability, get_any_case
+from .catalog import DEFAULT_CASE_ID, FULL_CASE_CATALOG, case_availability, get_any_case
 from .genie import GenieAdapter
+from backend.genie.decisions import allowed_set_digest
 from .state import InvestigationState, transition
 from backend.data.repositories import EvidenceRepository
 from .config import load_settings
@@ -42,6 +45,7 @@ async def request_id_middleware(request: Request, call_next):
 genie = GenieAdapter()
 evidence_repository = EvidenceRepository()
 SESSIONS: dict[str, dict] = {}
+SESSION_MUTATION_LOCK = RLock()
 PROGRESSION: dict[str, Any] = {"completed_case_ids": set(), "best_scores": {}}
 
 # Canonical V3 shell states for the documented session API. The older
@@ -96,9 +100,36 @@ def append_event(session: dict, event_type: str, **payload: Any) -> None:
     events.append({"sequence": len(events) + 1, "type": event_type, **payload})
 
 
+def persist_pending_decision(session: dict, message: dict[str, Any], registered: tuple) -> None:
+    """Persist a valid start selection without marking it as completed evidence.
+
+    Legacy spaces return the older control shape and therefore do not create a
+    pending decision. New V3 protocol responses use ``selected_experiment``.
+    """
+    selected = message.get("selected_experiment")
+    instrument = message.get("instrument")
+    if not isinstance(selected, dict) or not isinstance(instrument, dict):
+        return
+    experiment_id = selected.get("id")
+    instrument_id = instrument.get("id")
+    allowed = {item.id for item in registered}
+    if experiment_id not in allowed or not instrument_id:
+        return
+    session["pending_decision"] = {
+        "message_id": message.get("message_id"),
+        "experiment_id": experiment_id,
+        "instrument_id": instrument_id,
+        "target": selected.get("target_component"),
+        "allowed_set_digest": allowed_set_digest(allowed),
+        "protocol_sha256": message.get("protocol_sha256"),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    append_event(session, "PENDING_EXPERIMENT", experiment_id=experiment_id, source="genie")
+
+
 
 class StartInvestigationRequest(BaseModel):
-    case_id: str = Field(default="CASE_0042", pattern=r"^CASE_\d{4}$")
+    case_id: str = Field(default=DEFAULT_CASE_ID, pattern=r"^CASE_\d{4}$")
 
 
 class ExperimentRequest(BaseModel):
@@ -229,7 +260,10 @@ def session_start(session_id: str) -> dict:
     session = SESSIONS.get(session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Investigation not found")
-    if session["state"] != CASE_BRIEFING_STATE:
+    # A failed live turn is retryable: no Experiment/evidence is committed,
+    # so a client retry must be allowed to re-enter the Genie boundary.
+    retryable_states = {CASE_BRIEFING_STATE, "WAITING_FOR_GENIE"}
+    if session["state"] not in retryable_states:
         raise HTTPException(status_code=409, detail="Investigation has already started")
     previous = session["state"]
     session["state"] = STARTING_INVESTIGATION_STATE
@@ -259,6 +293,7 @@ def session_start(session_id: str) -> dict:
                 if candidate:
                     by_name = {item["name"]: item for item in candidate}
                     hypotheses = [by_name.get(item["name"], item) for item in CANONICAL_HYPOTHESES]
+            persist_pending_decision(session, live["message"], registered)
             source = "genie"
         except Exception as exc:
             LOGGER.exception("live Genie start failed")
@@ -395,6 +430,12 @@ def conclude_session(session_id: str) -> dict:
 
 @app.post("/api/sessions/{session_id}/next")
 def session_next(session_id: str, request: SessionNextRequest) -> dict:
+    """Serialize one logical Experiment action per process."""
+    with SESSION_MUTATION_LOCK:
+        return _session_next_impl(session_id, request)
+
+
+def _session_next_impl(session_id: str, request: SessionNextRequest) -> dict:
     session = SESSIONS.get(session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Investigation not found")
@@ -411,7 +452,43 @@ def session_next(session_id: str, request: SessionNextRequest) -> dict:
     append_event(session, "STATE", from_state=previous, to_state=session["state"])
     session["state"] = RUNNING_EXPERIMENT_STATE
     append_event(session, "STATE", from_state=SELECTING_EXPERIMENT_STATE, to_state=session["state"])
-    result = next_experiment(ExperimentRequest(case_id=session["case_id"], completed_experiments=completed, player_prediction=request.player_prediction, conversation_id=session.get("conversation_id")))
+    pending = session.get("pending_decision")
+    if pending and not pending.get("consumed"):
+        registered = EXPERIMENTS_BY_CASE.get(session["case_id"]) or PLANNED_EXPERIMENTS_BY_CASE.get(session["case_id"], ())
+        current_allowed = {item.id for item in registered if item.id not in completed}
+        if pending.get("allowed_set_digest") != allowed_set_digest(current_allowed):
+            session["state"] = "ERROR"
+            append_event(session, "PENDING_DECISION_REJECTED", reason="STALE_ALLOWED_SET")
+            raise HTTPException(status_code=409, detail="Pending Genie decision is stale")
+        selected = pending["experiment_id"]
+        if selected not in current_allowed:
+            session["state"] = "ERROR"
+            append_event(session, "PENDING_DECISION_REJECTED", reason="ALREADY_COMPLETED")
+            raise HTTPException(status_code=409, detail="Pending Genie decision is no longer executable")
+        index = next(i for i, item in enumerate(registered) if item.id == selected)
+        result = experiment_payload(registered[index], index, session["case_id"])
+        pending["consumed"] = True
+        append_event(session, "PENDING_EXPERIMENT_CONSUMED", experiment_id=selected)
+    else:
+        try:
+            result = next_experiment(ExperimentRequest(case_id=session["case_id"], completed_experiments=completed, player_prediction=request.player_prediction, conversation_id=session.get("conversation_id")))
+        except HTTPException as exc:
+            # Genie is advisory at this boundary.  If its control payload is
+            # malformed or unavailable, continue only with the next
+            # server-registered Experiment; never accept a model-provided ID.
+            if exc.status_code != 503:
+                session["state"] = previous
+                raise
+            registered = EXPERIMENTS_BY_CASE.get(session["case_id"]) or PLANNED_EXPERIMENTS_BY_CASE.get(session["case_id"], ())
+            index = next((i for i, experiment in enumerate(registered) if experiment.id not in completed), None)
+            if index is None:
+                session["state"] = previous
+                raise HTTPException(status_code=409, detail="All registered experiments are complete") from exc
+            result = experiment_payload(registered[index], index, session["case_id"]) | {
+                "source": "genie-server-continuation",
+                "selection_note": "The server continued the next registered Experiment after an invalid Genie response.",
+            }
+            append_event(session, "SAFE_FALLBACK", reason="LIVE_GENIE_UNAVAILABLE_OR_INVALID")
     session["completed"] = list(dict.fromkeys(completed + [result["experiment_id"]]))
     entitlement_by_experiment = {
         "COMPONENT_DECOMPOSITION": "COMPONENT_IMPACT",
@@ -452,6 +529,17 @@ def next_experiment(request: ExperimentRequest) -> dict:
             return message
         except Exception as exc:
             LOGGER.exception("live Genie next failed")
+            # Once the server's allowed set is a singleton, no open-ended
+            # model reselection is necessary. Continue with that one
+            # server-owned registered Experiment and its trusted payload;
+            # never accept the invalid model-selected ID.
+            remaining = [experiment for experiment in experiments if experiment.id not in completed]
+            if len(remaining) == 1:
+                index = next(i for i, experiment in enumerate(experiments) if experiment.id == remaining[0].id)
+                return experiment_payload(remaining[0], index, request.case_id) | {
+                    "source": "genie-singleton-continuation",
+                    "selection_note": "The server continued the only remaining allowed Experiment after an invalid Genie reselection.",
+                }
             raise HTTPException(status_code=503, detail="Live Genie is unavailable") from exc
     index = next((i for i, experiment in enumerate(experiments) if experiment.id not in completed), None)
     if index is None:
@@ -481,9 +569,23 @@ def session_chat(session_id: str, request: dict) -> dict:
     if not session:
         raise HTTPException(status_code=404, detail="Investigation not found")
     question = str(request.get("question", ""))
-    if not question or len(question) > 2000:
-        raise HTTPException(status_code=422, detail="question must be 1-2000 characters")
-    return ask_genie(GenieQuestionRequest(case_id=session["case_id"], conversation_id=session.get("conversation_id"), question=question))
+    if not question or len(question) > 1000:
+        raise HTTPException(status_code=422, detail="question must be 1-1000 characters")
+    now = time.monotonic()
+    recent_chat = [stamp for stamp in session.setdefault("chat_timestamps", []) if now - stamp < 60]
+    if len(recent_chat) >= 10:
+        session["chat_timestamps"] = recent_chat
+        raise HTTPException(status_code=429, detail="chat rate limit exceeded")
+    recent_chat.append(now)
+    session["chat_timestamps"] = recent_chat
+    # Separate chat prompt boundary: prose is never passed to the control
+    # parser and cannot mutate Investigation state.
+    scoped_question = (
+        f"You are answering a question inside MAD DATA LAB. The active Case is {session['case_id']}. "
+        "Use only curated evidence for this Case. Do not reveal hidden truth or claim access to it. "
+        "If evidence is insufficient, say so.\n\nUser question:\n" + question
+    )
+    return ask_genie(GenieQuestionRequest(case_id=session["case_id"], conversation_id=session.get("conversation_id"), question=scoped_question))
 
 
 DIST = Path(__file__).resolve().parent.parent / "dist"

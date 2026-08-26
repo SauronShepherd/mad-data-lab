@@ -4,20 +4,22 @@ from __future__ import annotations
 import json
 import hashlib
 from pathlib import Path
+from typing import Any
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
 
 def build(iteration: str) -> dict:
     plan = json.loads((ROOT / f"assets/review/{iteration}/art-generation-plan.json").read_text(encoding="utf-8"))
-    entries = []
-    slot_sheets = {}
+    entries: list[tuple[str, Path, Image.Image]] = []
+    slot_sheets: dict[str, list[tuple[str, Path, Image.Image]]] = {}
     for slot in plan["slots"]:
         slot_entries = []
         for rel in slot["candidates"]:
             path = ROOT / rel
             with Image.open(path) as image:
-                item = (slot["asset_id"], path, image.convert("RGB"))
+                converted: Image.Image = image.convert("RGB")
+                item = (slot["asset_id"], path, converted)
                 entries.append(item)
                 slot_entries.append(item)
         slot_sheets[slot["asset_id"]] = slot_entries
@@ -26,7 +28,7 @@ def build(iteration: str) -> dict:
     rows = (len(entries) + cols - 1) // cols
     sheet = Image.new("RGB", (cols * thumb_w, rows * (thumb_h + label_h)), "white")
     draw = ImageDraw.Draw(sheet)
-    for index, (asset_id, path, image) in enumerate(entries):
+    for index, (asset_id, path, image) in enumerate(entries):  # type: ignore[assignment]
         x = (index % cols) * thumb_w
         y = (index // cols) * (thumb_h + label_h)
         image.thumbnail((thumb_w - 12, thumb_h - 12))
@@ -41,7 +43,7 @@ def build(iteration: str) -> dict:
         per_asset_dir.mkdir(parents=True, exist_ok=True)
         per = Image.new("RGB", (len(items) * thumb_w, thumb_h + label_h), "white")
         per_draw = ImageDraw.Draw(per)
-        for index, (_, path, image) in enumerate(items):
+        for index, (_, path, image) in enumerate(items):  # type: ignore[assignment]
             image.thumbnail((thumb_w - 12, thumb_h - 12))
             x = index * thumb_w
             per.paste(image, (x + (thumb_w - image.width) // 2, (thumb_h - image.height) // 2))

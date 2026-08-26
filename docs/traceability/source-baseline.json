@@ -1,0 +1,15 @@
+{
+  "status": "IN_PROGRESS",
+  "source": {
+    "path": "external definitive V3 source referenced by MDL-1",
+    "version": "3.0",
+    "date": "2026-08-23",
+    "sha256": "237570e5d62cee11e78ecced43c8449f62f53e7b547e9fe1bfbf4ed54eb0cc44"
+  },
+  "iteration_contracts": {
+    "MDL-1": "MDL-1_FOUNDATION_CANONICAL_DOMAIN_AND_CI_READY_TO_IMPLEMENT.md",
+    "MDL-2": "MDL-2_CASE042_DATA_EVIDENCE_GENERATOR_AND_SQL_READY_TO_IMPLEMENT.md",
+    "MDL-3": "MDL-3_GENIE_AT_THE_CORE_ORCHESTRATION_PROTOCOL_AND_EVAL_READY_TO_IMPLEMENT.md"
+  },
+  "pending": ["canonical-source-archive", "external-source-fingerprint-verification"]
+}

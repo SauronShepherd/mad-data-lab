@@ -2,16 +2,15 @@
   "checks": 63,
   "diagnostics": {
     "current_identity": {
-      "data_contract_digest": "ec669e9e6ff8d443bc7fbd3171fcf6c1ec693f18e575fa1ffafb464ca8ace7c7",
-      "git_head": "98072e9c6ab85f4ce5122a77f27950a4cadf5c2d",
-      "runtime_digest": "103d4602e75b9de0eb1c10438d941081dcee8aae04f2f564f2c4bb9da55fd371"
+      "data_contract_digest": "41f8e307c2420eb4b9e2627575572f32a0791e39e6ddedea5ed5199416cad471",
+      "git_head": "d7f1568d88dd14d8252877da251aebbbc2f7e890",
+      "runtime_digest": "4974aae717af547977175723fdfbe4e0642cbadb279f1cfa1604186574bce19e"
     },
-    "expected_data_digest": "ec669e9e6ff8d443bc7fbd3171fcf6c1ec693f18e575fa1ffafb464ca8ace7c7",
-    "recorded_data_digest": "ec669e9e6ff8d443bc7fbd3171fcf6c1ec693f18e575fa1ffafb464ca8ace7c7"
+    "expected_data_digest": "41f8e307c2420eb4b9e2627575572f32a0791e39e6ddedea5ed5199416cad471",
+    "recorded_data_digest": "41f8e307c2420eb4b9e2627575572f32a0791e39e6ddedea5ed5199416cad471"
   },
   "failed": [],
   "pending": [
-    "human-art-approval",
     "predecessor-mdl1",
     "live-evidence-refresh:genie-eval.json",
     "live-evidence-refresh:deployed-smoke.json",
