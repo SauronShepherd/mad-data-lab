@@ -44,12 +44,12 @@ jobs:
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST || vars.DATABRICKS_HOST }}
           DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID || vars.DATABRICKS_CLIENT_ID }}
-          GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID }}
+          GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID || secrets.GENIE_SPACE_ID }}
         run: |
           set -euo pipefail
           test -n "$DATABRICKS_HOST" || { echo 'Missing staging secret/variable: DATABRICKS_HOST' >&2; exit 1; }
           test -n "$DATABRICKS_CLIENT_ID" || { echo 'Missing staging secret/variable: DATABRICKS_CLIENT_ID' >&2; exit 1; }
-          test -n "$GENIE_SPACE_ID" || { echo 'Missing staging variable or dispatch input: GENIE_SPACE_ID' >&2; exit 1; }
+          test -n "$GENIE_SPACE_ID" || { echo 'Missing staging variable/secret or dispatch input: GENIE_SPACE_ID' >&2; exit 1; }
           case "$DATABRICKS_HOST" in
             https://*) ;;
             *) echo 'DATABRICKS_HOST must be an https:// Databricks workspace URL' >&2; exit 1 ;;
@@ -62,7 +62,7 @@ jobs:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST || vars.DATABRICKS_HOST }}
           DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID || vars.DATABRICKS_CLIENT_ID }}
           DATABRICKS_AUTH_TYPE: github-oidc
-          GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID }}
+          GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID || secrets.GENIE_SPACE_ID }}
           MDL3_BENCHMARK_ATTEMPT_TIMEOUT_SECONDS: '120'
           MDL3_BENCHMARK_DELAY_SECONDS: '1'
         run: |
