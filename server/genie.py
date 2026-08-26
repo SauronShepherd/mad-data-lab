@@ -183,10 +183,10 @@ class GenieAdapter:
             )
             status = str(getattr(last, "status", ""))
             attachments = getattr(last, "attachments", []) or []
+            # A query attachment is an intermediate plan. Only a query result
+            # or text attachment is sufficient to treat ASKING_AI as answered.
             has_answer = bool(getattr(last, "query_result", None)) or any(
-                getattr(attachment, "query", None) is not None
-                or getattr(attachment, "text", None) is not None
-                for attachment in attachments
+                getattr(attachment, "text", None) is not None for attachment in attachments
             )
             if status.endswith("COMPLETED") or (status.endswith("ASKING_AI") and has_answer):
                 return last

@@ -115,10 +115,11 @@ def wait_for_message(client: object, space_id: str, conversation_id: str, messag
         )
         status = str(getattr(last, "status", "")).upper()
         attachments = getattr(last, "attachments", []) or []
+        # A query attachment is an intermediate plan, not a completed answer.
+        # Do not parse it while Genie is still ASKING_AI; wait for a result or
+        # a text attachment containing the final response.
         has_answer = bool(getattr(last, "query_result", None)) or any(
-            getattr(attachment, "query", None) is not None
-            or getattr(attachment, "text", None) is not None
-            for attachment in attachments
+            getattr(attachment, "text", None) is not None for attachment in attachments
         )
         # Genie may expose a complete answer while retaining ASKING_AI as the
         # message state. This is the same completion condition used by the
