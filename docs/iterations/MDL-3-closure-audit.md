@@ -17,7 +17,7 @@ Generated: 2026-08-26
 | Deployed smoke | PASS | PASS |
 | Deployed soak | 10/10 PASS | PASS |
 | Live 30-attempt benchmark | 30/30 failed by timeout in latest recorded run | OPEN / BLOCKING |
-| Final implementation identity | Current pushed SHA `763869fcde5714306a048cd7932a41c8972ffe88`; excluded local generated files remain dirty | PASS for current implementation; release freeze still open |
+| Final implementation identity | Current pushed SHA `95177f0fb0ac6baf31a478ddd20ff29ef051ccb6`; excluded local generated files remain dirty | PASS for current implementation; release freeze still open |
 | A05/A07 assets | 10 implementation-owned candidates recorded; 6 transparent A05 sprites, 4 opaque A07 environments, contact sheets, preflight, and 2 selected production derivatives | PASS |
 | Final CI/post-merge evidence | Not present for the final identity | OPEN |
 
