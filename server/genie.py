@@ -211,6 +211,12 @@ class GenieAdapter:
         # misclassify every live turn as a V3 response and bypass managed
         # attachment handling.
         answer_parts: list[str] = []
+        query_result = getattr(response, "query_result", None)
+        statement = getattr(query_result, "statement_response", query_result)
+        rows = getattr(getattr(statement, "result", None), "data_array", None) or []
+        for row in rows:
+            if row:
+                answer_parts.append(str(row[0]))
         for answer_attachment in getattr(response, "attachments", []) or []:
             answer_text = getattr(getattr(answer_attachment, "text", None), "content", None)
             if answer_text:

@@ -45,6 +45,12 @@ def current_evidence_identity() -> dict[str, str]:
 
 def response_text(response: object, client: object | None = None, space_id: str | None = None) -> str:
     parts = [getattr(response, "content", "") or ""]
+    query_result = getattr(response, "query_result", None)
+    statement = getattr(query_result, "statement_response", query_result)
+    rows = getattr(getattr(statement, "result", None), "data_array", None) or []
+    for row in rows:
+        if row:
+            parts.append(str(row[0]))
     for attachment in getattr(response, "attachments", []) or []:
         text = getattr(getattr(attachment, "text", None), "content", None)
         if text:
