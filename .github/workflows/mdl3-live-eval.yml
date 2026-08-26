@@ -14,6 +14,10 @@ permissions:
   contents: read
   id-token: write
 
+concurrency:
+  group: mdl3-live-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   authenticated-live-batch:
     runs-on: ubuntu-latest
