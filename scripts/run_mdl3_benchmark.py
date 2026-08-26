@@ -213,18 +213,27 @@ def live_run(corpus: dict) -> dict:
             record["response_preview"] = text[:500]
             if item["turn_type"] in {"fresh-control", "fresh-2-turn"}:
                 from backend.genie.protocol import extract_control_object
-                try:
-                    payload = extract_control_object(text)
-                except ValueError:
-                    # Genie query attachments commonly return the same strict
-                    # object without Markdown fencing. Accept that transport
-                    # representation, but still run the identical validator.
+                def parse_and_validate(candidate_text: str):
                     try:
-                        decoded = json.loads(text.strip())
-                        payload = decoded if isinstance(decoded, dict) else extract_unfenced_control(text)
-                    except json.JSONDecodeError:
-                        payload = extract_unfenced_control(text)
-                validated = validate_control_response(payload, active_case_id="CASE_0042", allowed_experiments=allowed, instrument_for_experiment=lambda experiment: instruments[experiment])
+                        payload = extract_control_object(candidate_text)
+                    except ValueError:
+                        try:
+                            decoded = json.loads(candidate_text.strip())
+                            payload = decoded if isinstance(decoded, dict) else extract_unfenced_control(candidate_text)
+                        except json.JSONDecodeError:
+                            payload = extract_unfenced_control(candidate_text)
+                    return validate_control_response(payload, active_case_id="CASE_0042", allowed_experiments=allowed, instrument_for_experiment=lambda experiment: instruments[experiment])
+                try:
+                    validated = parse_and_validate(text)
+                except Exception:
+                    # MDL-03 permits exactly one repair turn. Keep the repair
+                    # contract-only: never add a golden answer or private truth.
+                    repair = guided_prompt("Repair the previous response. Return exactly one valid control JSON object now; do not return SQL, query text, or prose.")
+                    repaired = message_and_wait(client, space_id, str(started.conversation_id), repair, timeout_seconds)
+                    record["repair_count"] = 1
+                    text = response_text(repaired, client, space_id)
+                    record["response_preview"] = text[:500]
+                    validated = parse_and_validate(text)
                 record["selected_experiment"] = validated.selected_experiment.id if validated.selected_experiment else None
                 record["instrument"] = validated.instrument.id.value if validated.instrument else None
             elif item["critical_grader"] == "security":
