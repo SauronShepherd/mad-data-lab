@@ -23,6 +23,7 @@ sys.path.insert(0, str(ROOT))
 
 from backend.genie.config_digest import genie_contract_digest, load_benchmark  # noqa: E402
 from backend.genie.protocol import validate_control_response  # noqa: E402
+from server.genie import system_prompt  # noqa: E402
 
 
 def current_evidence_identity() -> dict[str, str]:
@@ -49,6 +50,11 @@ def response_text(response: object) -> str:
         if text:
             parts.append(text)
     return "\n".join(parts)
+
+
+def guided_prompt(prompt: str, case_id: str = "CASE_0042") -> str:
+    """Apply the production control protocol to guided benchmark turns."""
+    return f"{system_prompt(case_id)}\n\nUser request:\n{prompt}"
 
 
 def wait_for_message(client: object, space_id: str, conversation_id: str, message_id: str, timeout_seconds: int) -> object:
@@ -145,11 +151,15 @@ def live_run(corpus: dict) -> dict:
         record = {"benchmark_id": item["id"], "phrasing_id": item["phrasing_id"], "case_id": "CASE_0042", "repair_count": 0, "fallback": False, "criticality": item["critical_grader"], "status": "PASS"}
         try:
             first_prompt = "Start a CASE_0042 investigation and return the initial observation and hypotheses."
-            started = start_and_wait(client, space_id, first_prompt if item["turn_type"] == "fresh-2-turn" else item["prompt"], timeout_seconds)
+            start_prompt = first_prompt if item["turn_type"] == "fresh-2-turn" else item["prompt"]
+            if item["turn_type"] in {"fresh-control", "fresh-2-turn"}:
+                start_prompt = guided_prompt(start_prompt)
+            started = start_and_wait(client, space_id, start_prompt, timeout_seconds)
             record["conversation_id"] = str(started.conversation_id)
             text = response_text(started)
             if item["turn_type"] == "fresh-2-turn":
-                second = message_and_wait(client, space_id, str(started.conversation_id), item["prompt"], timeout_seconds)
+                second_prompt = guided_prompt(item["prompt"])
+                second = message_and_wait(client, space_id, str(started.conversation_id), second_prompt, timeout_seconds)
                 text = response_text(second)
                 record["turns"] = 2
             else:
