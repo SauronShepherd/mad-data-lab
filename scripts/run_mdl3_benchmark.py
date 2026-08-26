@@ -228,7 +228,11 @@ def live_run(corpus: dict) -> dict:
                 except Exception:
                     # MDL-03 permits exactly one repair turn. Keep the repair
                     # contract-only: never add a golden answer or private truth.
-                    repair = guided_prompt("Repair the previous response. Return exactly one valid control JSON object now; do not return SQL, query text, or prose.")
+                    repair = guided_prompt(
+                        "Repair the previous response. Return exactly one valid control JSON object now; "
+                        "do not return SQL, query text, or prose. Every hypotheses[].evidence item must "
+                        "be a plain string, never an object or array."
+                    )
                     repaired = message_and_wait(client, space_id, str(started.conversation_id), repair, timeout_seconds)
                     record["repair_count"] = 1
                     text = response_text(repaired, client, space_id)
