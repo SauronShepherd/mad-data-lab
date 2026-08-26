@@ -1,7 +1,7 @@
 name: mad-data-lab-ci
 on:
   push:
-    branches: [main, 'MDL-*']
+    branches: [main, 'MDL-*', 'codex/**']
   pull_request:
 jobs:
   local-contracts:
