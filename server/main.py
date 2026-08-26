@@ -21,6 +21,8 @@ from .catalog import DEFAULT_CASE_ID, FULL_CASE_CATALOG, case_availability, get_
 from .genie import GenieAdapter
 from backend.genie.decisions import allowed_set_digest
 from backend.genie.client import CanonicalGenieBoundary
+from backend.domain.orchestration import DecisionOrchestrator
+from backend.genie.decisions import PendingDecisionStore, PendingDecision
 from .state import InvestigationState, transition
 from backend.data.repositories import EvidenceRepository
 from .config import load_settings
@@ -457,15 +459,24 @@ def _session_next_impl(session_id: str, request: SessionNextRequest) -> dict:
     if pending and not pending.get("consumed"):
         registered = EXPERIMENTS_BY_CASE.get(session["case_id"]) or PLANNED_EXPERIMENTS_BY_CASE.get(session["case_id"], ())
         current_allowed = {item.id for item in registered if item.id not in completed}
-        if pending.get("allowed_set_digest") != allowed_set_digest(current_allowed):
+        try:
+            pending_value = PendingDecision(
+                message_id=str(pending.get("message_id") or ""),
+                experiment_id=str(pending.get("experiment_id") or ""),
+                instrument_id=str(pending.get("instrument_id") or ""),
+                target=pending.get("target"),
+                allowed_set_digest=str(pending.get("allowed_set_digest") or ""),
+                protocol_sha256=str(pending.get("protocol_sha256") or ""),
+                created_at=str(pending.get("created_at") or ""),
+            )
+            pending_store = PendingDecisionStore()
+            pending_store.put(pending_value)
+            selected_decision = DecisionOrchestrator(pending_store).claim_first_experiment(current_allowed=current_allowed)
+        except ValueError as exc:
             session["state"] = "ERROR"
             append_event(session, "PENDING_DECISION_REJECTED", reason="STALE_ALLOWED_SET")
-            raise HTTPException(status_code=409, detail="Pending Genie decision is stale")
-        selected = pending["experiment_id"]
-        if selected not in current_allowed:
-            session["state"] = "ERROR"
-            append_event(session, "PENDING_DECISION_REJECTED", reason="ALREADY_COMPLETED")
-            raise HTTPException(status_code=409, detail="Pending Genie decision is no longer executable")
+            raise HTTPException(status_code=409, detail="Pending Genie decision is stale") from exc
+        selected = selected_decision.experiment_id
         index = next(i for i, item in enumerate(registered) if item.id == selected)
         result = experiment_payload(registered[index], index, session["case_id"])
         pending["consumed"] = True

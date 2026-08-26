@@ -1,0 +1,71 @@
+name: mad-data-lab-mdl3-live-eval
+
+on:
+  workflow_dispatch:
+    inputs:
+      genie_space_id:
+        description: Published Genie Space ID for the accepted MDL-03 configuration
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  authenticated-live-batch:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install benchmark dependencies
+        run: python -m pip install -e ".[dev]"
+      - uses: databricks/setup-cli@main
+
+      - name: Prove exact checked-out identity
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.sha }}"
+          python scripts/validate_mdl3_contract.py --strict
+
+      - name: Run authenticated 30-attempt MDL-03 batch
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_AUTH_TYPE: github-oidc
+          DATABRICKS_CONFIG_PROFILE: ${{ vars.DATABRICKS_CONFIG_PROFILE }}
+          GENIE_SPACE_ID: ${{ inputs.genie_space_id }}
+          MDL3_BENCHMARK_ATTEMPT_TIMEOUT_SECONDS: '120'
+          MDL3_BENCHMARK_DELAY_SECONDS: '1'
+        run: python scripts/run_mdl3_benchmark.py --no-fixture
+
+      - name: Validate identity-bound live evidence
+        env:
+          ARTIFACT: release-report/MDL-3/live-benchmark.json
+        run: |
+          implementation_sha="$(git rev-parse HEAD)"
+          contract_digest="$(python -c 'from backend.genie.config_digest import genie_contract_digest; print(genie_contract_digest())')"
+          live_config_sha="$(python -c 'import json; print(json.load(open("release-report/MDL-3/genie-live-config.json"))["genie_live_config_sha256"])')"
+          data_digest="$(python scripts/compute_mdl2_data_digest.py)"
+          case_hash="$(python -c 'from data.generation.case_0042 import generate_case; print(generate_case().content_hash)')"
+          python scripts/validate_mdl3_evidence.py "$ARTIFACT" \
+            --implementation-sha "$implementation_sha" \
+            --genie-contract-digest "$contract_digest" \
+            --genie-live-config-sha256 "$live_config_sha" \
+            --mdl2-data-contract-digest "$data_digest" \
+            --case-hash "$case_hash"
+
+      - name: Upload immutable live-evaluation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mdl3-live-evidence-${{ github.sha }}
+          if-no-files-found: error
+          path: |
+            release-report/MDL-3/live-benchmark.json
+            release-report/MDL-3/live-benchmark.junit.xml
+            release-report/MDL-3/contract-validation.json

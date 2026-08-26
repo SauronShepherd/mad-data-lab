@@ -23,7 +23,7 @@ def source_identity() -> dict[str, Any]:
 
 GATES = {
     "lint": [sys.executable, "-m", "compileall", "-q", "server", "tests", "scripts"],
-    "typecheck": [sys.executable, "-m", "mypy", "server", "--ignore-missing-imports", "--follow-imports=skip", "--no-site-packages"],
+    "typecheck": [NPM, "run", "typecheck"],
     "unit": [sys.executable, "scripts/pytest_gate.py", "--junitxml=release-report/pytest-results.xml", "-q"],
     "data": [sys.executable, "-m", "pytest", "-q", "tests/test_domain.py", "tests/test_mutation.py"],
     "mdl2_property": [sys.executable, "scripts/mdl2_property_suite.py"],
@@ -36,10 +36,12 @@ GATES = {
     "security": [sys.executable, "scripts/security_gate.py"],
     "frontend_contract": [sys.executable, "scripts/frontend_contract_gate.py"],
     "art_contact_sheets": [sys.executable, "scripts/build_art_contact_sheets.py"],
-    "art_preflight": [sys.executable, "scripts/build_mdl2_art_review.py"],
+    "art_preflight": [sys.executable, "scripts/build_mdl3_art_review.py"],
     "mdl1_art_preflight": [sys.executable, "scripts/build_mdl1_art_review.py"],
     "browser": [NPM, "run", "test:browser"],
     "mdl2_contract": [sys.executable, "scripts/validate_mdl2_contract.py"],
+    "mdl3_contract": [sys.executable, "scripts/validate_mdl3_contract.py", "--strict"],
+    "mdl3_benchmark": [sys.executable, "scripts/run_mdl3_benchmark.py"],
     "live_sql_plan": [sys.executable, "scripts/live_sql_check.py", "--plan"],
     "traceability": [sys.executable, "scripts/validate_traceability.py"],
     "a11y": [sys.executable, "scripts/a11y_gate.py"],
@@ -98,7 +100,12 @@ def main() -> None:
     identity = source_identity()
     summary = ["# MAD DATA LAB release report", "", f"Generated: {datetime.now(timezone.utc).isoformat()}", f"Source identity: git_head={identity['git_head']} dirty={identity['git_worktree_dirty']}", f"Runtime digest: {identity['runtime_digest']}", f"Data contract digest: {identity['data_contract_digest']}", "", f"Local gates: {'PASS' if not failed else 'FAIL'}"]
     summary += [f"- {item['name']}: {item['status']}" for item in results]
-    live_status = "PASS" if all(payload.get("status") == "PASS" for payload in live_payloads.values()) else "NOT RUN"
+    live_values = [payload.get("status") for payload in live_payloads.values()]
+    live_status = (
+        "PASS" if all(value == "PASS" for value in live_values)
+        else "FAIL" if any(value == "FAIL" for value in live_values)
+        else "NOT RUN"
+    )
     summary += ["", f"Live Genie/deployed gates: {live_status}."]
     (REPORT / "summary.md").write_text("\n".join(summary) + "\n", encoding="utf-8")
     if failed:

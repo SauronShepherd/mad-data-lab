@@ -4,32 +4,32 @@ Generated: 2026-08-26
 
 ## Verdict
 
-**MDL-03 is not 100% closed.** The current repository contains working protocol, orchestration, deployment, and evidence components, but the production-path migration and authenticated live-evaluation gates are not closed. The report must remain `IN_PROGRESS`.
+**MDL-03 is not 100% closed.** The current repository contains working protocol, orchestration, deployment, and evidence components. Local implementation and deterministic gates are now green; authenticated live-evaluation, exact-head deployment/CI, and final release identity gates remain open. The report must remain `IN_PROGRESS`.
 
 ## Evidence snapshot
 
 | Area | Current state | Closure state |
 |---|---|---|
-| Strict MDL-3 contract gate | 25/25 checks pass | PASS |
-| Local Python suite | 146 tests passed at last full run | PASS, must rerun after final changes |
+| Strict MDL-3 contract gate | 29/29 checks pass against current runtime digest, including art preflight and production derivatives | PASS |
+| Local Python suite | 152 passed, 1 warning | PASS |
 | Genie configuration read-back | Authenticated export captured; digest `ad8418446a24e0d1e17768ff981141027f75f9cfea4c183b030e17e6bedd8fef` | PASS |
 | Deployment | Databricks deployment `01f1a13e70ea15119a15e59c93c04fad` succeeded | PASS, identity reconciliation required |
 | Deployed smoke | PASS | PASS |
 | Deployed soak | 10/10 PASS | PASS |
 | Live 30-attempt benchmark | 30/30 failed by timeout in latest recorded run | OPEN / BLOCKING |
 | Final implementation identity | Report says `NOT_FROZEN`; worktree is dirty | OPEN / BLOCKING |
-| A05/A07 assets | No `assets/review/MDL-3/` directory exists | OPEN; no human approval required |
+| A05/A07 assets | 10 implementation-owned candidates recorded; 6 transparent A05 sprites, 4 opaque A07 environments, contact sheets, preflight, and 2 selected production derivatives | PASS |
 | Final CI/post-merge evidence | Not present for the final identity | OPEN |
 
 ## P0 — production implementation defects
 
 These must be fixed before a live benchmark can be considered meaningful:
 
-1. Wire `server/main.py` to the canonical `backend/genie/client.py` and `backend/domain/orchestration.py` boundary. The current runtime still imports and calls the legacy `server.genie.GenieAdapter`.
-2. Remove the single-golden-answer behavior from the live adapter. Genie responses must be validated against the server-derived allowed Experiment set, not forced to the next tuple position.
-3. Preserve the pending first decision and consume it atomically on the first `/next`; later turns must derive the allowed set from server state and validated evidence.
-4. Add integration tests proving that an alternate legal Experiment is accepted and that a model-provided invalid ID is rejected without event/query commit.
-5. Re-run the live benchmark only after these changes; the current 0/30 result is evidence of an active failure, not a passing evaluation.
+1. Keep the canonical boundary and domain pending-decision orchestration covered by the current route path.
+2. Keep the live adapter validating Genie responses against the server-derived allowed Experiment set, never a tuple-position golden answer.
+3. Preserve the pending first decision and consume it atomically on the first `/next`; later turns derive the allowed set from server state and validated evidence.
+4. Maintain integration coverage proving alternate legal selection and invalid-ID rejection without state mutation.
+5. Re-run the authenticated live benchmark against the final frozen implementation; the recorded pre-fix 0/30 result remains stale evidence.
 
 ## P1 — authenticated live evaluation
 

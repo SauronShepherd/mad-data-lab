@@ -16,7 +16,7 @@ def build(iteration: str) -> dict:
     for slot in plan["slots"]:
         slot_entries = []
         for rel in slot["candidates"]:
-            path = ROOT / rel
+            path = ROOT / (rel["path"] if isinstance(rel, dict) else rel)
             with Image.open(path) as image:
                 converted: Image.Image = image.convert("RGB")
                 item = (slot["asset_id"], path, converted)

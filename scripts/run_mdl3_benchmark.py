@@ -11,6 +11,7 @@ import json
 import os
 import queue
 import sys
+import subprocess
 import threading
 import time
 from datetime import timedelta
@@ -22,6 +23,23 @@ sys.path.insert(0, str(ROOT))
 
 from backend.genie.config_digest import genie_contract_digest, load_benchmark  # noqa: E402
 from backend.genie.protocol import validate_control_response  # noqa: E402
+
+
+def current_evidence_identity() -> dict[str, str]:
+    """Capture every identity required to reject stale live benchmark output."""
+    implementation_sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    runtime_digest = subprocess.check_output([sys.executable, "scripts/compute_runtime_digest.py"], cwd=ROOT, text=True).strip()
+    mdl2_data_contract_digest = subprocess.check_output([sys.executable, "scripts/compute_mdl2_data_digest.py"], cwd=ROOT, text=True).strip()
+    live_config = json.loads((ROOT / "release-report/MDL-3/genie-live-config.json").read_text(encoding="utf-8"))
+    from data.generation.case_0042 import generate_case
+    case_hash = generate_case().content_hash
+    return {
+        "implementation_sha": implementation_sha,
+        "runtime_digest": runtime_digest,
+        "genie_live_config_sha256": live_config["genie_live_config_sha256"],
+        "mdl2_data_contract_digest": mdl2_data_contract_digest,
+        "case_hash": case_hash,
+    }
 
 
 def response_text(response: object) -> str:
@@ -44,7 +62,17 @@ def wait_for_message(client: object, space_id: str, conversation_id: str, messag
             remaining,
         )
         status = str(getattr(last, "status", "")).upper()
-        if status.endswith("COMPLETED") or status.endswith("FAILED") or status.endswith("CANCELLED") or status.endswith("CANCELED"):
+        attachments = getattr(last, "attachments", []) or []
+        has_answer = bool(getattr(last, "query_result", None)) or any(
+            getattr(attachment, "query", None) is not None
+            or getattr(attachment, "text", None) is not None
+            for attachment in attachments
+        )
+        # Genie may expose a complete answer while retaining ASKING_AI as the
+        # message state. This is the same completion condition used by the
+        # production adapter; waiting for COMPLETED alone turns valid answers
+        # into false timeout failures.
+        if status.endswith("COMPLETED") or (status.endswith("ASKING_AI") and has_answer) or status.endswith("FAILED") or status.endswith("CANCELLED") or status.endswith("CANCELED"):
             return last
         time.sleep(min(2.0, max(0.1, deadline - time.monotonic())))
     raise TimeoutError(f"Genie message timed out after {timeout_seconds}s: {message_id}")
@@ -72,13 +100,26 @@ def call_with_timeout(function: object, timeout_seconds: int) -> object:
 
 
 def start_and_wait(client: object, space_id: str, prompt: str, timeout_seconds: int) -> object:
-    waiter = call_with_timeout(lambda: client.genie.start_conversation(space_id=space_id, content=prompt), timeout_seconds)
-    return wait_for_message(client, space_id, str(waiter.conversation_id), str(waiter.message_id), timeout_seconds)
+    # The SDK's waiter handles transient ASKING_AI/attachment states more
+    # reliably than repeatedly calling get_message against the live service.
+    return call_with_timeout(
+        lambda: client.genie.start_conversation_and_wait(
+            space_id=space_id, content=prompt, timeout=timedelta(seconds=timeout_seconds)
+        ),
+        timeout_seconds,
+    )
 
 
 def message_and_wait(client: object, space_id: str, conversation_id: str, prompt: str, timeout_seconds: int) -> object:
-    waiter = call_with_timeout(lambda: client.genie.create_message(space_id=space_id, conversation_id=conversation_id, content=prompt), timeout_seconds)
-    return wait_for_message(client, space_id, conversation_id, str(waiter.message_id), timeout_seconds)
+    return call_with_timeout(
+        lambda: client.genie.create_message_and_wait(
+            space_id=space_id,
+            conversation_id=conversation_id,
+            content=prompt,
+            timeout=timedelta(seconds=timeout_seconds),
+        ),
+        timeout_seconds,
+    )
 
 
 def live_run(corpus: dict) -> dict:
@@ -131,7 +172,7 @@ def live_run(corpus: dict) -> dict:
         attempts.append(record)
         time.sleep(float(os.getenv("MDL3_BENCHMARK_DELAY_SECONDS", "1")))
     failures = [item for item in attempts if item["status"] != "PASS"]
-    return {"status": "PASS" if not failures else "FAIL", "batch_id": corpus["batch_id"], "mode": "live", "started_at_utc": "AUTHENTICATED", "genie_contract_digest": genie_contract_digest(), "attempts": attempts, "summary": {"total": len(attempts), "passed": len(attempts) - len(failures), "failed": len(failures)}}
+    return {"status": "PASS" if not failures else "FAIL", "batch_id": corpus["batch_id"], "mode": "live", "started_at_utc": "AUTHENTICATED", "genie_contract_digest": genie_contract_digest(), **current_evidence_identity(), "attempts": attempts, "summary": {"total": len(attempts), "passed": len(attempts) - len(failures), "failed": len(failures)}}
 
 
 def fixture_response(attempt: dict) -> dict:

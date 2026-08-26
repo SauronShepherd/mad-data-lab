@@ -22,6 +22,34 @@ def main() -> None:
     required = ("genie/instructions.md", "genie/registry.json", "genie/benchmarks/mdl3-live.yaml", "genie/agent.source.json", "backend/genie/protocol.py", "docs/traceability/mdl3-tests.csv", "docs/iterations/MDL-3-report.md")
     checks.extend((f"path:{path}", (ROOT / path).is_file()) for path in required)
 
+    # Art is part of the MDL-03 release contract: review candidates must be
+    # hash-bound and selected production derivatives must be present outside
+    # the review tree. Keep this fail-closed so a stale/missing art report
+    # cannot pass merely because the protocol files are healthy.
+    art_report_path = ROOT / "release-report/MDL-3/art-preflight.json"
+    try:
+        art_report = json.loads(art_report_path.read_text(encoding="utf-8"))
+        candidates = art_report.get("candidates", [])
+        derivatives = art_report.get("production_derivatives", [])
+        checks.extend([
+            ("art:preflight-pass", art_report.get("status") == "CANDIDATES_PREFLIGHT_PASS"),
+            ("art:exactly-10-candidates", art_report.get("candidate_count") == 10 and len(candidates) == 10),
+            ("art:unique-candidate-ids", len({item.get("candidate_id") for item in candidates}) == 10),
+            ("art:production-derivatives", len(derivatives) == 2 and all(
+                item.get("exists") and len(item.get("sha256", "")) == 64
+                and item.get("path", "").startswith("public/")
+                and item.get("path", "").lower().endswith((".png", ".webp", ".jpg", ".jpeg"))
+                for item in derivatives
+            )),
+        ])
+    except (OSError, ValueError, json.JSONDecodeError):
+        checks.extend([
+            ("art:preflight-pass", False),
+            ("art:exactly-10-candidates", False),
+            ("art:unique-candidate-ids", False),
+            ("art:production-derivatives", False),
+        ])
+
     instructions = (ROOT / "genie/instructions.md").read_text(encoding="utf-8")
     checks.extend(
         [

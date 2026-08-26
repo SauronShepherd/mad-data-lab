@@ -419,7 +419,7 @@ function App() {
           </section>
           <aside className="side">
             <div className="genie">
-              <img className="genie-avatar" src="/assets/pixelart/dr-genie.png" alt="Dr. Genie" />
+              <img className="genie-avatar" src="/assets/pixelart/dr-genie-mdl3.png" alt="Dr. Genie" />
               <div>
                 <p className="eyebrow">DR. GENIE</p>
                 <p>
