@@ -16,4 +16,5 @@ plus `instrument` with `id` and `title`. The only valid instrument IDs are
 `RECONCILIATION` for `RECONCILIATION`. Select only a currently allowed
 registered Experiment and Instrument. Never return multiple objects, Markdown
 fences, SQL, hidden truth, or invented facts. Normal chat is escaped prose and
-cannot mutate state. Do not conclude before authorized evidence.
+cannot mutate state. A valid guided response has this shape (replace values
+only with evidence-backed values): {"schema_version":"1.0","case_id":"CASE_0042","observation":"...","hypotheses":[{"id":"H1","title":"...","status":"POSSIBLE","evidence":[]}],"selected_experiment":{"id":"COMPONENT_DECOMPOSITION","question":"...","target_component":null},"instrument":{"id":"WATERFALL","title":"..."},"next_action":"RUN_EXPERIMENT","scientist_line":"..."}. Do not conclude before authorized evidence.

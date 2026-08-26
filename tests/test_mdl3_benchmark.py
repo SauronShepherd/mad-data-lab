@@ -28,7 +28,7 @@ def test_live_mode_does_not_silently_use_fixture():
 def test_live_benchmark_uses_two_turn_protocol_for_gnext_cases():
     source = (ROOT / "scripts/run_mdl3_benchmark.py").read_text(encoding="utf-8")
     assert 'item["turn_type"] == "fresh-2-turn"' in source
-    assert "create_message_and_wait" in source
+        assert "create_message(" in source
 
 
 def test_benchmark_polling_accepts_asking_ai_with_answer_attachment():

@@ -145,26 +145,19 @@ def call_with_timeout(function: object, timeout_seconds: int) -> object:
 
 
 def start_and_wait(client: object, space_id: str, prompt: str, timeout_seconds: int) -> object:
-    # The SDK's waiter handles transient ASKING_AI/attachment states more
-    # reliably than repeatedly calling get_message against the live service.
-    return call_with_timeout(
-        lambda: client.genie.start_conversation_and_wait(
-            space_id=space_id, content=prompt, timeout=timedelta(seconds=timeout_seconds)
-        ),
+    submitted = call_with_timeout(
+        lambda: client.genie.start_conversation(space_id=space_id, content=prompt),
         timeout_seconds,
     )
+    return wait_for_message(client, space_id, str(submitted.conversation_id), str(submitted.message_id), timeout_seconds)
 
 
 def message_and_wait(client: object, space_id: str, conversation_id: str, prompt: str, timeout_seconds: int) -> object:
-    return call_with_timeout(
-        lambda: client.genie.create_message_and_wait(
-            space_id=space_id,
-            conversation_id=conversation_id,
-            content=prompt,
-            timeout=timedelta(seconds=timeout_seconds),
-        ),
+    submitted = call_with_timeout(
+        lambda: client.genie.create_message(space_id=space_id, conversation_id=conversation_id, content=prompt),
         timeout_seconds,
     )
+    return wait_for_message(client, space_id, conversation_id, str(submitted.message_id), timeout_seconds)
 
 
 def live_run(corpus: dict) -> dict:
