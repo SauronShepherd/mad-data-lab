@@ -1,7 +1,7 @@
 # MDL-3 iteration report
 
 status: IN_PROGRESS
-implementation_sha: NOT_FROZEN
+implementation_sha: 8a0564616fe94f18ac3543d94d7e6943a9b496ae
 runtime_digest: 180410c7d23eda496696e5f27051430af13605864ec9738457c4303bf27369f1
 genie_contract_digest: 8e78b74e39bd9cd4936a2cc5b8b950cc3ebecee9b0a94890313b0277dc1ab9aa
 genie_live_config_sha256: ad8418446a24e0d1e17768ff981141027f75f9cfea4c183b030e17e6bedd8fef
@@ -18,10 +18,11 @@ benchmark_batch_id: mdl3-accepted-baseline
 - Local contract gate: `release-report/MDL-3/contract-validation.json`.
 - Local fixture benchmark JSON/JUnit: `release-report/MDL-3/benchmark.json`, `release-report/MDL-3/benchmark.junit.xml`.
 - Live benchmark harness now binds implementation SHA, runtime digest, Genie config digest, MDL-2 data digest, and public Case #042 hash into its output; live execution still requires authenticated credentials.
+- Exact-head CI: PASS for commit `8a0564616fe94f18ac3543d94d7e6943a9b496ae` (run `32996003084`; frontend, local-contracts, and container jobs).
 
 ## Pending closure evidence
 
-- [ ] Exact accepted implementation SHA after all runtime-affecting changes.
+- [x] Exact accepted implementation SHA after all runtime-affecting changes (`8a0564616fe94f18ac3543d94d7e6943a9b496ae`; exact-head CI passed).
 - [x] Authenticated Genie Agent configuration export/read-back and `genie_live_config_sha256` (`release-report/MDL-3/genie-live-config.json`).
 - [ ] Protected 30-attempt live batch with immutable workflow artifact and JUnit result.
 - [x] Databricks deployed smoke/soak against frozen implementation `9d54ef38786d852d4b42eff4a7dc2c3d02d5d294` and matching runtime/data/config evidence (`release-report/deployed-smoke.json`, `release-report/deployed-soak.json`).
