@@ -104,6 +104,29 @@ class Case042ContractTests(unittest.TestCase):
         self.assertEqual(SESSIONS[session_id]['completed'], [])
         self.assertEqual(sum(event['type'] == 'EXPERIMENT' for event in SESSIONS[session_id]['events']), 0)
 
+    def test_live_start_selection_is_claimed_on_first_session_next(self):
+        live_message = {
+            'schema_version': '1.0',
+            'hypothesis_updates': [],
+            'selected_experiment': {
+                'id': 'SNAPSHOT_DIFF',
+                'question': 'Inspect V2',
+                'target_component': 'V2',
+            },
+            'instrument': {'id': 'SNAPSHOT_DIFF', 'title': 'Snapshot'},
+        }
+        created = self.client.post('/api/sessions', json={'case_id': 'CASE_0042'})
+        session_id = created.json()['session_id']
+        with patch.object(type(main_module.genie), 'enabled', new_callable=unittest.mock.PropertyMock, return_value=True), \
+             patch('server.main.genie.start', return_value={'conversation_id': 'c1', 'message': live_message}):
+            started = self.client.post(f'/api/sessions/{session_id}/start')
+            self.assertEqual(started.status_code, 200)
+            selected = self.client.post(f'/api/sessions/{session_id}/next', json={})
+        self.assertEqual(selected.status_code, 200)
+        self.assertEqual(selected.json()['experiment_id'], 'SNAPSHOT_DIFF')
+        self.assertEqual(SESSIONS[session_id]['completed'], ['SNAPSHOT_DIFF'])
+        self.assertEqual(sum(event['type'] == 'PENDING_EXPERIMENT_CONSUMED' for event in SESSIONS[session_id]['events']), 1)
+
     def test_invalid_case_is_rejected(self):
         response = self.client.post('/api/experiments/next', json={'case_id': 'CASE_9999', 'completed_experiments': []})
         self.assertEqual(response.status_code, 404)
