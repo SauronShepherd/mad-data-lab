@@ -139,7 +139,9 @@ def live_run(corpus: dict) -> dict:
         "RECONCILIATION": {"RECONCILIATION"},
     }
     timeout_seconds = max(5, int(os.getenv("MDL3_BENCHMARK_ATTEMPT_TIMEOUT_SECONDS", "45")))
-    for item in corpus["attempts"]:
+    total_attempts = len(corpus["attempts"])
+    for attempt_number, item in enumerate(corpus["attempts"], start=1):
+        print(f"MDL-03 live attempt {attempt_number}/{total_attempts}: {item['id']}", file=sys.stderr, flush=True)
         record = {"benchmark_id": item["id"], "phrasing_id": item["phrasing_id"], "case_id": "CASE_0042", "repair_count": 0, "fallback": False, "criticality": item["critical_grader"], "status": "PASS"}
         try:
             first_prompt = "Start a CASE_0042 investigation and return the initial observation and hypotheses."
@@ -171,6 +173,7 @@ def live_run(corpus: dict) -> dict:
             record["status"] = "FAIL"
             record["error"] = str(exc)
         attempts.append(record)
+        print(f"MDL-03 live attempt {attempt_number}/{total_attempts}: {item['id']} -> {record['status']}", file=sys.stderr, flush=True)
         time.sleep(float(os.getenv("MDL3_BENCHMARK_DELAY_SECONDS", "1")))
     failures = [item for item in attempts if item["status"] != "PASS"]
     return {"status": "PASS" if not failures else "FAIL", "batch_id": corpus["batch_id"], "mode": "live", "started_at_utc": "AUTHENTICATED", "genie_contract_digest": genie_contract_digest(), **current_evidence_identity(), "attempts": attempts, "summary": {"total": len(attempts), "passed": len(attempts) - len(failures), "failed": len(failures)}}
