@@ -7,7 +7,8 @@ closure tasks, separated by ownership so evidence is not claimed prematurely.
 
 - [ ] Configure the GitHub `staging` environment with `DATABRICKS_HOST`.
 - [ ] Configure `DATABRICKS_CLIENT_ID` for the Databricks workload-identity
-  federation trust used by GitHub Actions.
+  federation trust used by GitHub Actions, or configure `DATABRICKS_TOKEN` as
+  the secure PAT-authentication fallback.
 - [ ] Configure `GENIE_SPACE_ID` for the accepted published Genie Space.
 - [ ] Confirm the GitHub OIDC subject/audience is authorized by the Databricks
   service principal and workspace.
@@ -39,7 +40,7 @@ closure tasks, separated by ownership so evidence is not claimed prematurely.
    variables where policy permits).
 3. Add `GENIE_SPACE_ID` as an environment variable or secret.
 4. Verify the Databricks workload-identity federation trust accepts this
-   repository's GitHub Actions OIDC token.
+   repository's GitHub Actions OIDC token, or confirm the PAT fallback is valid.
 5. Push or manually dispatch `mad-data-lab-mdl3-live-eval` and inspect the
    identity-bound benchmark artifact.
 
