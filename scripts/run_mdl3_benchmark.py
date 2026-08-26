@@ -128,7 +128,8 @@ def live_run(corpus: dict) -> dict:
     from backend.genie.config_digest import load_benchmark
 
     config = json.loads((ROOT / "resources/genie/case_0042.space.json").read_text(encoding="utf-8"))
-    client = WorkspaceClient(profile=os.getenv("DATABRICKS_CONFIG_PROFILE", "sda"))
+    profile = os.getenv("DATABRICKS_CONFIG_PROFILE")
+    client = WorkspaceClient(**({"profile": profile} if profile else {}))
     space_id = os.getenv("GENIE_SPACE_ID", config["space_id"])
     attempts = []
     allowed = {"COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "FORMULA_VALIDATION", "RECONCILIATION"}
