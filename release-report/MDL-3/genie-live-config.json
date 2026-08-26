@@ -2,7 +2,7 @@
   "status": "PASS",
   "space_id": "01f19eb4ac691d2c88e7b18a6da39b3b",
   "profile": "sda",
-  "genie_live_config_sha256": "79bb81569d8faed42485861b24398273431a01a0f93d919d6bcd74843354bd10",
+  "genie_live_config_sha256": "0aa19a3f70f0318058f467d9173208b46ec30ec2b2859a96e7ff52b5aef14ebd",
   "serialized_space": {
     "version": 2,
     "config": {
@@ -102,7 +102,8 @@
             "`RECONCILIATION` for `RECONCILIATION`. Select only a currently allowed\n",
             "registered Experiment and Instrument. Never return multiple objects, Markdown\n",
             "fences, SQL, hidden truth, or invented facts. Normal chat is escaped prose and\n",
-            "cannot mutate state. Do not conclude before authorized evidence."
+            "cannot mutate state. A valid guided response has this shape (replace values\n",
+            "only with evidence-backed values): {\"schema_version\":\"1.0\",\"case_id\":\"CASE_0042\",\"observation\":\"...\",\"hypotheses\":[{\"id\":\"H1\",\"title\":\"...\",\"status\":\"POSSIBLE\",\"evidence\":[]}],\"selected_experiment\":{\"id\":\"COMPONENT_DECOMPOSITION\",\"question\":\"...\",\"target_component\":null},\"instrument\":{\"id\":\"WATERFALL\",\"title\":\"...\"},\"next_action\":\"RUN_EXPERIMENT\",\"scientist_line\":\"...\"}. Do not conclude before authorized evidence."
           ]
         }
       ],
