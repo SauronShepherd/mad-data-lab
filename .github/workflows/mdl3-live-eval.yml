@@ -43,12 +43,12 @@ jobs:
       - name: Validate staging live-evaluation configuration
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID || vars.DATABRICKS_CLIENT_ID }}
           GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID }}
         run: |
           set -euo pipefail
           test -n "$DATABRICKS_HOST" || { echo 'Missing staging secret: DATABRICKS_HOST' >&2; exit 1; }
-          test -n "$DATABRICKS_CLIENT_ID" || { echo 'Missing staging secret: DATABRICKS_CLIENT_ID' >&2; exit 1; }
+          test -n "$DATABRICKS_CLIENT_ID" || { echo 'Missing staging secret/variable: DATABRICKS_CLIENT_ID' >&2; exit 1; }
           test -n "$GENIE_SPACE_ID" || { echo 'Missing staging variable or dispatch input: GENIE_SPACE_ID' >&2; exit 1; }
           case "$DATABRICKS_HOST" in
             https://*) ;;
@@ -60,7 +60,7 @@ jobs:
       - name: Run authenticated 30-attempt MDL-03 batch
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID || vars.DATABRICKS_CLIENT_ID }}
           DATABRICKS_AUTH_TYPE: github-oidc
           GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID }}
           MDL3_BENCHMARK_ATTEMPT_TIMEOUT_SECONDS: '120'
