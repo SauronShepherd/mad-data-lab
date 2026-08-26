@@ -12,6 +12,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "release-report"
 NPM = "npm.cmd" if os.name == "nt" else "npm"
+GATE_TIMEOUT_SECONDS = int(os.getenv("MDL3_GATE_TIMEOUT_SECONDS", "300"))
 
 def source_identity() -> dict[str, Any]:
     """Bind local evidence to the source tree that produced it."""
@@ -51,8 +52,31 @@ GATES = {
 
 
 def run(name: str, command: list[str]) -> dict:
-    result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
-    return {"name": name, "command": command, "status": "PASS" if result.returncode == 0 else "FAIL", "output": (result.stdout + result.stderr)[-4000:]}
+    try:
+        result = subprocess.run(
+            command,
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=GATE_TIMEOUT_SECONDS,
+        )
+        return {
+            "name": name,
+            "command": command,
+            "status": "PASS" if result.returncode == 0 else "FAIL",
+            "output": (result.stdout + result.stderr)[-4000:],
+        }
+    except subprocess.TimeoutExpired as exc:
+        output = "".join(
+            part.decode(errors="replace") if isinstance(part, bytes) else (part or "")
+            for part in (exc.stdout, exc.stderr)
+        )
+        return {
+            "name": name,
+            "command": command,
+            "status": "FAIL",
+            "output": f"timed out after {GATE_TIMEOUT_SECONDS}s\n{output}"[-4000:],
+        }
 
 
 def main() -> None:
