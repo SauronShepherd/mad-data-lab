@@ -35,16 +35,35 @@ jobs:
           test "$(git rev-parse HEAD)" = "${{ github.sha }}"
           python scripts/validate_mdl3_contract.py --strict
 
+      - name: Validate staging live-evaluation configuration
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID }}
+        run: |
+          set -euo pipefail
+          test -n "$DATABRICKS_HOST" || { echo 'Missing staging secret: DATABRICKS_HOST' >&2; exit 1; }
+          test -n "$DATABRICKS_CLIENT_ID" || { echo 'Missing staging secret: DATABRICKS_CLIENT_ID' >&2; exit 1; }
+          test -n "$GENIE_SPACE_ID" || { echo 'Missing staging variable or dispatch input: GENIE_SPACE_ID' >&2; exit 1; }
+          case "$DATABRICKS_HOST" in
+            https://*) ;;
+            *) echo 'DATABRICKS_HOST must be an https:// Databricks workspace URL' >&2; exit 1 ;;
+          esac
+          echo "Configured Databricks host: ${DATABRICKS_HOST%%/*}"
+          echo "Configured Genie Space ID: ${GENIE_SPACE_ID}"
+
       - name: Run authenticated 30-attempt MDL-03 batch
         env:
           DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
           DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
           DATABRICKS_AUTH_TYPE: github-oidc
           DATABRICKS_CONFIG_PROFILE: ${{ vars.DATABRICKS_CONFIG_PROFILE }}
-          GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID || '01f1a11f6c281e79bd1e0c448055fbdd' }}
+          GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID }}
           MDL3_BENCHMARK_ATTEMPT_TIMEOUT_SECONDS: '120'
           MDL3_BENCHMARK_DELAY_SECONDS: '1'
-        run: python scripts/run_mdl3_benchmark.py --no-fixture
+        run: |
+          set -o pipefail
+          python scripts/run_mdl3_benchmark.py --no-fixture 2>&1 | tee release-report/MDL-3/live-benchmark.log
 
       - name: Validate identity-bound live evidence
         env:
@@ -71,4 +90,5 @@ jobs:
           path: |
             release-report/MDL-3/live-benchmark.json
             release-report/MDL-3/live-benchmark.junit.xml
+            release-report/MDL-3/live-benchmark.log
             release-report/MDL-3/contract-validation.json
