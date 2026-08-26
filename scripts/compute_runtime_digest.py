@@ -12,6 +12,14 @@ def files():
     return sorted(set(result), key=lambda p:p.relative_to(ROOT).as_posix())
 def digest():
     h=hashlib.sha256()
-    for p in files(): h.update(p.relative_to(ROOT).as_posix().encode()+b'\0'+p.read_bytes()+b'\0')
+    for p in files():
+        raw = p.read_bytes()
+        try:
+            # Git checkouts may use CRLF on Windows and LF on Linux. Runtime
+            # identity must bind semantic source content, not checkout style.
+            content = raw.decode('utf-8').replace('\r\n', '\n').replace('\r', '\n').encode('utf-8')
+        except UnicodeDecodeError:
+            content = raw
+        h.update(p.relative_to(ROOT).as_posix().encode()+b'\0'+content+b'\0')
     return h.hexdigest()
 if __name__=='__main__': print(digest())
