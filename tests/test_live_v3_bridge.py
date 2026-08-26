@@ -42,3 +42,37 @@ def test_production_prompt_requests_v3_protocol():
     assert "schema_version 1.0" in prompt
     assert "selected_experiment" in prompt
     assert "arbitrary SQL" in prompt
+
+
+def _attachment_response():
+    attachment = SimpleNamespace(query=SimpleNamespace(query="SELECT curated"), attachment_id="a1")
+    return SimpleNamespace(content="", attachments=[attachment], conversation_id="c1", message_id="m1")
+
+
+def _attachment_workspace(rows):
+    statement = SimpleNamespace(
+        manifest=SimpleNamespace(schema=SimpleNamespace(columns=[SimpleNamespace(name="experiment_id"), SimpleNamespace(name="evidence")])),
+        result=SimpleNamespace(data_array=rows),
+        status=SimpleNamespace(state="SUCCEEDED"),
+    )
+    genie = SimpleNamespace(
+        execute_message_attachment_query=lambda **_: None,
+        get_message_attachment_query_result=lambda **_: SimpleNamespace(statement_response=statement),
+    )
+    return SimpleNamespace(genie=genie)
+
+
+def test_live_adapter_recovers_curated_rows_only_from_explicit_allowed_id():
+    adapter = GenieAdapter(sleeper=lambda _: None)
+    adapter.space_id = "space"
+    adapter._client = _attachment_workspace([["SNAPSHOT_DIFF", "V2 differs"]])
+    result = adapter._control_message(_attachment_response(), "CASE_0042", {"SNAPSHOT_DIFF"})
+    assert result["experiment_id"] == "SNAPSHOT_DIFF"
+
+
+def test_live_adapter_rejects_ambiguous_curated_row_selection():
+    adapter = GenieAdapter(sleeper=lambda _: None)
+    adapter.space_id = "space"
+    adapter._client = _attachment_workspace([["SNAPSHOT_DIFF", "one"], ["COMPONENT_DECOMPOSITION", "two"]])
+    with pytest.raises(ValueError, match="did not contain a control payload"):
+        adapter._control_message(_attachment_response(), "CASE_0042", {"SNAPSHOT_DIFF", "COMPONENT_DECOMPOSITION"})
