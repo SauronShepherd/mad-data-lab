@@ -75,7 +75,14 @@ def response_text(response: object, client: object | None = None, space_id: str 
 
 def guided_prompt(prompt: str, case_id: str = "CASE_0042") -> str:
     """Apply the production control protocol to guided benchmark turns."""
-    return f"{system_prompt(case_id)}\n\nUser request:\n{prompt}"
+    # Keep the user request visible for Genie SQL planning, then repeat the
+    # machine-output boundary at the end where instruction-following models
+    # most reliably apply the requested response shape.
+    return (
+        f"{system_prompt(case_id)}\n\nUser request:\n{prompt}\n\n"
+        "Final response requirement: return exactly one unfenced JSON control "
+        "object matching the schema above; do not return SQL, query text, or prose."
+    )
 
 
 def extract_unfenced_control(text: str) -> dict:
