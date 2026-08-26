@@ -40,7 +40,7 @@ jobs:
           DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
           DATABRICKS_AUTH_TYPE: github-oidc
           DATABRICKS_CONFIG_PROFILE: ${{ vars.DATABRICKS_CONFIG_PROFILE }}
-          GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID }}
+          GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID || '01f1a11f6c281e79bd1e0c448055fbdd' }}
           MDL3_BENCHMARK_ATTEMPT_TIMEOUT_SECONDS: '120'
           MDL3_BENCHMARK_DELAY_SECONDS: '1'
         run: python scripts/run_mdl3_benchmark.py --no-fixture
