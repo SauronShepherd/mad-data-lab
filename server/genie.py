@@ -290,11 +290,17 @@ class GenieAdapter:
                             "FORMULA_VALIDATION": ("Formula Validation", "FORMULA_CHECK"),
                             "RECONCILIATION": ("Reconciliation", "RECONCILIATION"),
                         }
-                        selected_id = None
-                        try:
-                            selected_id = normalise_control_response(raw, registered_ids=allowed_experiments)["experiment_id"]
-                        except ValueError:
-                            pass
+                        # Curated evidence responses may omit the control JSON,
+                        # but they must still identify the selected Experiment
+                        # explicitly. Never infer it from row/column position.
+                        explicit_ids = {
+                            str(value)
+                            for row in evidence
+                            for key, value in row.items()
+                            if key.lower() in {"experiment_id", "experiment", "selected_experiment_id"}
+                            and str(value) in allowed_experiments
+                        }
+                        selected_id = next(iter(explicit_ids)) if len(explicit_ids) == 1 else None
                         if selected_id not in allowed_experiments or selected_id not in names:
                             continue
                         name, instrument = names[selected_id]
