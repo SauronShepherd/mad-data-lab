@@ -140,6 +140,14 @@ class Case042ContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             normalise_control_response('The next experiment is SNAPSHOT_DIFF.', 'SNAPSHOT_DIFF', {'SNAPSHOT_DIFF'})
 
+    def test_legal_alternate_genie_experiment_is_not_rejected_as_golden_sequence(self):
+        payload = normalise_control_response(
+            '{"experiment_id":"SNAPSHOT_DIFF","name":"Snapshot","instrument":"SNAPSHOT_DIFF","rationale":"inspect changes","evidence":"curated evidence","hypothesis_updates":[]}',
+            'COMPONENT_DECOMPOSITION',
+            {'COMPONENT_DECOMPOSITION', 'SNAPSHOT_DIFF'},
+        )
+        self.assertEqual(payload['experiment_id'], 'SNAPSHOT_DIFF')
+
     def test_genie_prompt_is_case_scoped(self):
         self.assertIn('CASE_0107', system_prompt('CASE_0107'))
         self.assertNotIn('Investigate Case #042', system_prompt('CASE_0107'))

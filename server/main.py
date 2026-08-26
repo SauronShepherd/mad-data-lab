@@ -20,6 +20,7 @@ from .case_data import EXPERIMENTS_BY_CASE, PLANNED_EXPERIMENTS_BY_CASE, experim
 from .catalog import DEFAULT_CASE_ID, FULL_CASE_CATALOG, case_availability, get_any_case
 from .genie import GenieAdapter
 from backend.genie.decisions import allowed_set_digest
+from backend.genie.client import CanonicalGenieBoundary
 from .state import InvestigationState, transition
 from backend.data.repositories import EvidenceRepository
 from .config import load_settings
@@ -42,7 +43,7 @@ async def request_id_middleware(request: Request, call_next):
     response = await call_next(request)
     response.headers["X-Request-ID"] = request_id
     return response
-genie = GenieAdapter()
+genie = CanonicalGenieBoundary(GenieAdapter())
 evidence_repository = EvidenceRepository()
 SESSIONS: dict[str, dict] = {}
 SESSION_MUTATION_LOCK = RLock()

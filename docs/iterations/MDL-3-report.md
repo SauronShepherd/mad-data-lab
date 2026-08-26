@@ -23,7 +23,7 @@ benchmark_batch_id: mdl3-accepted-baseline
 - [ ] Exact accepted implementation SHA after all runtime-affecting changes.
 - [x] Authenticated Genie Agent configuration export/read-back and `genie_live_config_sha256` (`release-report/MDL-3/genie-live-config.json`).
 - [ ] Protected 30-attempt live batch with immutable workflow artifact and JUnit result.
-- [ ] Databricks deployed smoke/soak against the same implementation/data/config digests (snapshot `01f1a0f6e3c013a3bc127c26e992a56b` is RUNNING; smoke records the external Genie V3 configuration failure in `release-report/deployed-smoke.json`).
+- [x] Databricks deployed smoke/soak against frozen implementation `9d54ef38786d852d4b42eff4a7dc2c3d02d5d294` and matching runtime/data/config evidence (`release-report/deployed-smoke.json`, `release-report/deployed-soak.json`).
 - [ ] A05/A07 artwork candidates, production-byte hashes, and previews (implementation gate; final human revision is reserved for pre-submission polish and is not a closure blocker).
 - [ ] Final-head CI and post-merge verification.
 

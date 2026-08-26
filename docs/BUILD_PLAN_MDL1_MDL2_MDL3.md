@@ -1,6 +1,6 @@
 # MAD DATA LAB — MDL-1/MDL-2/MDL-3 Complete Build Plan
 
-Status: `IMPLEMENTED LOCALLY — external closure evidence pending`
+Status: `NOT COMPLETE — core Genie orchestration defect active in production path (see §0.1 P0), plus external closure evidence pending`
 
 This plan is the implementation assessment for the current repository against:
 
@@ -24,6 +24,49 @@ The dependency-safe local implementation is complete and verified. The original 
 - [ ] Obtain authenticated Genie configuration read-back and live 30-attempt evaluation evidence.
 - [ ] Deploy the exact implementation to Databricks, prove resolved runtime identity, and pass deployed smoke/soak.
 - [ ] Freeze final release evidence; human artwork approval is not required by agreement, and a final human revision may occur before submission.
+
+## 0.1 Independent re-audit (2026-08-26) — corrections to the status above
+
+A fresh, direct read of the code (not the self-reported checkmarks above) found that several `[x]` items in §0 are **overstated**. The checkmarks describe modules that exist in isolation, not modules that are actually wired into the live request path. This section is the authoritative correction; treat any conflicting `[x]` above as **not proven** until the items below are closed.
+
+### P0 — Core competition-invariant is still violated in the live path (blocks everything downstream)
+
+- [ ] **`server/main.py` still instantiates and calls the OLD `GenieAdapter`** (`from .genie import GenieAdapter`, `server/main.py:21,45`, `genie.start(...)` / `genie.next(...)` at `server/main.py:224,277,526`). The new `backend/genie/client.py` (64 lines) and `backend/domain/orchestration.py` (38 lines) exist but are **not** the code path that talks to Genie — only `backend.genie.decisions.allowed_set_digest` / `persist_pending_decision` are layered on top of the old adapter's result. Wiring these new modules up is still an open task, not a completed migration.
+- [ ] **`server/genie.py` still hard-codes the expected next Experiment from a fixed tuple order and rejects any other legal Genie answer**: `start()` (`server/genie.py:347-358`) always seeds `expected_experiment_id = registered[0].id`; `next()` (`server/genie.py:360-375`) computes `expected = next(item.id for item in registered if item.id not in completed_ids)` — i.e. "whatever slot comes next in the fixed list," not a server-derived allowed-set from actual evidence state. `_control_message`/`parse_control_json` then **discards and retries** any Genie response whose `experiment_id` doesn't equal that hardcoded value (one retry, per the updated "one repair attempt" comment — improved framing, same underlying defect). This is the exact anti-pattern MDL-3 §2 requires removed: the app decides the answer and Genie is only asked until it agrees, which is why a genuinely independent live run cannot pass for the right reason.
+- [ ] **Live 30-attempt benchmark is failing, not merely "not yet run"**: `release-report/MDL-3/live-benchmark.json` records `status: FAIL`, `total: 30, passed: 0, failed: 30`. This is consistent with the P0 defect above — the harness is exercising the same hardcoded-rejection path.
+- [ ] **`release-report/MDL-3/contract-validation.json` ("25 checks", `status: PASS`) does not catch this.** Treat that file as validating scaffolding/shape (files exist, schemas parse), not the "Genie chooses" behavioral invariant. Do not cite it as evidence the defect is fixed.
+- [ ] Fix: delete the `expected_experiment_id` rejection branch from `parse_control_json`/`_control_message`/`GenieAdapter.start`/`GenieAdapter.next`; replace with validation against a server-derived **allowed set** (legal-or-not), never a single golden answer; make `server/main.py` route through `backend/domain/orchestration.py` (or finish moving that logic there) so the new pending-decision/registry/protocol modules are actually load-bearing; keep `G42-028`/`G42-029`'s golden sequence as a **test oracle only**, never production branch logic. Re-run the 30-attempt live benchmark only after this fix — re-running it against today's code cannot produce valid evidence no matter how many times it's tried.
+
+### P1 — Deployment is currently failing, not pending
+
+- [ ] `release-report/deployed-smoke.json`: `status: FAIL` — `"Live Genie configuration has not produced a valid V3 control response; smoke cannot complete until the external Genie Space is published with the canonical instructions and sources."` This is an active failure against deployment `01f1a101c98414b296012bc17ff3b642`, not an unrun check.
+- [ ] Publish/sync the live Genie Space from `genie/agent.source.json` + `genie/instructions.md` (via `scripts/configure_genie.py --apply` or equivalent) so the deployed space actually matches the repo's canonical config, then re-run deployed smoke and soak.
+
+### P2 — Nothing is committed; all GitHub/CI evidence is categorically unobtainable until this changes
+
+- [ ] The working tree has **121 uncommitted paths** (`git status --porcelain`), including all of the new MDL-3 work (`backend/genie/`, `backend/domain/`, `genie/`, `docs/BUILD_PLAN_MDL1_MDL2_MDL3.md`, every `tests/test_mdl3_*.py`, `release-report/MDL-3/`). None of it is on a pushed branch; there is no open PR (`gh` CLI is not installed in this environment, confirming `docs/iterations/MDL-1-entry.md`'s `MDL1-ENTRY-003/004 BLOCKED` rows are real, not just cautious).
+- [ ] `implementation_sha: NOT_FROZEN` in `docs/iterations/MDL-3-report.md` is accurate — there is nothing to freeze yet.
+- [ ] Fix: once P0/P1 are closed locally, commit in the reviewable increments the repo's own convention already uses (see recent `git log`), push `MDL-2` (or a fresh `MDL-3` branch per the spec's own branch-per-iteration process — decide which before pushing), open/refresh the PR, and get exact-head CI green before treating any CI-dependent checkbox above as done.
+
+### P3 — Predecessor/platform blockers already honestly tracked (no new finding, just confirming they're still open)
+
+- [ ] `docs/iterations/MDL-1-entry.md` status is `BLOCKED_PREDECESSOR_AND_EXTERNAL_CLOSURE_EVIDENCE`; `MDL1-ENTRY-002/003/004/007/009` remain `BLOCKED` (remote/PR/CI identity, human art approver, dirty worktree).
+- [ ] `docs/traceability/MDL-2-predecessor.json` status is `BLOCKED_PREDECESSOR_EVIDENCE_NOT_PROVABLE`; last observed upstream CI run (`32814200497`) concluded `failure`.
+- [ ] `docs/iterations/MDL-1-entry.md` also notes the Databricks Free Edition app is blocked by a daily compute quota — full deploy verification needs that quota available.
+
+### P4 — Artwork: policy decision recorded, but A05/A07 have not been started at all
+
+- [ ] The team has recorded an explicit waiver (`docs/approvals/MDL-1-art.md`, `docs/approvals/MDL-2-art.md`: `status: IMPLEMENTATION_OWNED`, `human_reviewer: NOT_REQUIRED`) — this is a deliberate scope decision, not a gap, and should not be "fixed" by inventing a human approval step.
+- [ ] However `assets/review/MDL-3/` does not exist at all — **zero** A05 (Dr. Genie thinking pose)/A07 (Hypothesis Chamber) candidates have been generated (MDL-3 §14). If the same implementation-owned policy applies to MDL-3 art, generate the candidates and record them the same way A08–A12 were; if not, get an explicit decision recorded in `docs/decisions/MDL-3-art-ownership.md` (does not exist yet) rather than leaving it silently undone.
+
+### Confirmed fixed since the last gap analysis (do not re-flag)
+
+- [x] The MDL-3 "CASE_TRUTH numeric answers embedded in the permanent Genie instruction prompt" STOP-THE-LINE finding from the earlier gap-analysis pass no longer reproduces: `genie/instructions.md` contains no matches for the golden values (`125`, `118.2`, `-6.8`, `0.30`) that were previously found hard-coded into `resources/genie/case_0042.serialized.json`'s instruction text.
+- [x] Test suite genuinely runs and passes: `python -m pytest -q` → `147 passed`, 0 failed, 0 skipped (verified directly in this session, not taken from a report file).
+
+### Bottom line
+
+The project cannot be honestly stated as 100% complete. The single highest-priority blocker is P0: the live Genie orchestration path still enforces a hardcoded expected-experiment sequence, which both violates MDL-3's core "Genie chooses" invariant and is the direct cause of the current 0/30 live-benchmark failure and the failing deployed smoke check. Everything in P1–P3 is either downstream of P0 or requires access (GitHub push/PR, Databricks compute quota) not available in this environment and must be executed by a human/CI runner with that access.
 
 ## 1. Current baseline
 

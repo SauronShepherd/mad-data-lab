@@ -89,11 +89,10 @@ def parse_control_json(text: str, registered_ids: set[str] | None = None, expect
     required = {"experiment_id", "name", "instrument", "rationale", "evidence", "hypothesis_updates"}
     control_keys = required - {"hypothesis_updates"}
     control = [(end, value) for end, value in decoded if control_keys.issubset(value)]
-    if expected_experiment_id:
-        expected = [(end, value) for end, value in control if value.get("experiment_id") == expected_experiment_id]
-        if not expected:
-            raise ValueError(f"Genie returned the wrong experiment; expected {expected_experiment_id}")
-        control = expected
+    # ``expected_experiment_id`` is retained as a compatibility parameter for
+    # callers from the retired prototype, but it is deliberately not used as
+    # a golden-answer constraint. The server validates membership in the
+    # current allowed set below; any legal selection is acceptable.
     if len(control) == 1:
         payload = control[0][1]
     else:
@@ -149,8 +148,8 @@ def validate_control_payload(payload: dict, registered_ids: set[str] | None = No
     return payload
 
 
-def normalise_control_response(text: str, expected_experiment_id: str, registered_ids: set[str] | None = None) -> dict:
-    """Accept only the declared Genie control protocol; never synthesize a choice."""
+def normalise_control_response(text: str, expected_experiment_id: str | None = None, registered_ids: set[str] | None = None) -> dict:
+    """Accept a registered Genie choice without imposing a golden sequence."""
     return parse_control_json(text, registered_ids, expected_experiment_id)
 
 

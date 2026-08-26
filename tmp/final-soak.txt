@@ -1,0 +1,10 @@
+deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)
+deployed soak: completed 1/10
+deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)
+deployed soak: completed 2/10
+deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)
+deployed soak: completed 3/10
+deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)
+deployed soak: completed 4/10
+deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)
+deployed soak: completed 5/10

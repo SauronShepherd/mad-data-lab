@@ -48,6 +48,30 @@ class GenieClientError(RuntimeError):
     """Recoverable boundary error; callers decide retry/fallback policy."""
 
 
+class CanonicalGenieBoundary:
+    """Canonical application boundary around a transport implementation.
+
+    The transport is injected so the domain layer depends on this module's
+    stable interface rather than on Databricks SDK or legacy route objects.
+    """
+
+    def __init__(self, transport: Any) -> None:
+        self._transport = transport
+
+    @property
+    def enabled(self) -> bool:
+        return bool(getattr(self._transport, "enabled", False))
+
+    def start(self, case_id: str) -> dict[str, Any]:
+        return self._transport.start(case_id)
+
+    def next(self, conversation_id: str, context: str, case_id: str) -> dict[str, Any]:
+        return self._transport.next(conversation_id, context, case_id)
+
+    def ask(self, conversation_id: str, content: str) -> str:
+        return self._transport.ask(conversation_id, content)
+
+
 def normalize_message(response: Any, *, conversation_id: str | None = None, message_id: str | None = None) -> NormalizedMessage:
     """Convert an SDK message-like object into a bounded internal value."""
     cid = conversation_id or str(getattr(response, "conversation_id", ""))
