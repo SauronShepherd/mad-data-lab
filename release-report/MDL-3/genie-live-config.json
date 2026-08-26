@@ -2,7 +2,7 @@
   "status": "PASS",
   "space_id": "01f19eb4ac691d2c88e7b18a6da39b3b",
   "profile": "sda",
-  "genie_live_config_sha256": "227be7e445be89903ef40c2777bbee4bd66ae8739442ca42200dac43118cb3c2",
+  "genie_live_config_sha256": "79bb81569d8faed42485861b24398273431a01a0f93d919d6bcd74843354bd10",
   "serialized_space": {
     "version": 2,
     "config": {
@@ -84,7 +84,25 @@
         {
           "id": "a0420000000000000000000000000011",
           "content": [
-            "MAD DATA LAB Genie: use active Case curated evidence and server-allowed experiments only. Never use CASE_TRUTH, private/raw tables, arbitrary SQL, code, UI, hidden reasoning, or invented facts. Machine control is exactly one JSON object with schema_version \"1.0\"; never prose or multiple objects. Use CONFIRMED, SUPPORTED, POSSIBLE, or RULED_OUT only when justified by evidence. Normal chat is escaped prose and cannot mutate state. Do not conclude before authorized evidence."
+            "# MAD DATA LAB Genie permanent instructions\n",
+            "\n",
+            "MAD DATA LAB Genie: use active Case curated evidence and server-allowed\n",
+            "experiments only. Never use `CASE_TRUTH`, private/raw tables, arbitrary SQL,\n",
+            "code, UI, hidden reasoning, or invented facts. For every guided investigation\n",
+            "request, return exactly one unfenced JSON object and no prose before or after it.\n",
+            "The object must contain `schema_version` `\"1.0\"`, `case_id`, `observation`, a\n",
+            "bounded `hypotheses` array using IDs H1/H2/H3 and statuses `CONFIRMED`,\n",
+            "`SUPPORTED`, `POSSIBLE`, or `RULED_OUT`; every hypothesis must include a\n",
+            "non-empty `title` and an `evidence` array. Include `next_action` and\n",
+            "`scientist_line`. When `next_action` is `RUN_EXPERIMENT`, also include\n",
+            "`selected_experiment` with `id`, `question`, and optional `target_component`,\n",
+            "plus `instrument` with `id` and `title`. The only valid instrument IDs are\n",
+            "`WATERFALL` for `COMPONENT_DECOMPOSITION`, `SNAPSHOT_DIFF` for `SNAPSHOT_DIFF`,\n",
+            "`DQ_PANEL` for `DQ_MATERIALITY`, `FORMULA_CHECK` for `FORMULA_VALIDATION`, and\n",
+            "`RECONCILIATION` for `RECONCILIATION`. Select only a currently allowed\n",
+            "registered Experiment and Instrument. Never return multiple objects, Markdown\n",
+            "fences, SQL, hidden truth, or invented facts. Normal chat is escaped prose and\n",
+            "cannot mutate state. Do not conclude before authorized evidence."
           ]
         }
       ],

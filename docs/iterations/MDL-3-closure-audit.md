@@ -10,14 +10,14 @@ Generated: 2026-08-26
 
 | Area | Current state | Closure state |
 |---|---|---|
-| Strict MDL-3 contract gate | 29/29 checks pass against current runtime digest, including art preflight and production derivatives | PASS |
+| Strict MDL-3 contract gate | 29/29 checks pass against current runtime/contract identity, including art preflight and production derivatives | PASS |
 | Local Python suite | 152 passed, 1 warning | PASS |
-| Genie configuration read-back | Authenticated export captured from the current `sda` workspace; digest `227be7e445be89903ef40c2777bbee4bd66ae8739442ca42200dac43118cb3c2` | PASS |
+| Genie configuration read-back | Authenticated export captured from the current `sda` workspace; digest `79bb81569d8faed42485861b24398273431a01a0f93d919d6bcd74843354bd10` | PASS |
 | Deployment | Databricks deployment `01f1a13e70ea15119a15e59c93c04fad` succeeded | PASS, identity reconciliation required |
 | Deployed smoke | PASS | PASS |
 | Deployed soak | 10/10 PASS | PASS |
 | Live 30-attempt benchmark | 30/30 failed by timeout in latest recorded run | OPEN / BLOCKING |
-| Final implementation identity | Current pushed SHA `e0b69b44e1504f524354b0a1efebc07eb4755a05`; excluded local generated files remain dirty | PASS for current implementation; release freeze still open |
+| Final implementation identity | Current pushed SHA `0b1c41811b5fe35af514fcec1dd9e27db7b7ebc3`; excluded local generated files remain dirty | PASS for current implementation; release freeze still open |
 | A05/A07 assets | 10 implementation-owned candidates recorded; 6 transparent A05 sprites, 4 opaque A07 environments, contact sheets, preflight, and 2 selected production derivatives | PASS |
 | Final CI/post-merge evidence | Not present for the final identity | OPEN |
 
