@@ -17,6 +17,7 @@ permissions:
 jobs:
   authenticated-live-batch:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     environment: staging
     steps:
       - uses: actions/checkout@v4
