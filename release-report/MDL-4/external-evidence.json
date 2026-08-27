@@ -1,0 +1,14 @@
+{
+  "github-ci": {
+    "status": "PASS",
+    "immutable_id": "33071323070",
+    "head_sha": "2cd29ad7d245ff47a8f7df392b930f7ff9654340"
+  },
+  "live-deployment": {
+    "status": "PASS",
+    "immutable_id": "01f1a211254d1404ac6b6a23e6a21134",
+    "app_name": "mad-data-lab",
+    "session_evidence": "live-session.json",
+    "score": 1000
+  }
+}

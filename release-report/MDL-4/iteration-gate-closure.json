@@ -1,7 +1,7 @@
 {
   "iteration": "MDL-4",
   "mode": "closure",
-  "status": "FAIL",
+  "status": "PASS",
   "gates": [
     {
       "name": "contract",
@@ -51,7 +51,7 @@
         "-q"
       ],
       "status": "PASS",
-      "output": "......s..........                                                        [100%]\n16 passed, 1 skipped in 3.34s\n"
+      "output": "......s..........                                                        [100%]\n16 passed, 1 skipped in 2.91s\n"
     },
     {
       "name": "fake-e2e",
@@ -60,7 +60,7 @@
         "scripts/run_mdl4_fake_e2e.py"
       ],
       "status": "PASS",
-      "output": "{\n  \"status\": \"PASS\",\n  \"session_id\": \"5ee71c89-c222-428d-9e13-363b84251dfc\",\n  \"experiments\": [\n    \"COMPONENT_DECOMPOSITION\",\n    \"SNAPSHOT_DIFF\",\n    \"DQ_MATERIALITY\",\n    \"FORMULA_VALIDATION\",\n    \"RECONCILIATION\"\n  ],\n  \"state\": \"DEBRIEF\",\n  \"score\": 1000\n}\n"
+      "output": "{\n  \"status\": \"PASS\",\n  \"session_id\": \"820ed9c4-265d-4aaa-8eea-38ed4b177e11\",\n  \"experiments\": [\n    \"COMPONENT_DECOMPOSITION\",\n    \"SNAPSHOT_DIFF\",\n    \"DQ_MATERIALITY\",\n    \"FORMULA_VALIDATION\",\n    \"RECONCILIATION\"\n  ],\n  \"state\": \"DEBRIEF\",\n  \"score\": 1000\n}\n"
     },
     {
       "name": "frontend-typecheck",
@@ -80,7 +80,7 @@
         "build"
       ],
       "status": "PASS",
-      "output": "\n> mad-data-lab@0.1.0 build\n> vite build\n\nvite v8.2.2 building client environment for production...\ntransforming...\n\u00e2\u0153\u201c 19 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.44 kB \u00e2\u201d\u201a gzip:  0.31 kB\ndist/assets/index-rbhqkHbq.css   12.71 kB \u00e2\u201d\u201a gzip:  3.83 kB\ndist/assets/index-sSbEQ_wN.js   215.45 kB \u00e2\u201d\u201a gzip: 67.30 kB\n\n\u00e2\u0153\u201c built in 376ms\n"
+      "output": "\n> mad-data-lab@0.1.0 build\n> vite build\n\nvite v8.2.2 building client environment for production...\ntransforming...\n\u00e2\u0153\u201c 19 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.44 kB \u00e2\u201d\u201a gzip:  0.31 kB\ndist/assets/index-rbhqkHbq.css   12.71 kB \u00e2\u201d\u201a gzip:  3.83 kB\ndist/assets/index-sSbEQ_wN.js   215.45 kB \u00e2\u201d\u201a gzip: 67.30 kB\n\n\u00e2\u0153\u201c built in 3.72s\n\u001b[33m[PLUGIN_TIMINGS] \u001b[0mYour build spent 97% of 3.7s inside plugin hooks (3.6s).\nNot measurable \u00e2\u20ac\u201d 1 hook whose calls overlap, so elapsed time covers work other calls were doing. Profile with `node --cpu-prof`:\n  - vite:css transform (3 calls)\nSee https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.\n\n"
     },
     {
       "name": "exact-head-ci",
@@ -90,8 +90,8 @@
         "MDL-4",
         "github-ci"
       ],
-      "status": "FAIL",
-      "output": "{\"status\": \"FAIL\", \"iteration\": \"MDL-4\", \"kind\": \"github-ci\", \"reason\": \"immutable external evidence manifest is missing\"}\n"
+      "status": "PASS",
+      "output": "{\"status\": \"PASS\", \"iteration\": \"MDL-4\", \"kind\": \"github-ci\", \"immutable_id\": \"33071323070\"}\n"
     },
     {
       "name": "live-deployment",
@@ -101,8 +101,8 @@
         "MDL-4",
         "live-deployment"
       ],
-      "status": "FAIL",
-      "output": "{\"status\": \"FAIL\", \"iteration\": \"MDL-4\", \"kind\": \"live-deployment\", \"reason\": \"immutable external evidence manifest is missing\"}\n"
+      "status": "PASS",
+      "output": "{\"status\": \"PASS\", \"iteration\": \"MDL-4\", \"kind\": \"live-deployment\", \"immutable_id\": \"01f1a211254d1404ac6b6a23e6a21134\"}\n"
     }
   ]
 }

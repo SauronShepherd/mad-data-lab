@@ -1,6 +1,6 @@
 {
-  "accepted_head_commit_sha": "9fedd2a242d01dd5dc9f1bdec9dff4c131d94dcf",
-  "accepted_head_tree_sha": "fe98ceeb58858193e7e37823dc487fc4786b2889",
+  "accepted_head_commit_sha": "2cd29ad7d245ff47a8f7df392b930f7ff9654340",
+  "accepted_head_tree_sha": "430b2fa57602e4b956e45d516b8c80b0a9e7e8a1",
   "asset_sha256": {
     "A03/candidate-001.png": "14739a88ba325fc245146bfeaa88890e59e78d2f89f706bbea99369e664439cf",
     "A03/candidate-002.png": "2900ef3d55dee531ba8a94f5e05dc8f688e825494c817caf672baa976d4541fe",
@@ -19,20 +19,17 @@
   "build_artifact_sha256": null,
   "data_schema_version": null,
   "databricks_deployment": {
-    "app_name": null,
-    "deployment_or_run_id": null,
-    "post_deploy_smoke": "PENDING",
-    "reported_build_sha": null,
-    "reported_tree_sha": null
+    "app_name": "mad-data-lab",
+    "deployment_or_run_id": "01f1a211254d1404ac6b6a23e6a21134",
+    "post_deploy_smoke": "PASS",
+    "reported_build_sha": "2cd29ad7d245ff47a8f7df392b930f7ff9654340",
+    "reported_tree_sha": "430b2fa57602e4b956e45d516b8c80b0a9e7e8a1"
   },
   "genie_config_sha256": null,
-  "github_workflow_run_ids": [],
+  "github_workflow_run_ids": [33071323070],
   "human_art_approval_files": [],
   "iteration": "MDL-4",
-  "open_blockers": [
-    "exact-head-ci",
-    "live-deployment"
-  ],
+  "open_blockers": [],
   "pull_request_number": null,
   "required_ci_checks": [],
   "test_report_sha256": {}
