@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query, Request, Header
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
@@ -67,6 +68,13 @@ async def http_error_handler(request: Request, exc: HTTPException):
     message = str(detail.get("message") or "The request could not be completed.")
     error = AppError(code, message, exc.status_code, bool(detail.get("retryable", False)), details={k:v for k,v in detail.items() if k not in {"code", "message", "retryable"}} or None)
     return JSONResponse(status_code=exc.status_code, content=envelope(error, request_id))
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_error_handler(request: Request, exc: RequestValidationError):
+    request_id = getattr(request.state, "request_id", uuid.uuid4().hex)
+    error = AppError("INVALID_REQUEST", "The request contains invalid or missing fields.", 422, False, details={"field_count": len(exc.errors())})
+    return JSONResponse(status_code=422, content=envelope(error, request_id))
 genie = CanonicalGenieBoundary(GenieAdapter())
 evidence_repository = EvidenceRepository()
 SESSIONS: dict[str, dict] = {}
@@ -375,7 +383,7 @@ def create_session(request: StartInvestigationRequest, idempotency_key: str | No
 def session_start(session_id: str, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")) -> dict:
     session = SESSIONS.get(session_id)
     if not session:
-        raise HTTPException(status_code=404, detail="Investigation not found")
+        raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     replay = replay_for_key(session, idempotency_key)
     if replay: return replay
     # A failed live turn is retryable: no Experiment/evidence is committed,
@@ -448,7 +456,7 @@ def get_session(session_id: str) -> dict:
 def restart_session(session_id: str) -> dict:
     session = SESSIONS.get(session_id)
     if not session:
-        raise HTTPException(status_code=404, detail="Investigation not found")
+        raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     case_id = session["case_id"]
     PENDING_STORES.pop(session_id, None)
     new_session_id = str(uuid.uuid4())
@@ -463,7 +471,7 @@ def restart_session(session_id: str) -> dict:
 def session_evidence(session_id: str, limit: int = Query(default=100, ge=1, le=100), offset: int = Query(default=0, ge=0), business_key: str | None = Query(default=None, max_length=64)) -> dict:
     session = SESSIONS.get(session_id)
     if not session:
-        raise HTTPException(status_code=404, detail="Investigation not found")
+        raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     if "SNAPSHOT_IMPACT" not in session.get("evidence_entitlements", []):
         raise HTTPException(status_code=409, detail="Snapshot evidence has not been earned")
     # Reading evidence is observational. Rewards require the explicit inspect action.
@@ -483,7 +491,7 @@ def session_evidence(session_id: str, limit: int = Query(default=100, ge=1, le=1
 @serialized_mutation
 def inspect_evidence(session_id: str, request: dict, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")) -> dict:
     session = SESSIONS.get(session_id)
-    if not session: raise HTTPException(status_code=404, detail="Investigation not found")
+    if not session: raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     key = idempotency_key or request.get("idempotency_key")
     if key and key in session.setdefault("idempotency_results", {}): return session["idempotency_results"][key]
     validate_revision(session, request)
@@ -514,7 +522,7 @@ def inspect_evidence(session_id: str, request: dict, idempotency_key: str | None
 def session_prediction(session_id: str, request: dict, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")) -> dict:
     session = SESSIONS.get(session_id)
     if not session:
-        raise HTTPException(status_code=404, detail="Investigation not found")
+        raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     key = idempotency_key or request.get("idempotency_key")
     replay = replay_for_key(session, key)
     if replay: return replay
@@ -551,7 +559,7 @@ def session_prediction(session_id: str, request: dict, idempotency_key: str | No
 def session_hint(session_id: str, request: dict | None = None, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")) -> dict:
     session = SESSIONS.get(session_id)
     if not session:
-        raise HTTPException(status_code=404, detail="Investigation not found")
+        raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     key = idempotency_key or (request or {}).get("idempotency_key")
     replay = replay_for_key(session, key)
     if replay: return replay
@@ -582,7 +590,7 @@ def session_hint(session_id: str, request: dict | None = None, idempotency_key: 
 def conclude_session(session_id: str, request: dict | None = None, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")) -> dict:
     session = SESSIONS.get(session_id)
     if not session:
-        raise HTTPException(status_code=404, detail="Investigation not found")
+        raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     validate_revision(session, request)
     key = idempotency_key or (request or {}).get("idempotency_key")
     replay = replay_for_key(session, key)
@@ -668,7 +676,7 @@ def session_next(session_id: str, request: SessionNextRequest, idempotency_key: 
 def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency_key: str | None = None) -> dict:
     session = SESSIONS.get(session_id)
     if not session:
-        raise HTTPException(status_code=404, detail="Investigation not found")
+        raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     replay = replay_for_key(session, idempotency_key)
     if replay: return replay
     validate_revision(session, request.model_dump())
@@ -829,7 +837,7 @@ def ask_genie(request: GenieQuestionRequest) -> dict:
 def session_chat(session_id: str, request: dict) -> dict:
     session = SESSIONS.get(session_id)
     if not session:
-        raise HTTPException(status_code=404, detail="Investigation not found")
+        raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     question = str(request.get("question", ""))
     if not question or len(question) > 1000:
         raise HTTPException(status_code=422, detail="question must be 1-1000 characters")

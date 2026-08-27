@@ -15,3 +15,10 @@ def test_unknown_session_uses_stable_error_envelope_and_request_id():
     assert response.headers["X-Request-ID"]
     assert response.json()["error"]["code"] == "SESSION_NOT_FOUND"
     assert "traceback" not in response.text.lower()
+
+
+def test_validation_errors_use_stable_error_envelope():
+    response = TestClient(app).post("/api/sessions", json={"case_id": "not-a-case"})
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "INVALID_REQUEST"
+    assert response.headers["X-Request-ID"] == response.json()["error"]["request_id"]
