@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from server.errors import AppError, envelope
+from server.errors import AppError, ERROR_CODES, envelope
 from server.main import app
 
 
@@ -22,3 +22,8 @@ def test_validation_errors_use_stable_error_envelope():
     assert response.status_code == 422
     assert response.json()["error"]["code"] == "INVALID_REQUEST"
     assert response.headers["X-Request-ID"] == response.json()["error"]["request_id"]
+
+
+def test_mdl6_error_taxonomy_contains_required_categories():
+    required = {"GENIE_TIMEOUT", "GENIE_FAILED", "GENIE_MALFORMED_PROTOCOL", "CASE_NOT_FOUND", "EVIDENCE_SCHEMA_MISMATCH", "RECONCILIATION_FAILED", "DATA_INVARIANT_FAILED", "ILLEGAL_STATE_TRANSITION", "SESSION_NOT_FOUND", "DUPLICATE_ACTION", "WAREHOUSE_PENDING", "WAREHOUSE_QUOTA_EXHAUSTED", "APP_RESOURCE_UNAVAILABLE"}
+    assert required <= ERROR_CODES
