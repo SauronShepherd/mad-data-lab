@@ -35,17 +35,23 @@ def main() -> None:
     else:
         raise AssertionError(f"container did not become ready: {last_error}")
     session = call("/api/sessions", "POST", {"case_id": "CASE_0042"})
-    assert session["state"] == "CASE_BRIEFING" and session["score"] == 0
+    assert session["state"] == "CASE_BRIEFING" and "score" not in session
     session_id = session["session_id"]
     started = call(f"/api/sessions/{session_id}/start", "POST", {})
     assert started["state"] == "HYPOTHESES_READY"
+    call(f"/api/sessions/{session_id}/prediction", "POST", {"prediction": "PRED_SOURCE_VALUES_CHANGED"})
     results = [call(f"/api/sessions/{session_id}/next", "POST", {}) for _ in range(5)]
     assert [item["experiment_id"] for item in results] == [
         "COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "FORMULA_VALIDATION", "RECONCILIATION"
     ]
     assert call(f"/api/sessions/{session_id}/evidence")["total"] == 30
-    assert call(f"/api/sessions/{session_id}/conclude", "POST", {})["status"] == "COMPLETE"
-    print("container smoke: PASS (canonical Case #042 session)")
+    call(f"/api/sessions/{session_id}/evidence/inspect", "POST", {"capability": "CASE_0042:LINEAGE:V2_SOURCE_PATH"})
+    final_stage = call(f"/api/sessions/{session_id}/next", "POST", {})
+    assert final_stage["phase"] == "PLAYER_PREDICTION_FINAL"
+    call(f"/api/sessions/{session_id}/prediction", "POST", {"final": True, "prediction": "FINAL_CHANGED_V2_SOURCE_RECORDS"})
+    assert call(f"/api/sessions/{session_id}/conclude", "POST", {})["state"] == "CONCLUDING"
+    assert call(f"/api/sessions/{session_id}/debrief", "POST", {})["state"] == "DEBRIEF"
+    print("container smoke: PASS (canonical MDL-4 Case #042 session)")
 
 
 if __name__ == "__main__":
