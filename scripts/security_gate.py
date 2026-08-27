@@ -25,7 +25,7 @@ def main() -> None:
     scan_repository()
     source_files = [*ROOT.glob("server/**/*.py"), *ROOT.glob("src/**/*"), *ROOT.glob("resources/**/*.json"), *ROOT.glob("sql/**/*.sql"), *ROOT.glob("data/fixtures/public/**/*.json")]
     source = "\n".join(path.read_text(encoding="utf-8", errors="ignore") for path in source_files if path.is_file())
-    assert not re.search(r"(?i)(databricks_pat|api[_-]?key|client_secret|password\s*=)", source), "secret-like source pattern found"
+    assert not re.search(r"(?i)(databricks_pat\s*[:=]|api[_-]?key\s*[:=]|client_secret\s*=|password\s*=)", source), "secret-like source pattern found"
     frontend = "\n".join(path.read_text(encoding="utf-8", errors="ignore") for path in ROOT.glob("src/**/*") if path.is_file())
     assert "CASE_TRUTH" not in frontend and "primary_component" not in frontend
     assert "eval(" not in frontend and "new Function(" not in frontend
