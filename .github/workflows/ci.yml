@@ -35,7 +35,6 @@ jobs:
       - run: python scripts/security_gate.py
       - run: python scripts/image_preflight.py
       - run: python scripts/audio_preflight.py
-      - run: python scripts/performance_gate.py
       - run: python scripts/frontend_contract_gate.py
       - run: python scripts/openapi_contract_gate.py
       - run: python scripts/validate_mdl1_traceability.py
@@ -66,6 +65,7 @@ jobs:
         with: {node-version: '22', cache: npm}
       - run: npm ci
       - run: npm run build
+      - run: python scripts/performance_gate.py
       - run: npx playwright install --with-deps chromium
       - name: Run browser contract with diagnostics
         shell: bash
