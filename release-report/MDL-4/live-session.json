@@ -1,0 +1,8 @@
+{
+  "case_id": "CASE_0042",
+  "diagnostic": "HTTP Error 502: Bad Gateway",
+  "finished_at": "2026-08-27T11:32:08.652749+00:00",
+  "iteration": "MDL-4",
+  "started_at": "2026-08-27T11:32:06.804884+00:00",
+  "status": "LIVE_GENIE_PROTOCOL_FAILURE"
+}
