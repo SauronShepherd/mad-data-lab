@@ -56,7 +56,7 @@ def test_counts() -> dict[str, int]:
 def _project_command(command: list[str]) -> list[str]:
     """Run Python gates in the project environment, including when launched by uv."""
     if command and Path(command[0]).name.lower().startswith("python") and shutil.which("uv"):
-        return ["uv", "run", *command]
+        return ["uv", "run", "python", *command[1:]]
     return command
 
 
