@@ -1,4 +1,6 @@
 from pathlib import Path
+import json
+import subprocess
 
 import yaml
 
@@ -22,3 +24,15 @@ def test_debt_ledger_has_no_unexplained_open_items():
     for line in text.splitlines():
         if line.startswith("| TD-"):
             assert "rationale:" in line or "CLOSED" in line or "BLOCKED_" in line
+
+
+def test_td005_closure_is_bound_to_real_historical_live_evidence():
+    manifest = json.loads((ROOT / "release-report/MDL-4/manifest.json").read_text(encoding="utf-8"))
+    external = json.loads((ROOT / "release-report/MDL-4/external-evidence.json").read_text(encoding="utf-8"))
+    session = json.loads((ROOT / "release-report/MDL-4/live-session.json").read_text(encoding="utf-8"))
+    accepted = manifest["accepted_head_commit_sha"]
+    assert len(accepted) == 40
+    assert subprocess.run(["git", "cat-file", "-e", f"{accepted}^{{commit}}"], cwd=ROOT).returncode == 0
+    assert manifest["databricks_deployment"]["deployment_or_run_id"] == external["live-deployment"]["immutable_id"]
+    assert session["status"] == "PASS" and session["health"] == "ok" and session["score"] == 1000
+    assert session["started_at"] < session["finished_at"]
