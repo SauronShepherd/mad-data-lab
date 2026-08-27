@@ -62,3 +62,17 @@ def test_experiment_rationales_explain_analytical_use_without_private_cause():
         assert experiment.id.lower() not in experiment.rationale.lower()
         assert "SOURCE_RECORD_CHANGE" not in experiment.rationale
         assert "case_truth" not in experiment.rationale.lower()
+
+
+@pytest.mark.parametrize("failure", [TimeoutError("timeout"), ValueError("invalid json"), RuntimeError("partial response"), ConnectionError("space unavailable"), RuntimeError("rate limit"), OSError("transient http")])
+def test_genie_turn_failures_never_become_success(failure):
+    from backend.genie.lifecycle import GenieTurn, TurnFailure
+
+    result = GenieTurn(
+        active_case_id="CASE_0042", allowed_experiments={"SNAPSHOT_DIFF"},
+        instrument_for_experiment=lambda _: {"SNAPSHOT_DIFF"},
+        request=lambda _: (_ for _ in ()).throw(failure),
+        repair=lambda _: "{}",
+    )
+    with pytest.raises(type(failure)):
+        result.run()
