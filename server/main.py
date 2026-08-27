@@ -645,7 +645,7 @@ def conclude_session(session_id: str, request: dict | None = None, idempotency_k
 @serialized_mutation
 def enter_debrief(session_id: str, request: dict | None = None, idempotency_key: str | None = Header(default=None, alias="Idempotency-Key")) -> dict:
     session = SESSIONS.get(session_id)
-    if not session: raise HTTPException(status_code=404, detail="Investigation not found")
+    if not session: raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     key = idempotency_key or (request or {}).get("idempotency_key")
     if key and key in session.setdefault("idempotency_results", {}): return session["idempotency_results"][key]
     validate_revision(session, request)
