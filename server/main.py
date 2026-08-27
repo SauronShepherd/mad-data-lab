@@ -491,13 +491,19 @@ def session_evidence(session_id: str, limit: int = Query(default=100, ge=1, le=1
         raise HTTPException(status_code=409, detail="Snapshot evidence has not been earned")
     # Reading evidence is observational. Rewards require the explicit inspect action.
     if session["case_id"] == "CASE_0042":
-        evidence = []
-        for item in evidence_repository.records(session["case_id"], limit=100, business_key=business_key):
-            payload = item.model_dump()
-            for key in ("old_value", "new_value", "impact"):
-                if payload[key] is not None:
-                    payload[key] = float(payload[key])
-            evidence.append(payload)
+        try:
+            evidence = []
+            for item in evidence_repository.records(session["case_id"], limit=100, business_key=business_key):
+                payload = item.model_dump()
+                for key in ("old_value", "new_value", "impact"):
+                    if payload[key] is not None:
+                        payload[key] = float(payload[key])
+                evidence.append(payload)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise HTTPException(status_code=502, detail={"code": "EVIDENCE_SCHEMA_MISMATCH", "retryable": True}) from exc
+        except Exception as exc:
+            LOGGER.exception("evidence repository failed")
+            raise HTTPException(status_code=503, detail={"code": "DATA_INVARIANT_FAILED", "retryable": True}) from exc
     else:
         raise HTTPException(status_code=409, detail="Curated evidence is not available for this Case")
     return {"session_id": session_id, "case_id": session["case_id"], "total": len(evidence), "offset": offset, "limit": limit, "evidence": evidence[offset:offset + limit]}
