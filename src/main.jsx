@@ -321,6 +321,7 @@ function App() {
         loop
         preload="none"
         src="/audio/mad_data_lab_curiosity.mp3"
+        onError={() => setServiceError("Background music unavailable; gameplay continues.")}
       />
       <header className="topbar">
         <div className="brand">

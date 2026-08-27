@@ -10,6 +10,26 @@ test('same-origin Case #042 browser contract', async ({ page, request }) => {
   await expect(page).not.toHaveTitle(/error/i);
 });
 
+test('audio failure does not block first interaction', async ({ page }) => {
+  await page.route('**/audio/mad_data_lab_curiosity.mp3', (route) => route.abort());
+  await page.goto('/');
+  await page.getByRole('button', {name: 'Play laboratory music'}).click();
+  await page.getByRole('button', {name: 'OPEN CASE BOARD'}).click();
+  await expect(page.getByRole('button', {name: /START INVESTIGATION|OPEN CASE/}).first()).toBeVisible();
+  await expect(page).not.toHaveTitle(/error/i);
+});
+
+test('music control persists mute preference and uses a looped track', async ({ page }) => {
+  await page.goto('/');
+  const audio = page.locator('audio');
+  await expect(audio).toHaveAttribute('loop', '');
+  await page.getByRole('button', {name: 'Play laboratory music'}).click();
+  await expect(page.getByRole('button', {name: 'Mute laboratory music'})).toBeVisible();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('mad-data-lab-audio'))).toBe('on');
+  await page.getByRole('button', {name: 'Mute laboratory music'}).click();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('mad-data-lab-audio'))).toBe('off');
+});
+
 test('Case #042 visible flow reaches final prediction and Debrief', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', {name: 'OPEN CASE BOARD'}).click();
