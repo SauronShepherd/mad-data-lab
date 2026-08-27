@@ -1,11 +1,108 @@
 {
-  "status": "CANDIDATES_PREFLIGHT_PASS",
-  "approval": "PENDING_HUMAN_APPROVAL",
-  "assets": ["A03", "A06"],
+  "approval_status": "DEFERRED_TO_USER_END_REVIEW",
   "candidate_count": 10,
-  "exact_byte_hashes_recorded": true,
-  "contact_sheets": {
-    "A03": "assets/review/MDL-4/contact-sheets/A03.png",
-    "A06": "assets/review/MDL-4/contact-sheets/A06.png"
-  }
+  "candidates": [
+    {
+      "asset_id": "A03",
+      "candidate_id": "candidate-001",
+      "height": 941,
+      "mode": "RGB",
+      "path": "assets\\review\\MDL-4\\A03\\candidate-001.png",
+      "sha256": "14739a88ba325fc245146bfeaa88890e59e78d2f89f706bbea99369e664439cf",
+      "status": "CANDIDATE",
+      "width": 1672
+    },
+    {
+      "asset_id": "A03",
+      "candidate_id": "candidate-002",
+      "height": 941,
+      "mode": "RGB",
+      "path": "assets\\review\\MDL-4\\A03\\candidate-002.png",
+      "sha256": "2900ef3d55dee531ba8a94f5e05dc8f688e825494c817caf672baa976d4541fe",
+      "status": "CANDIDATE",
+      "width": 1672
+    },
+    {
+      "asset_id": "A03",
+      "candidate_id": "candidate-003",
+      "height": 1055,
+      "mode": "RGB",
+      "path": "assets\\review\\MDL-4\\A03\\candidate-003.png",
+      "sha256": "261ee0c70ae5d51b4c9450503ad7b061bb5cafb7ffd39dbd131dcc5e6742997a",
+      "status": "CANDIDATE",
+      "width": 1491
+    },
+    {
+      "asset_id": "A03",
+      "candidate_id": "candidate-004",
+      "height": 1055,
+      "mode": "RGB",
+      "path": "assets\\review\\MDL-4\\A03\\candidate-004.png",
+      "sha256": "ae2aa820f01c84ffb3a1a10e65b8938a397f62a9777810a6330543db297b70fe",
+      "status": "CANDIDATE",
+      "width": 1491
+    },
+    {
+      "asset_id": "A03",
+      "candidate_id": "candidate-005",
+      "height": 941,
+      "mode": "RGB",
+      "path": "assets\\review\\MDL-4\\A03\\candidate-005.png",
+      "sha256": "5683e643167ca52c6400c14fd0fcb97704e7279356f61b4e62bbb60e52d756a3",
+      "status": "CANDIDATE",
+      "width": 1672
+    },
+    {
+      "asset_id": "A03",
+      "candidate_id": "candidate-006",
+      "height": 941,
+      "mode": "RGB",
+      "path": "assets\\review\\MDL-4\\A03\\candidate-006.png",
+      "sha256": "3cdf1a9690b05ff54f68fb216f55cb5821a81a082e911b35e9c2bf01df3f2c00",
+      "status": "CANDIDATE",
+      "width": 1672
+    },
+    {
+      "asset_id": "A06",
+      "candidate_id": "candidate-001",
+      "height": 1536,
+      "mode": "RGBA",
+      "path": "assets\\review\\MDL-4\\A06\\candidate-001.png",
+      "sha256": "615640bc3af491956fe4380133fdeb08741361e5f8e9b5d7190dda51707bbcaf",
+      "status": "CANDIDATE",
+      "width": 1024
+    },
+    {
+      "asset_id": "A06",
+      "candidate_id": "candidate-002",
+      "height": 1536,
+      "mode": "RGBA",
+      "path": "assets\\review\\MDL-4\\A06\\candidate-002.png",
+      "sha256": "9d1b3c73ae9f42f4c1c688423ec341029c58afb7eb95d6ca048fd73638653964",
+      "status": "CANDIDATE",
+      "width": 1024
+    },
+    {
+      "asset_id": "A06",
+      "candidate_id": "candidate-003",
+      "height": 1295,
+      "mode": "RGBA",
+      "path": "assets\\review\\MDL-4\\A06\\candidate-003.png",
+      "sha256": "7808770d677a620b2a2f890d8aaecb60637a3fc47771c512eff0f3d795504715",
+      "status": "CANDIDATE",
+      "width": 1214
+    },
+    {
+      "asset_id": "A06",
+      "candidate_id": "candidate-004",
+      "height": 1536,
+      "mode": "RGBA",
+      "path": "assets\\review\\MDL-4\\A06\\candidate-004.png",
+      "sha256": "97722bcad5e04b503ac598ba289226a5ed902f6640070a4feb77a35b0f8917e9",
+      "status": "CANDIDATE",
+      "width": 1024
+    }
+  ],
+  "iteration": "MDL-4",
+  "status": "CANDIDATES_PREFLIGHT_PASS"
 }
