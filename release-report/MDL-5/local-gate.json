@@ -1,7 +1,7 @@
 {
   "iteration": "MDL-5",
   "status": "PASS_LOCAL",
-  "pytest": {"collected": 182, "passed": 175, "allowed_skips": 7, "failures": 0, "junit": "pytest-gate.xml"},
+  "pytest": {"collected": 187, "passed": 180, "allowed_skips": 7, "failures": 0, "junit": "pytest-gate.xml"},
   "gates": {
     "security": "PASS",
     "frontend_contract": "PASS",

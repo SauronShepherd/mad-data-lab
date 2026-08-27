@@ -203,10 +203,8 @@ class GenieAdapter:
         workspace = self._workspace()
         conversation_id = getattr(response, "conversation_id", None)
         message_id = getattr(response, "message_id", None)
-        # V3 protocol responses are validated before any legacy attachment or
-        # compatibility extraction. This makes strict control the live path
-        # while preserving the older fixture-space response shape during
-        # migration.
+        # The live boundary accepts only the V3 control object. Legacy
+        # fixture-space payloads are intentionally not a production fallback.
         # ``response.content`` is the prompt sent to Genie, not an answer.
         # It contains the schema marker by design, so inspecting it would
         # misclassify every live turn as a V3 response and bypass managed
@@ -249,89 +247,7 @@ class GenieAdapter:
                 return v3.model_dump(mode="json") | {"message_id": message_id, "conversation_id": conversation_id, "source": "genie"}
             except (TypeError, ValueError) as exc:
                 raise ValueError(f"invalid V3 Genie control response: {exc}") from exc
-        for attachment in getattr(response, "attachments", []) or []:
-            if not getattr(attachment, "query", None) or not getattr(attachment, "attachment_id", None):
-                continue
-            if not conversation_id or not message_id:
-                break
-            try:
-                workspace.genie.execute_message_attachment_query(
-                    space_id=self.space_id,
-                    conversation_id=conversation_id,
-                    message_id=message_id,
-                    attachment_id=attachment.attachment_id,
-                )
-            except Exception:
-                # App-runtime messages can advertise an attachment before its
-                # query resource exists. The canonical-view recovery below is
-                # the safe path for that transient SDK race.
-                continue
-            for _ in range(30):
-                try:
-                    result = workspace.genie.get_message_attachment_query_result(
-                        space_id=self.space_id,
-                        conversation_id=conversation_id,
-                        message_id=message_id,
-                        attachment_id=attachment.attachment_id,
-                    )
-                except Exception:
-                    break
-                statement = getattr(result, "statement_response", None)
-                data = getattr(getattr(statement, "result", None), "data_array", None)
-                if data and data[0] and data[0][0]:
-                    raw = str(data[0][0])
-                    try:
-                        return normalise_control_response(raw, registered_ids=allowed_experiments)
-                    except ValueError:
-                        # Some Genie plans return the curated evidence rows
-                        # directly instead of the requested JSON column. Keep
-                        # the live evidence and normalize it into the closed
-                        # control protocol; never invent an experiment ID.
-                        schema = getattr(getattr(statement, "manifest", None), "schema", None)
-                        columns = [getattr(column, "name", "column") for column in getattr(schema, "columns", [])]
-                        evidence = [dict(zip(columns, row)) for row in data]
-                        names = {
-                            "COMPONENT_DECOMPOSITION": ("Component Decomposition", "component_evidence"),
-                            "SNAPSHOT_DIFF": ("Snapshot Diff", "SNAPSHOT_DIFF"),
-                            "DQ_MATERIALITY": ("DQ Materiality", "DQ_PANEL"),
-                            "FORMULA_VALIDATION": ("Formula Validation", "FORMULA_CHECK"),
-                            "RECONCILIATION": ("Reconciliation", "RECONCILIATION"),
-                        }
-                        # Curated evidence responses may omit the control JSON,
-                        # but they must still identify the selected Experiment
-                        # explicitly. Never infer it from row/column position.
-                        explicit_ids = {
-                            str(value)
-                            for row in evidence
-                            for key, value in row.items()
-                            if key.lower() in {"experiment_id", "experiment", "selected_experiment_id"}
-                            and str(value) in allowed_experiments
-                        }
-                        selected_id = next(iter(explicit_ids)) if len(explicit_ids) == 1 else None
-                        if selected_id not in allowed_experiments or selected_id not in names:
-                            continue
-                        name, instrument = names[selected_id]
-                        return validate_control_payload({
-                            "experiment_id": selected_id,
-                            "name": name,
-                            "instrument": instrument,
-                            "rationale": "Curated evidence returned by the live Genie query.",
-                            "evidence": json.dumps(evidence, ensure_ascii=False, default=str)[:1200],
-                            "hypothesis_updates": [{"name": key, "status": "POSSIBLE"} for key in ("H1", "H2", "H3")],
-                        }, registered_ids_for_case(case_id))
-                state = getattr(getattr(statement, "status", None), "state", None)
-                if str(state).endswith("FAILED") or str(state).endswith("CANCELED"):
-                    break
-                self._sleeper(max(0.05, load_settings().genie_poll_interval_ms / 1000))
-        text = _text_from_response(response)
-        # Do not execute a trusted query merely because tuple position supplied
-        # an expected ID. A query fallback is legal only after a valid model
-        # selection has been parsed and validated; otherwise the caller owns
-        # the safe server-registered continuation.
-        try:
-            return normalise_control_response(text, registered_ids=allowed_experiments)
-        except ValueError as exc:
-            raise ValueError(f"Genie answer did not contain a control payload: {text[:1200]}") from exc
+        raise ValueError("Genie answer did not contain a valid V3 control payload")
 
     def start(self, case_id: str = DEFAULT_CASE_ID) -> dict:
         registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS

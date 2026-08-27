@@ -62,17 +62,25 @@ def _attachment_workspace(rows):
     return SimpleNamespace(genie=genie)
 
 
-def test_live_adapter_recovers_curated_rows_only_from_explicit_allowed_id():
+def test_live_adapter_rejects_legacy_curated_rows_without_v3_control():
     adapter = GenieAdapter(sleeper=lambda _: None)
     adapter.space_id = "space"
     adapter._client = _attachment_workspace([["SNAPSHOT_DIFF", "V2 differs"]])
-    result = adapter._control_message(_attachment_response(), "CASE_0042", {"SNAPSHOT_DIFF"})
-    assert result["experiment_id"] == "SNAPSHOT_DIFF"
+    with pytest.raises(ValueError, match="valid V3"):
+        adapter._control_message(_attachment_response(), "CASE_0042", {"SNAPSHOT_DIFF"})
 
 
-def test_live_adapter_rejects_ambiguous_curated_row_selection():
+def test_live_adapter_rejects_ambiguous_legacy_curated_rows():
     adapter = GenieAdapter(sleeper=lambda _: None)
     adapter.space_id = "space"
     adapter._client = _attachment_workspace([["SNAPSHOT_DIFF", "one"], ["COMPONENT_DECOMPOSITION", "two"]])
-    with pytest.raises(ValueError, match="did not contain a control payload"):
+    with pytest.raises(ValueError, match="valid V3"):
         adapter._control_message(_attachment_response(), "CASE_0042", {"SNAPSHOT_DIFF", "COMPONENT_DECOMPOSITION"})
+
+
+def test_live_adapter_rejects_flattened_fixture_shape():
+    adapter = GenieAdapter()
+    adapter._client = SimpleNamespace()
+    legacy = _response('{"experiment_id":"SNAPSHOT_DIFF","name":"Snapshot","instrument":"SNAPSHOT_DIFF","rationale":"x","evidence":"y","hypothesis_updates":[]}')
+    with pytest.raises(ValueError, match="valid V3"):
+        adapter._control_message(legacy, "CASE_0042", {"SNAPSHOT_DIFF"})
