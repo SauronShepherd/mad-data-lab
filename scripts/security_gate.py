@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 import re
 import sys
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE_MARKERS = ('truth_json', 'primary_cause', 'primary_component', 'secondary_cause', 'expected_path_json', 'allowed_final_status_json', 'case_truth')
@@ -11,7 +12,8 @@ SECRET_PATTERNS = (r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----', r'(?i)\
 
 
 def scan_repository() -> None:
-    candidates = [p for p in ROOT.rglob('*') if p.is_file() and not any(part in {'node_modules', '.git', '.venv', '.mdl3-venv', '__pycache__', 'tmp', 'test-results'} or part.startswith('tmp_') for part in p.parts)]
+    tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode().split("\\0")
+    candidates = [ROOT / name for name in tracked if name and (ROOT / name).is_file()]
     forbidden_files = [p for p in candidates if p.name.lower() in {'.env', '.env.local', '.env.production'} or p.suffix.lower() in {'.pem', '.key', '.p12'}]
     assert not forbidden_files, f"credential files present: {forbidden_files}"
     for path in candidates:
