@@ -46,6 +46,7 @@ def main() -> None:
         "irrelevant", "unrelated", "only answer", "specified tables",
         "not accessible", "cannot fulfill", "cannot access", "cannot reveal",
         "limited to", "not able to", "not available",
+        "outside the allowed", "outside the provided", "outside the allowed database scope",
     )
     assert any(signal in refusal_text for signal in refusal_signals), refusal_text
     # A refusal may quote or paraphrase the adversarial request.  Detect
