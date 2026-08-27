@@ -60,7 +60,7 @@ def _project_command(command: list[str]) -> list[str]:
         joined = " ".join(command[1:])
         if "pytest" in joined:
             extras.append("pytest")
-        if any(name in joined for name in ("assets_gate", "art_contact", "art_review")):
+        if any(name in joined for name in ("assets_gate", "art_contact", "art_review", "pytest_gate")):
             extras.append("Pillow")
         return ["uv", "run", *(sum((["--with", package] for package in extras), [])), "python", *command[1:]]
     return command
