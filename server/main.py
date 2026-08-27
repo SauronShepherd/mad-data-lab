@@ -74,7 +74,18 @@ async def request_id_middleware(request: Request, call_next):
 async def http_error_handler(request: Request, exc: HTTPException):
     request_id = getattr(request.state, "request_id", uuid.uuid4().hex)
     detail = exc.detail if isinstance(exc.detail, dict) else {}
-    code = str(detail.get("code") or "REQUEST_REJECTED")
+    raw_message = str(exc.detail) if not detail else ""
+    inferred = {
+        "Investigation not found": "SESSION_NOT_FOUND",
+        "Live Genie is unavailable": "GENIE_FAILED",
+        "Genie could not answer this question": "GENIE_FAILED",
+        "Snapshot evidence has not been earned": "EVIDENCE_SCHEMA_MISMATCH",
+        "Curated evidence is not available for this Case": "EVIDENCE_SCHEMA_MISMATCH",
+        "This Case is not enabled yet": "CASE_NOT_FOUND",
+    }.get(raw_message)
+    if inferred is None and raw_message.lower().startswith("unknown case:"):
+        inferred = "CASE_NOT_FOUND"
+    code = str(detail.get("code") or inferred or "REQUEST_REJECTED")
     message = str(detail.get("message") or "The request could not be completed.")
     error = AppError(code, message, exc.status_code, bool(detail.get("retryable", False)), details={k:v for k,v in detail.items() if k not in {"code", "message", "retryable"}} or None)
     body = envelope(error, request_id)
