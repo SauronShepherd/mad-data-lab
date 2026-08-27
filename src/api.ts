@@ -10,7 +10,13 @@ const API_BASE = import.meta.env.VITE_API_BASE || (import.meta.env.DEV ? 'http:/
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, init);
-  if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    const error = payload?.error;
+    const failure = new Error(error?.message || `API request failed: ${response.status}`) as Error & { code?: string; retryable?: boolean; requestId?: string };
+    failure.code = error?.code; failure.retryable = error?.retryable; failure.requestId = error?.request_id;
+    throw failure;
+  }
   return response.json() as Promise<T>;
 }
 const post = <T>(path: string, body: Json, idempotencyKey?: string): Promise<T> => request<T>(path, {method: 'POST', headers: {'Content-Type': 'application/json', ...(idempotencyKey ? {'Idempotency-Key': idempotencyKey} : {})}, body: JSON.stringify(body)});

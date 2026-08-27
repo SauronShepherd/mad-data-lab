@@ -33,6 +33,8 @@ jobs:
           cat pytest-report.txt
           exit "$status"
       - run: python scripts/security_gate.py
+      - run: python scripts/image_preflight.py
+      - run: python scripts/audio_preflight.py
       - run: python scripts/frontend_contract_gate.py
       - run: python scripts/openapi_contract_gate.py
       - run: python scripts/validate_mdl1_traceability.py

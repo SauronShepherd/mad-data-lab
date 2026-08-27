@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import os
 import time
@@ -11,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query, Request, Header
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -19,7 +20,7 @@ from pydantic import BaseModel, Field
 
 from .case_data import EXPERIMENTS_BY_CASE, PLANNED_EXPERIMENTS_BY_CASE, experiment_payload
 from .catalog import DEFAULT_CASE_ID, FULL_CASE_CATALOG, case_availability, get_any_case
-from .genie import GenieAdapter
+from .genie import CircuitOpenError, GenieAdapter, SessionCircuitBreaker
 from backend.genie.decisions import allowed_set_digest
 from backend.genie.client import CanonicalGenieBoundary
 from backend.domain.orchestration import DecisionOrchestrator
@@ -32,6 +33,7 @@ from backend.genie.decisions import PendingDecisionStore, PendingDecision
 from .state import InvestigationState, transition
 from backend.data.repositories import EvidenceRepository
 from .config import load_settings
+from .errors import AppError, envelope
 
 
 app = FastAPI(title="MAD DATA LAB API", version="0.1.0")
@@ -47,10 +49,24 @@ app.add_middleware(
 
 @app.middleware("http")
 async def request_id_middleware(request: Request, call_next):
-    request_id = uuid.uuid4().hex
-    response = await call_next(request)
+    request_id = request.headers.get("X-Request-ID") or uuid.uuid4().hex
+    request.state.request_id = request_id
+    try:
+        response = await call_next(request)
+    except AppError as exc:
+        response = JSONResponse(status_code=exc.status_code, content=envelope(exc, request_id))
     response.headers["X-Request-ID"] = request_id
+    LOGGER.info(json.dumps({"event": "request_completed", "request_id": request_id, "method": request.method, "path": request.url.path, "status_code": response.status_code}, separators=(",", ":")))
     return response
+
+@app.exception_handler(HTTPException)
+async def http_error_handler(request: Request, exc: HTTPException):
+    request_id = getattr(request.state, "request_id", uuid.uuid4().hex)
+    detail = exc.detail if isinstance(exc.detail, dict) else {}
+    code = str(detail.get("code") or "REQUEST_REJECTED")
+    message = str(detail.get("message") or "The request could not be completed.")
+    error = AppError(code, message, exc.status_code, bool(detail.get("retryable", False)), details={k:v for k,v in detail.items() if k not in {"code", "message", "retryable"}} or None)
+    return JSONResponse(status_code=exc.status_code, content=envelope(error, request_id))
 genie = CanonicalGenieBoundary(GenieAdapter())
 evidence_repository = EvidenceRepository()
 SESSIONS: dict[str, dict] = {}
@@ -80,7 +96,7 @@ def expire_sessions() -> None:
 def require_session(session_id: str) -> dict:
     expire_sessions()
     session = SESSIONS.get(session_id)
-    if not session: raise HTTPException(status_code=404, detail="Investigation not found")
+    if not session: raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     if session.get("expired"): raise HTTPException(status_code=410, detail={"code":"SESSION_EXPIRED", "retryable":False})
     session["last_activity"] = datetime.now(timezone.utc).isoformat()
     return session
@@ -138,6 +154,14 @@ def append_event(session: dict, event_type: str, **payload: Any) -> None:
                    "event_id": uuid.uuid4().hex, "schema_version": 1, "session_id": session.get("session_id"),
                    "case_id": session.get("case_id"), "created_at": datetime.now(timezone.utc).isoformat(), **payload})
 
+
+def session_breaker(session: dict) -> SessionCircuitBreaker:
+    breaker = session.get("genie_breaker")
+    if not isinstance(breaker, SessionCircuitBreaker):
+        breaker = SessionCircuitBreaker()
+        session["genie_breaker"] = breaker
+    return breaker
+
 def score_event(session: dict, score_type: str, eligibility_key: str) -> None:
     session.setdefault("score_ledger", []).append({"score_event_id": uuid.uuid4().hex, "type": score_type,
         "score_type": score_type, "eligibility_key": eligibility_key, "reason_code": eligibility_key,
@@ -147,7 +171,7 @@ def score_event(session: dict, score_type: str, eligibility_key: str) -> None:
     session.setdefault("score_events", []).append(score_type)
 
 def safe_session_projection(session_id: str, session: dict) -> dict:
-    public = {k: v for k, v in session.items() if k not in {"score_ledger", "private_truth", "idempotency", "idempotency_results", "initial_prediction_correct", "final_prediction_correct"}}
+    public = {k: v for k, v in session.items() if k not in {"score_ledger", "private_truth", "idempotency", "idempotency_results", "initial_prediction_correct", "final_prediction_correct", "genie_breaker"}}
     public["session_id"] = session_id
     public["state_revision"] = len(session.get("events", []))
     if session.get("state") not in {CONCLUDING_STATE, DEBRIEF_STATE}:
@@ -359,6 +383,11 @@ def session_start(session_id: str, idempotency_key: str | None = Header(default=
     retryable_states = {CASE_BRIEFING_STATE, "WAITING_FOR_GENIE"}
     if session["state"] not in retryable_states:
         raise HTTPException(status_code=409, detail="Investigation has already started")
+    breaker = session_breaker(session)
+    try:
+        breaker.before_request()
+    except CircuitOpenError as exc:
+        raise HTTPException(status_code=503, detail={"code": "GENIE_CIRCUIT_OPEN", "retryable": False}) from exc
     previous = session["state"]
     session["state"] = STARTING_INVESTIGATION_STATE
     append_event(session, "INVESTIGATION_STARTED")
@@ -370,6 +399,7 @@ def session_start(session_id: str, idempotency_key: str | None = Header(default=
     if genie.enabled:
         try:
             live = genie.start(session["case_id"])
+            breaker.record_success()
             conversation_id = live["conversation_id"]
             # The live space may contain stale prose from an older iteration.
             # Preserve the live conversation, but expose only the current
@@ -391,6 +421,7 @@ def session_start(session_id: str, idempotency_key: str | None = Header(default=
             persist_pending_decision(session_id, session, live["message"], registered)
             source = "genie"
         except Exception as exc:
+            breaker.record_failure()
             LOGGER.exception("live Genie start failed")
             session["state"] = "WAITING_FOR_GENIE"
             append_event(session, "STATE", from_state=STARTING_INVESTIGATION_STATE, to_state=session["state"])
@@ -576,10 +607,15 @@ def conclude_session(session_id: str, request: dict | None = None, idempotency_k
         raise HTTPException(status_code=422, detail={"code": "VERDICT_INVALID", "errors": errors})
     if genie.enabled:
         try:
+            breaker = session_breaker(session)
+            breaker.before_request()
             genie_text = genie.ask(session.get("conversation_id") or "", "Synthesize a concise scientific verdict from the visible Case evidence. State the primary explanation, why the strongest alternative is ruled out, and why the data-quality signal is not causal. Do not reveal private truth or hidden scoring.")
+            breaker.record_success()
         except Exception as exc:
+            session_breaker(session).record_failure()
             session["state"] = previous
-            raise HTTPException(status_code=503, detail={"code": "GENIE_CONCLUSION_UNAVAILABLE", "retryable": True}) from exc
+            code = "GENIE_CIRCUIT_OPEN" if isinstance(exc, CircuitOpenError) else "GENIE_CONCLUSION_UNAVAILABLE"
+            raise HTTPException(status_code=503, detail={"code": code, "retryable": code != "GENIE_CIRCUIT_OPEN"}) from exc
         if not genie_text.strip():
             session["state"] = previous
             raise HTTPException(status_code=503, detail={"code": "GENIE_CONCLUSION_EMPTY", "retryable": True})
@@ -683,7 +719,12 @@ def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency
         append_event(session, "PENDING_EXPERIMENT_CONSUMED", experiment_id=selected)
     else:
         try:
+            breaker = session_breaker(session)
+            if genie.enabled:
+                breaker.before_request()
             result = next_experiment(ExperimentRequest(case_id=session["case_id"], completed_experiments=completed, player_prediction=request.player_prediction, conversation_id=session.get("conversation_id")))
+            if genie.enabled:
+                breaker.record_success()
         except HTTPException as exc:
             # A live Genie failure is retryable and must not be hidden by
             # substituting the expected scripted path. Fixture continuation
@@ -692,7 +733,11 @@ def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency
                 session["state"] = previous
                 raise
             if genie.enabled or not fixture_mode_enabled():
+                if genie.enabled:
+                    session_breaker(session).record_failure()
                 session["state"] = previous
+                if isinstance(exc.detail, dict) and exc.detail.get("code") == "GENIE_CIRCUIT_OPEN":
+                    raise
                 raise HTTPException(status_code=503, detail={"code": "GENIE_EXPERIMENT_UNAVAILABLE", "retryable": True}) from exc
             registered = EXPERIMENTS_BY_CASE.get(session["case_id"]) or PLANNED_EXPERIMENTS_BY_CASE.get(session["case_id"], ())
             index = next((i for i, experiment in enumerate(registered) if experiment.id not in completed), None)

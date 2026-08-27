@@ -12,6 +12,31 @@ from .config import load_settings
 from backend.genie.protocol import validate_control_response
 
 
+class CircuitOpenError(RuntimeError):
+    """Raised when a session has exceeded its consecutive live-failure budget."""
+
+
+class SessionCircuitBreaker:
+    """Small in-memory breaker; state is scoped to one session by the caller."""
+    def __init__(self, threshold: int = 3) -> None:
+        self.threshold = threshold
+        self.consecutive_failures = 0
+        self.open = False
+
+    def before_request(self) -> None:
+        if self.open:
+            raise CircuitOpenError("Genie recovery is required for this session")
+
+    def record_success(self) -> None:
+        self.consecutive_failures = 0
+        self.open = False
+
+    def record_failure(self) -> None:
+        self.consecutive_failures += 1
+        if self.consecutive_failures >= self.threshold:
+            self.open = True
+
+
 # The Genie protocol is a runtime contract. Keep it independent from the
 # legacy fixture/domain module so production validation cannot inherit a
 # second analytical model through an incidental import.
@@ -159,6 +184,18 @@ class GenieAdapter:
         self._client = None
         self._clock = clock
         self._sleeper = sleeper
+
+    def _transient_call(self, operation, *, attempts: int = 2):
+        """Retry only transport-like failures, never a completed mutation."""
+        last_error = None
+        for attempt in range(attempts):
+            try:
+                return operation()
+            except (TimeoutError, ConnectionError, OSError) as exc:
+                last_error = exc
+                if attempt + 1 < attempts:
+                    self._sleeper(0.05 * (attempt + 1))
+        raise last_error  # type: ignore[misc]
 
     @property
     def enabled(self) -> bool:
@@ -315,10 +352,10 @@ class GenieAdapter:
         raise ValueError("Genie did not produce a valid experiment response after retries") from last_error
 
     def ask(self, conversation_id: str, content: str) -> str:
-        response = self._workspace().genie.create_message_and_wait(
+        response = self._transient_call(lambda: self._workspace().genie.create_message_and_wait(
             space_id=self.space_id,
             conversation_id=conversation_id,
             content=content[:2000],
             timeout=timedelta(seconds=load_settings().genie_request_timeout_seconds),
-        )
+        ))
         return _text_from_response(response)
