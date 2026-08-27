@@ -1,4 +1,6 @@
 import asyncio
+import re
+from pathlib import Path
 from fastapi.testclient import TestClient
 from starlette.requests import Request
 
@@ -29,6 +31,12 @@ def test_validation_errors_use_stable_error_envelope():
 def test_mdl6_error_taxonomy_contains_required_categories():
     required = {"GENIE_TIMEOUT", "GENIE_FAILED", "GENIE_MALFORMED_PROTOCOL", "CASE_NOT_FOUND", "EVIDENCE_SCHEMA_MISMATCH", "RECONCILIATION_FAILED", "DATA_INVARIANT_FAILED", "ILLEGAL_STATE_TRANSITION", "SESSION_NOT_FOUND", "DUPLICATE_ACTION", "WAREHOUSE_PENDING", "WAREHOUSE_QUOTA_EXHAUSTED", "APP_RESOURCE_UNAVAILABLE"}
     assert required <= ERROR_CODES
+
+
+def test_all_literal_api_error_codes_are_registered():
+    source = (Path(__file__).parents[1] / "server/main.py").read_text(encoding="utf-8")
+    emitted = set(re.findall(r'code["\']?\s*[:=]\s*["\']([A-Z][A-Z0-9_]+)', source))
+    assert emitted <= ERROR_CODES, sorted(emitted - ERROR_CODES)
 
 
 def test_unhandled_request_failure_is_safe():
