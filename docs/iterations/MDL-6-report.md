@@ -5,7 +5,7 @@ branch: MDL-6
 predecessor: MDL-5 closure evidence is incomplete in this checkout
 
 This report intentionally remains `IN_PROGRESS` until all MDL-6 gates and the
-external predecessor/deployment/artwork evidence are identity-bound.
+external predecessor/deployment evidence are identity-bound.
 
 ## Local implementation evidence
 
@@ -31,5 +31,5 @@ external predecessor/deployment/artwork evidence are identity-bound.
 
 ## External blockers
 
-- MDL-5 report remains `IN_PROGRESS` pending exact-head CI, live deployment evidence, visual/axe evidence, and exact-byte human artwork approval.
+- MDL-5 report remains `IN_PROGRESS` pending exact-head CI, live deployment evidence, and visual/axe evidence.
 - GitHub and Databricks evidence cannot be asserted from local tests alone.

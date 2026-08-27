@@ -13,4 +13,4 @@ MDL6-AUDIO,MDL-6,IMPLEMENTED,scripts/audio_preflight.py;tests/test_mdl6_assets.p
 MDL6-E2E,MDL-6,PARTIAL,tests/browser/mdl6.spec.ts
 MDL6-CI,MDL-6,PARTIAL,.github/workflows/ci.yml
 MDL6-DEPLOYMENT,MDL-6,BLOCKED_EXTERNAL,docs/iterations/MDL-6-report.md
-MDL6-ARTWORK,MDL-6,BLOCKED_HUMAN_APPROVAL,docs/iterations/MDL-6-report.md
+MDL6-ARTWORK,MDL-6,IMPLEMENTED,public/assets/mdl6-achievement-badges.png;public/assets/mdl6-recovery-background.png;tests/browser/mdl6.spec.ts
