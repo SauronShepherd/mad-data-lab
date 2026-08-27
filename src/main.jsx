@@ -64,6 +64,7 @@ function App() {
   const [inspectedCapabilities, setInspectedCapabilities] = useState([]);
   const recoveryAttempted = useRef(false);
   const audioRef = useRef(null);
+  const modalRef = useRef(null);
   useEffect(() => {
     listCases()
       .then((result) => {
@@ -134,6 +135,25 @@ function App() {
   useEffect(() => {
     document.documentElement.classList.toggle("reduced-motion", reducedMotion);
   }, [reducedMotion]);
+  useEffect(() => {
+    if (!panel) return undefined;
+    const dialog = modalRef.current;
+    if (!dialog) return undefined;
+    const focusable = () => [...dialog.querySelectorAll("button, input, select, textarea, [tabindex]:not([tabindex='-1'])")].filter((item) => !item.disabled);
+    const initialFocus = window.setTimeout(() => focusable()[0]?.focus(), 0);
+    const trap = (event) => {
+      if (event.key === "Escape") { setPanel(null); return; }
+      if (event.key !== "Tab") return;
+      const items = focusable();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener("keydown", trap, true);
+    return () => { window.clearTimeout(initialFocus); document.removeEventListener("keydown", trap, true); };
+  }, [panel]);
   useEffect(() => {
     if (screen !== "debrief" || !conclusion?.badges?.length) return;
     const newBadges = conclusion.badges;
@@ -349,7 +369,7 @@ function App() {
       </header>
       {panel && (
         <div className="modal-backdrop" role="presentation" onClick={() => setPanel(null)}>
-          <section className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={(event) => event.stopPropagation()}>
+          <section ref={modalRef} className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={(event) => event.stopPropagation()}>
             <button className="modal-close" aria-label="Close panel" onClick={() => setPanel(null)}>×</button>
             {panel === "help" && <>
               <p className="eyebrow">FIELD MANUAL</p>
