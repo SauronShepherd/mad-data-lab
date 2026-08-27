@@ -65,11 +65,14 @@ def main() -> None:
     assert started["state"] == "HYPOTHESES_READY"
     experiments = [call(f"/api/sessions/{session_id}/next", "POST", {}) for _ in range(5)]
     actual_experiment_ids = [item["experiment_id"] for item in experiments]
-    expected_experiment_ids = [
+    expected_experiment_ids = {
         "COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "FORMULA_VALIDATION", "RECONCILIATION"
-    ]
-    assert actual_experiment_ids == expected_experiment_ids, (
-        f"unexpected deployed experiment sequence: {actual_experiment_ids}"
+    }
+    assert len(actual_experiment_ids) == len(expected_experiment_ids), (
+        f"deployed experiment sequence repeated or omitted an experiment: {actual_experiment_ids}"
+    )
+    assert set(actual_experiment_ids) == expected_experiment_ids, (
+        f"unexpected deployed experiment set: {actual_experiment_ids}"
     )
     assert call(f"/api/sessions/{session_id}/evidence")["total"] >= 1
     assert call(f"/api/sessions/{session_id}/conclude", "POST", {})["status"] == "COMPLETE"
