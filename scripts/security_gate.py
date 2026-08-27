@@ -8,7 +8,7 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE_MARKERS = ('truth_json', 'primary_cause', 'primary_component', 'secondary_cause', 'expected_path_json', 'allowed_final_status_json', 'case_truth')
-SECRET_PATTERNS = (r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----', r'(?i)\b(?:databricks_pat|oauth_secret|api_key)\s*[:=]\s*["\']', r'(?i)\b(?:authorization|x-databricks-token)\s*[:=]\s*["\']?bearer')
+SECRET_PATTERNS = (r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----', r'(?i)\b(?:databricks_pat|oauth_secret|api_key)\s*[:=]\s*["\']', r'(?i)\bBearer\s+[A-Za-z0-9_\-]{20,}')
 
 
 def scan_repository() -> None:
