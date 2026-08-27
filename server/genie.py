@@ -336,10 +336,27 @@ class GenieAdapter:
         registered = EXPERIMENTS_BY_CASE.get(case_id) or PLANNED_EXPERIMENTS_BY_CASE.get(case_id) or CASE042_EXPERIMENTS
         allowed = {item.id for item in registered}
         last_error = None
+        conversation_id = None
         # One original response plus exactly one protocol repair attempt.
         for _ in range(2):
-            waiter = self._workspace().genie.start_conversation(space_id=self.space_id, content=system_prompt(case_id))
+            if _ == 0:
+                waiter = self._workspace().genie.start_conversation(space_id=self.space_id, content=system_prompt(case_id))
+            else:
+                # Repair the same conversation so Genie can see the invalid
+                # response and correct its protocol, rather than restarting
+                # from an identical prompt in a fresh conversation.
+                waiter = self._workspace().genie.create_message(
+                    space_id=self.space_id,
+                    conversation_id=conversation_id,
+                    content=(
+                        "Protocol repair: your previous response was invalid. "
+                        "Return exactly one JSON control object now, with no SQL, "
+                        "prose, Markdown, or query attachments. Include experiment_id, "
+                        "name, instrument, rationale, evidence, and hypothesis_updates."
+                    ),
+                )
             response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
+            conversation_id = getattr(response, "conversation_id", None) or waiter.conversation_id
             try:
                 return {"conversation_id": getattr(response, "conversation_id", None), "message": self._control_message(response, case_id, allowed)}
             except ValueError as exc:
