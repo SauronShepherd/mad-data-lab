@@ -34,6 +34,7 @@ def system_prompt(case_id: str = DEFAULT_CASE_ID) -> str:
         "Use hypotheses with IDs H1, H2, H3 and statuses CONFIRMED, SUPPORTED, POSSIBLE, or RULED_OUT. "
         "For RUN_EXPERIMENT, include selected_experiment {id, question, target_component} and instrument {id, title}; "
         "choose only a currently allowed registered Experiment/Instrument and never use hidden truth or arbitrary SQL. "
+        "Set target_component to null for every Experiment except SNAPSHOT_DIFF; for SNAPSHOT_DIFF use exactly one of V1, V2, V3, or V4. "
         "Include observation, next_action, and a concise scientist_line. Do not return multiple JSON objects."
     )
 
@@ -352,7 +353,8 @@ class GenieAdapter:
                         "Protocol repair: your previous response was invalid. "
                         "Return exactly one JSON control object now, with no SQL, "
                         "prose, Markdown, or query attachments. Include experiment_id, "
-                        "name, instrument, rationale, evidence, and hypothesis_updates."
+                        "name, instrument, rationale, evidence, and hypothesis_updates. "
+                        "Set target_component to null unless experiment_id is SNAPSHOT_DIFF; then use exactly V1, V2, V3, or V4."
                     ),
                 )
             response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
