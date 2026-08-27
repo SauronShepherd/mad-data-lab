@@ -16,8 +16,8 @@ Generated: 2026-08-26
 | Deployment | Databricks deployment `01f1a13e70ea15119a15e59c93c04fad` succeeded | PASS, identity reconciliation required |
 | Deployed smoke | PASS | PASS |
 | Deployed soak | 10/10 PASS | PASS |
-| Live 30-attempt benchmark | 30/30 failed by timeout in latest recorded run | OPEN / BLOCKING |
-| Final implementation identity | Current pushed SHA `c3ec70aa1c838e1780ea617a795b489736a5175a`; excluded local generated files remain dirty | PASS for current implementation; release freeze still open |
+| Live 30-attempt benchmark | 30/30 PASS against the synchronized Genie Space; identity-bound artifact validated | PASS |
+| Final implementation identity | Current pushed SHA `fa5b5a4ae79e9cff826387dd4e1a9e2686b62ccb`; excluded local generated files remain dirty | PASS for current implementation; release freeze still open |
 | A05/A07 assets | 10 implementation-owned candidates recorded; 6 transparent A05 sprites, 4 opaque A07 environments, contact sheets, preflight, and 2 selected production derivatives | PASS |
 | Final CI/post-merge evidence | Not present for the final identity | OPEN |
 
