@@ -414,6 +414,10 @@ h1 {
   padding: 23px;
   background: #101826;
   border-left: 2px solid #2c3c53;
+  max-height: calc(100vh - 76px);
+  height: calc(100vh - 76px);
+  align-self: start;
+  overflow-y: auto;
 }
 .genie {
   display: flex;
@@ -730,4 +734,5 @@ h1 {
   .observation, .instrument { width: min(45%, 300px); padding: 15px; }
   .map-node { grid-template-columns: 68px 1fr; }
   .map-node small { grid-column: 2; }
+  .side { max-height: none; overflow-y: visible; }
 }
