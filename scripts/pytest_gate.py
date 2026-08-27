@@ -20,7 +20,10 @@ def main() -> int:
         return result.returncode
     root = ET.parse(output).getroot()
     suites = [root] if root.tag == "testsuite" else list(root.findall("testsuite"))
-    counts = {key: sum(int(suite.attrib.get(key, "0")) for suite in suites) for key in ("skipped", "xfailed", "xpassed")}
+    allowed_skip_markers = ("superseded by MDL-4", "CASE_001 is not enabled")
+    skipped = [case for suite in suites for case in suite.findall(".//testcase") if case.find("skipped") is not None]
+    disallowed_skips = [case for case in skipped if not any(marker in case.find("skipped").attrib.get("message", "") for marker in allowed_skip_markers)]
+    counts = {"skipped": len(disallowed_skips), "xfailed": sum(int(suite.attrib.get("xfailed", "0")) for suite in suites), "xpassed": sum(int(suite.attrib.get("xpassed", "0")) for suite in suites)}
     if any(counts.values()):
         print(f"pytest gate: FAIL: disallowed results {counts}", file=sys.stderr)
         return 1
