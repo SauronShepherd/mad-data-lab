@@ -11,6 +11,7 @@ __pycache__/
 .env
 .env.*
 tmp_remote_bundle_*/
+tmp/
 release-report/
 test-results/
 assets/review/
