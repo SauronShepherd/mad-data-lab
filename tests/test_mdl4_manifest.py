@@ -27,8 +27,7 @@ def test_mdl4_manifest_closure_validator_is_fail_closed():
         [sys.executable, "scripts/validate_iteration_manifest.py", "release-report/MDL-4/manifest.json", "--require-complete"],
         cwd=ROOT, capture_output=True, text=True,
     )
-    assert result.returncode != 0
-    assert "open_blockers" in result.stdout
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 def test_successor_branch_preserves_historical_mdl4_manifest():
@@ -52,6 +51,16 @@ def test_mdl4_manifest_validator_rejects_malformed_manifest(tmp_path):
     assert result.returncode != 0
     assert "branch:not-MDL-4" in result.stdout
     assert "malformed:accepted_head_commit_sha" in result.stdout
+
+
+def test_closed_manifest_with_open_blockers_fails_closed(tmp_path):
+    path = tmp_path / "manifest.json"
+    data = json.loads((ROOT / "release-report/MDL-4/manifest.json").read_text())
+    data["open_blockers"] = ["spoofed-blocker"]
+    path.write_text(json.dumps(data))
+    result = subprocess.run([sys.executable, "scripts/validate_iteration_manifest.py", str(path), "--require-complete"], cwd=ROOT, capture_output=True, text=True)
+    assert result.returncode != 0
+    assert "open_blockers:spoofed-blocker" in result.stdout
 
 
 def test_manifest_generator_does_not_accept_branch_spoofing(monkeypatch):
