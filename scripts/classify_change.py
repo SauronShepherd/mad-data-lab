@@ -13,7 +13,7 @@ RULES = {
     "data": ("data/", "cases/", "sql/", "resources/genie/"),
     "deployment": (".github/", "app.yaml", "app.yml", "requirements.txt", "databricks.yml", "resources/", "Dockerfile", "docker-compose.yml"),
     "art": ("assets/", "public/assets/", "public/audio/", "docs/approvals/"),
-    "release": ("release-report/", "docs/iterations/", "docs/traceability/", "scripts/", "tests/"),
+    "release": ("release-report/", "docs/decisions/", "docs/iterations/", "docs/traceability/", "scripts/", "tests/"),
 }
 
 
