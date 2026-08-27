@@ -44,10 +44,10 @@ jobs:
         env:
           # Verified staging workspace for the accepted sda-aap deployment. The
           # host is non-secret and may still be overridden by environment config.
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST || vars.DATABRICKS_HOST || 'https://dbc-916267ef-3b9b.cloud.databricks.com' }}
-          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID || vars.DATABRICKS_CLIENT_ID || 'fe7c91e9-b565-466f-9e0a-a7dd79926135' }}
+          DATABRICKS_HOST: https://dbc-916267ef-3b9b.cloud.databricks.com
+          DATABRICKS_CLIENT_ID: fe7c91e9-b565-466f-9e0a-a7dd79926135
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-          GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID || secrets.GENIE_SPACE_ID || '01f1a11f6c281e79bd1e0c448055fbdd' }}
+          GENIE_SPACE_ID: 01f1a11f6c281e79bd1e0c448055fbdd
         run: |
           set -euo pipefail
           test -n "$DATABRICKS_HOST" || { echo 'Missing staging secret/variable: DATABRICKS_HOST' >&2; exit 1; }
@@ -65,11 +65,11 @@ jobs:
 
       - name: Run authenticated 30-attempt MDL-03 batch
         env:
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST || vars.DATABRICKS_HOST || 'https://dbc-916267ef-3b9b.cloud.databricks.com' }}
-          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID || vars.DATABRICKS_CLIENT_ID || 'fe7c91e9-b565-466f-9e0a-a7dd79926135' }}
+          DATABRICKS_HOST: https://dbc-916267ef-3b9b.cloud.databricks.com
+          DATABRICKS_CLIENT_ID: fe7c91e9-b565-466f-9e0a-a7dd79926135
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
           DATABRICKS_AUTH_TYPE: ${{ secrets.DATABRICKS_TOKEN != '' && 'pat' || 'github-oidc' }}
-          GENIE_SPACE_ID: ${{ inputs.genie_space_id || vars.GENIE_SPACE_ID || secrets.GENIE_SPACE_ID || '01f1a11f6c281e79bd1e0c448055fbdd' }}
+          GENIE_SPACE_ID: 01f1a11f6c281e79bd1e0c448055fbdd
           MDL3_BENCHMARK_ATTEMPT_TIMEOUT_SECONDS: '120'
           MDL3_BENCHMARK_DELAY_SECONDS: '1'
         run: |
