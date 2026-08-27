@@ -78,7 +78,9 @@ jobs:
         run: |
           set -o pipefail
           timeout --signal=TERM --kill-after=30s 1500s \
-            python scripts/run_mdl3_benchmark.py --no-fixture 2>&1 | \
+            python scripts/run_mdl3_benchmark.py --no-fixture \
+              --output release-report/MDL-3/live-benchmark.json \
+              --junit release-report/MDL-3/live-benchmark.junit.xml 2>&1 | \
             tee release-report/MDL-3/live-benchmark.log
 
       - name: Validate identity-bound live evidence
