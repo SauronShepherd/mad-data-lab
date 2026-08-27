@@ -8,5 +8,5 @@ targets:
   staging:
     mode: development
     workspace:
-      profile: sda
+      profile: mdl
       root_path: ~/.bundle/${bundle.name}/${bundle.target}
