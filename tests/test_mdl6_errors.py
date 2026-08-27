@@ -39,6 +39,12 @@ def test_all_literal_api_error_codes_are_registered():
     assert emitted <= ERROR_CODES, sorted(emitted - ERROR_CODES)
 
 
+def test_app_error_rejects_unregistered_codes():
+    import pytest
+    with pytest.raises(ValueError, match="unregistered application error code"):
+        AppError("NOT_REGISTERED", "should never be emitted")
+
+
 def test_unhandled_request_failure_is_safe():
     async def fail(_request):
         raise RuntimeError("secret backend traceback")

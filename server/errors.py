@@ -26,6 +26,8 @@ class AppError(Exception):
     diagnostic_code: str | None = None
     details: dict[str, Any] | None = None
     def __post_init__(self) -> None:
+        if self.code not in ERROR_CODES:
+            raise ValueError(f"unregistered application error code: {self.code}")
         super().__init__(self.message)
 
 def envelope(error: AppError, request_id: str) -> dict[str, Any]:
