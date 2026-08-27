@@ -392,7 +392,7 @@ function App() {
           </section>
         </div>
       )}
-      {serviceError && screen !== "investigation" && (
+      {serviceError && (
         <section className="error-panel" role="alert" aria-labelledby="error-title">
           <p className="eyebrow">LAB RECOVERY</p>
           <h2 id="error-title">The investigation needs attention.</h2>
