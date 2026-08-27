@@ -53,7 +53,10 @@ def test_counts() -> dict[str, int]:
 
 
 def run_gate(name: str) -> dict:
-    return release_gate.run(name, release_gate.GATES[name])
+    print(f"release candidate: running {name}", flush=True)
+    result = release_gate.run(name, release_gate.GATES[name])
+    print(f"release candidate: {name}={result['status']}", flush=True)
+    return result
 
 
 def main() -> int:
@@ -71,7 +74,9 @@ def main() -> int:
             "deployed-soak": [sys.executable, "scripts/deployed_soak.py"],
         }
         for name in live_names:
+            print(f"release candidate: running {name}", flush=True)
             item = release_gate.run(name, commands[name])
+            print(f"release candidate: {name}={item['status']}", flush=True)
             item["source_identity"] = source
             live[name] = item
     else:
