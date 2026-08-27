@@ -16,7 +16,7 @@ external predecessor/deployment evidence are identity-bound.
 - Performance gate: `scripts/performance_gate.py`; current production bundle passes JS/CSS/file budgets.
 - Browser contracts: complete Playwright suite passes 14/14, including MDL-6 recovery, responsive, accessibility, performance, and production artwork checks.
 - Canonical MDL-6 catalogue: 83 IDs locked in `backend/mdl6_contract.py` (AX 15, PF 8, AS 15, SEC 20, CH 25); implementation coverage remains partial until each scenario has a dedicated assertion.
-- Python repository suite: 216 passed, 7 skipped on the current implementation baseline.
+- Python repository suite: 221 passed, 7 skipped on the current implementation baseline (verified after the MDL-3 digest refresh and error-taxonomy hardening).
 - Image preflight: `scripts/image_preflight.py`; current production and review asset inventory passes (15 assets).
 - Frontend typecheck/build: passing.
 - Browser baseline: existing 3-test MDL-5 browser artifact passed; full MDL-6 resilience matrix is not yet implemented.
