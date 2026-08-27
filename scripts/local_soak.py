@@ -23,9 +23,14 @@ def main() -> None:
                 response = client.post(f"/api/sessions/{session_id}/next", json={"completed_experiments": completed})
                 assert response.status_code == 200, response.text
                 completed.append(response.json()["experiment_id"])
+            assert client.post(f"/api/sessions/{session_id}/next", json={}).status_code == 200
+            assert client.post(f"/api/sessions/{session_id}/evidence/inspect", json={"capability": "CASE_0042:RECORD:TX-004291"}).status_code == 200
+            assert client.post(f"/api/sessions/{session_id}/evidence/inspect", json={"capability": "CASE_0042:LINEAGE:V2_SOURCE_PATH"}).status_code == 200
+            assert client.post(f"/api/sessions/{session_id}/prediction", json={"final": True, "prediction": "FINAL_CHANGED_V2_SOURCE_RECORDS"}).status_code == 200
             verdict = client.post(f"/api/sessions/{session_id}/conclude")
             assert verdict.status_code == 200
-            assert verdict.json()["status"] == "COMPLETE"
+            debrief = client.post(f"/api/sessions/{session_id}/debrief", json={})
+            assert debrief.status_code == 200 and debrief.json()["state"] == "DEBRIEF"
     print("local soak: PASS (10 Case #042 investigations)")
 
 

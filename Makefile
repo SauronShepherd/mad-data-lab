@@ -1,4 +1,4 @@
-.PHONY: setup lint typecheck test-unit test-data test-contract test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-secondary-soak test-chaos test-web test-sql test-genie-live test-genie-contract test-genie-benchmark validate-live-evidence deploy-staging smoke-staging soak deployed-soak release-report release-gate audit-contract docker-build docker-smoke
+.PHONY: setup lint typecheck test-unit test-data test-contract test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-secondary-soak test-chaos test-web test-sql test-genie-live test-genie-contract test-genie-benchmark validate-live-evidence deploy-staging smoke-staging soak deployed-soak release-report release-gate release-candidate audit-contract docker-build docker-smoke
 
 setup:
 	python -m pip install -e ".[dev]"
@@ -86,6 +86,9 @@ test-web:
 	python scripts/local_web_smoke.py
 
 release-gate: lint typecheck test-unit test-data test-contract build test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-chaos test-genie-contract test-genie-benchmark
+
+release-candidate:
+	python scripts/release_candidate.py
 
 audit-contract:
 	python scripts/validate_mdl2_contract.py --strict

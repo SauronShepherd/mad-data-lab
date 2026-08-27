@@ -38,9 +38,14 @@ def main() -> None:
                 result = client.post(f"/api/sessions/{session_id}/next", json={})
                 assert result.status_code == 200, (case.id, result.text)
                 completed.append(result.json()["experiment_id"])
+            assert client.post(f"/api/sessions/{session_id}/next", json={}).status_code == 200
+            assert client.post(f"/api/sessions/{session_id}/evidence/inspect", json={"capability": "CASE_0042:RECORD:TX-004291"}).status_code == 200
+            assert client.post(f"/api/sessions/{session_id}/evidence/inspect", json={"capability": "CASE_0042:LINEAGE:V2_SOURCE_PATH"}).status_code == 200
+            assert client.post(f"/api/sessions/{session_id}/prediction", json={"final": True, "prediction": "FINAL_CHANGED_V2_SOURCE_RECORDS"}).status_code == 200
             verdict = client.post(f"/api/sessions/{session_id}/conclude")
             assert verdict.status_code == 200, (case.id, verdict.text)
-            assert verdict.json()["status"] == "COMPLETE"
+            debrief = client.post(f"/api/sessions/{session_id}/debrief", json={})
+            assert debrief.status_code == 200 and debrief.json()["state"] == "DEBRIEF"
     print("local e2e: PASS (Case #042 journey; secondary Cases remain locked)")
 
 
