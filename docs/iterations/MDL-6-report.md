@@ -13,6 +13,9 @@ external predecessor/deployment/artwork evidence are identity-bound.
 - Bounded Genie transport retry: implemented and covered by `tests/test_mdl6_resilience.py`.
 - Session circuit breaker: implemented and covered by `tests/test_mdl6_circuit_breaker.py`.
 - Audio preflight: `scripts/audio_preflight.py`; current bundled track passes duration/size/decode/channel/sample-rate checks.
+- Performance gate: `scripts/performance_gate.py`; current production bundle passes JS/CSS/file budgets.
+- Browser contracts: full existing suite 11/11 passed; MDL-6 contracts 2/2 passed.
+- Python repository suite: 206 passed, 7 skipped on the current implementation baseline.
 - Image preflight: `scripts/image_preflight.py`; currently fails on existing oversized production assets and remains blocking.
 - Frontend typecheck/build: passing.
 - Browser baseline: existing 3-test MDL-5 browser artifact passed; full MDL-6 resilience matrix is not yet implemented.

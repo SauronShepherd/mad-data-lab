@@ -1,0 +1,16 @@
+requirement_id,primary_owner,status,evidence
+MDL6-ERRORS,MDL-6,IMPLEMENTED,server/errors.py;tests/test_mdl6_errors.py
+MDL6-RETRY,MDL-6,IMPLEMENTED,server/genie.py;tests/test_mdl6_resilience.py
+MDL6-CIRCUIT,MDL-6,IMPLEMENTED,server/genie.py;tests/test_mdl6_circuit_breaker.py
+MDL6-OBSERVABILITY,MDL-6,IMPLEMENTED,server/main.py;tests/test_mdl6_observability.py
+MDL6-SECURITY,MDL-6,PARTIAL,scripts/security_gate.py;tests/test_mdl6_security.py
+MDL6-CHAOS,MDL-6,PARTIAL,scripts/local_chaos.py;tests/test_mdl6_chaos.py
+MDL6-A11Y,MDL-6,PARTIAL,scripts/a11y_gate.py;tests/browser/a11y.spec.ts
+MDL6-RESPONSIVE,MDL-6,IMPLEMENTED,tests/browser/mdl6.spec.ts
+MDL6-PERFORMANCE,MDL-6,IMPLEMENTED,scripts/performance_gate.py;tests/test_mdl6_performance.py
+MDL6-ASSETS,MDL-6,IMPLEMENTED,scripts/image_preflight.py;tests/test_mdl6_assets.py
+MDL6-AUDIO,MDL-6,IMPLEMENTED,scripts/audio_preflight.py;tests/test_mdl6_assets.py
+MDL6-E2E,MDL-6,PARTIAL,tests/browser/mdl6.spec.ts
+MDL6-CI,MDL-6,PARTIAL,.github/workflows/ci.yml
+MDL6-DEPLOYMENT,MDL-6,BLOCKED_EXTERNAL,docs/iterations/MDL-6-report.md
+MDL6-ARTWORK,MDL-6,BLOCKED_HUMAN_APPROVAL,docs/iterations/MDL-6-report.md
