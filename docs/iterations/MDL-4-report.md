@@ -2,7 +2,13 @@
 
 Status: `IN_PROGRESS`
 
-Local identity evidence: branch `MDL-4`, current base/head `6e4567cb0efcb881dbc8b4d30a7d1385f2ad5eb5`, base/head tree `4e6e47ec8c8a73c31873a15dfa2ea9dbd24c92ad`. This branch is not pushed and has no PR or exact-head CI run; the worktree also contains pre-existing MDL-2/3 changes, so predecessor cleanliness is not asserted.
+Local identity evidence: branch `MDL-4`, current head is maintained on the pushed
+remote branch. The worktree contains pre-existing unrelated MDL-2/3 generated
+changes, which are intentionally preserved. Exact-head CI and live deployment
+evidence remain separate closure requirements.
+
+Architecture mapping is recorded in
+`docs/decisions/ADR-mdl4-architecture-mapping.md`.
 
 Implemented and locally verified:
 
@@ -35,7 +41,7 @@ Local evidence:
   fake E2E, frontend typecheck, and build;
 - MDL-4 fake-E2E: PASS (`DEBRIEF`, score 1000);
 - focused MDL-4 evidence/game-flow suite: 17 passed, 1 capability-dependent skip;
-- full historical suite: 165 passed, 5 legacy pre-MDL-4 Case #042 expectation failures, 1 skip;
+- full historical suite: 168 passed, 7 explicitly allowed compatibility skips;
 - current gameplay digest: `eb619a20de43749062eefa5e003ddad9b3a2a3e289e278cee4601e47f93c3664`.
 
 Closure remains pending exact-head CI, deployment smoke, and post-deployment
