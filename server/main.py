@@ -77,7 +77,11 @@ async def http_error_handler(request: Request, exc: HTTPException):
     code = str(detail.get("code") or "REQUEST_REJECTED")
     message = str(detail.get("message") or "The request could not be completed.")
     error = AppError(code, message, exc.status_code, bool(detail.get("retryable", False)), details={k:v for k,v in detail.items() if k not in {"code", "message", "retryable"}} or None)
-    return JSONResponse(status_code=exc.status_code, content=envelope(error, request_id))
+    body = envelope(error, request_id)
+    # Preserve the historical `detail` projection for existing clients while
+    # making the MDL-6 envelope authoritative for new clients.
+    body["detail"] = detail or {"code": code}
+    return JSONResponse(status_code=exc.status_code, content=body)
 
 
 @app.exception_handler(RequestValidationError)
