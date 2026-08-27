@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
-import "./evidence-polish.css";
+import "./styles/tokens.css";
 import "./accessibility.css";
+import { InstrumentRenderer } from "./instruments.jsx";
 import {
   askGenie,
   concludeSession,
@@ -477,21 +478,10 @@ function App() {
                 <small>VERY ANOMALOUS</small>
               </div>
               <div className="instrument">
-                <span className="step">{exp < 0 ? "1" : " " + (exp + 1)}</span>
                 <p>
                   {exp < 0 ? "START INVESTIGATION" : current.name.toUpperCase()}
                 </p>
-                {exp >= 0 && (
-                  <>
-                    <div className="bars">
-                      <i style={{ height: "88%" }} />
-                      <i style={{ height: "42%" }} />
-                      <i style={{ height: "20%" }} />
-                      <i style={{ height: "10%" }} />
-                    </div>
-                    <small>{current.instrument}</small>
-                  </>
-                )}
+                {exp >= 0 && <InstrumentRenderer id={current.instrument} model={{...(current.instrument_model || {}), expected, observed, deviation, records: evidenceRecords.length ? evidenceRecords : (current.instrument_model || {}).records}} />}
               </div>
             </div>
           </section>
@@ -544,15 +534,25 @@ function App() {
                 )}
               </section>
             )}
-            <div className="progress">
-              <div>
-                <span>INVESTIGATION</span>
-                  <b>{exp < 0 ? 0 : Math.round(((exp + 1) / Math.max(experimentRegistry.length, 1)) * 100)}%</b>
-              </div>
-              <div className="progress-bar">
-                <i
-                  style={{ width: `${exp < 0 ? 0 : ((exp + 1) / Math.max(experimentRegistry.length, 1)) * 100}%` }}
-                />
+            <div className="investigation-map" aria-label="State-driven investigation map">
+              <div className="map-heading"><span>INVESTIGATION MAP</span><small>Authoritative evidence state</small></div>
+              <div className="map-nodes">
+                {experimentRegistry.map((node) => {
+                  const nodeState = node.status === "RULED_OUT"
+                    ? "ruled-out"
+                    : completed.includes(node.experiment_id)
+                    ? "completed"
+                    : current?.experiment_id === node.experiment_id
+                      ? "current"
+                      : finalStage
+                        ? "available"
+                        : "locked";
+                  return <div className={`map-node ${nodeState}`} key={node.experiment_id} aria-current={nodeState === "current" ? "step" : undefined}>
+                    <span className="map-node-state">{nodeState}</span>
+                    <strong>{node.name}</strong>
+                    <small>{node.instrument}</small>
+                  </div>;
+                })}
               </div>
             </div>
             <h2>HYPOTHESES</h2>

@@ -432,29 +432,19 @@ h1 {
   line-height: 1.4;
   color: #c6d1dd;
 }
-.progress {
-  padding: 22px 0;
-}
-.progress > div:first-child {
-  display: flex;
-  justify-content: space-between;
-  color: #aebdce;
-  font-size: 12px;
-}
-.progress b {
-  color: var(--lime);
-}
-.progress-bar {
-  height: 13px;
-  border: 1px solid #56657c;
-  background: #080c13;
-  margin-top: 9px;
-}
-.progress-bar i {
-  display: block;
-  height: 100%;
-  background: var(--lime);
-}
+.investigation-map { margin: 24px 0; padding: 12px; background: #0b1420; border: 1px solid #40556c; }
+.map-heading { display: flex; justify-content: space-between; gap: 8px; color: var(--cyan); font-size: 11px; letter-spacing: 1px; }
+.map-heading small { color: #8fa1b6; letter-spacing: 0; }
+.map-nodes { display: grid; gap: 7px; margin-top: 10px; }
+.map-node { display: grid; grid-template-columns: 74px 1fr auto; gap: 8px; align-items: center; padding: 8px; border-left: 3px solid #40556c; background: #111b29; color: #b7c5d4; font-size: 11px; }
+.map-node strong { color: #e9f3fa; font-size: 12px; }
+.map-node small { color: #8fa1b6; }
+.map-node-state { text-transform: uppercase; font-size: 9px; }
+.map-node.completed { border-left-color: var(--lime); }
+.map-node.current { border-left-color: var(--gold); box-shadow: inset 0 0 0 1px #806b2c; }
+.map-node.available { border-left-color: var(--cyan); }
+.map-node.ruled-out { border-left-color: var(--pink); opacity: .7; }
+.map-node.locked { opacity: .55; }
 .side h2 {
   font-family: "Press Start 2P";
   font-size: 13px;
@@ -727,4 +717,17 @@ h1 {
   font-size: 13px;
   line-height: 1.4;
   white-space: pre-wrap;
+}
+@media (max-width: 1100px) {
+  .investigation { grid-template-columns: minmax(0, 1fr) 340px; }
+  .side { padding: 18px; }
+  .overlay { min-height: 650px; }
+}
+@media (max-width: 800px) {
+  .investigation { display: block; }
+  .stage { min-height: 430px; }
+  .overlay { min-height: 430px; gap: 10px; padding: 18px; }
+  .observation, .instrument { width: min(45%, 300px); padding: 15px; }
+  .map-node { grid-template-columns: 68px 1fr; }
+  .map-node small { grid-column: 2; }
 }
