@@ -19,6 +19,12 @@ class MDL4DomainTests(unittest.TestCase):
         complete = evaluate_case_completion(REQUIRED_FAMILIES, REQUIRED_EVIDENCE, ["CASE_0042:LINEAGE:V2_SOURCE_PATH"])
         self.assertTrue(complete.ready_for_final_prediction)
 
+    def test_completion_requires_each_case042_evidence_contract(self):
+        for missing in ("RECONCILIATION", "FORMULA_VERSION", "DQ_MATERIALITY"):
+            evidence = [item for item in REQUIRED_EVIDENCE if item != missing]
+            result = evaluate_case_completion(REQUIRED_FAMILIES, evidence, ["CASE_0042:LINEAGE:V2_SOURCE_PATH"])
+            self.assertFalse(result.ready_for_final_prediction)
+
     def test_score_replay_caps_required_experiments_and_is_idempotent(self):
         events = [ScoreEvent("START_INVESTIGATION", "START_INVESTIGATION")]
         events += [ScoreEvent("REQUIRED_EXPERIMENT_COMPLETED", f"experiment-{i}") for i in range(5)]

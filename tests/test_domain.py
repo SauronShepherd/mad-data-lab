@@ -8,6 +8,7 @@ class DeterministicCaseTests(unittest.TestCase):
         fixture = generate_case()
         validate_fixture(fixture)
         self.assertEqual((fixture.expected, fixture.observed, fixture.deviation), (125.0, 118.2, -6.8))
+        self.assertEqual(fixture_hash(fixture), "189756bae236c38b946948dcf7859eca1062b34ed40a25c2b4304f7eb8e49f25")
         self.assertEqual([(c.previous, c.current, c.delta) for c in fixture.components], [(100.1, 98.9, -1.2), (30.0, 24.1, -5.9), (5.1, 4.8, 0.3), (0.0, 0.0, 0.0)])
         self.assertEqual([r.change_type for r in fixture.records].count("MODIFIED"), 23)
         self.assertEqual([r.change_type for r in fixture.records].count("REMOVED"), 2)
@@ -16,6 +17,8 @@ class DeterministicCaseTests(unittest.TestCase):
         self.assertAlmostEqual(fixture.snapshot_total, -5.9)
         self.assertEqual(next(r for r in fixture.records if r.business_key == "TX-004291").impact, -4.2)
         self.assertEqual((fixture.dq_affected_rows, fixture.dq_estimated_impact, fixture.dq_overlap), (5, -0.3, True))
+        self.assertEqual(fixture.truth.primary_component, "V2")
+        self.assertEqual(fixture.truth.primary_cause, "SOURCE_RECORD_CHANGE")
 
     def test_same_seed_is_byte_stable_and_other_seed_varies(self):
         a, b, c = generate_case(), generate_case(), generate_case(seed=43)

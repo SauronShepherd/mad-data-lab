@@ -14,6 +14,7 @@ def test_catalog_has_track_and_only_case042_playable():
     catalog = yaml.safe_load((ROOT / "cases/catalog.yaml").read_text(encoding="utf-8"))
     assert catalog["track"] == "Track B - Creative Thinking"
     assert [case["id"] for case in catalog["cases"] if case["playable"]] == ["CASE_0042"]
+    assert all(not case["playable"] for case in catalog["cases"] if case["id"] != "CASE_0042")
 
 
 def test_canonical_catalog_loader_validates_shape_and_identity():
