@@ -39,6 +39,16 @@ from .errors import AppError, envelope
 
 app = FastAPI(title="MAD DATA LAB API", version="0.1.0")
 LOGGER = logging.getLogger("mad_data_lab")
+_SENSITIVE_LOG_KEYS = {"private_truth", "truth_json", "authorization", "access_token", "client_secret", "password", "token"}
+
+
+def _safe_log_fields(fields: dict[str, Any]) -> dict[str, Any]:
+    """Redact sensitive fields before structured diagnostic logging."""
+    return {key: "[REDACTED]" if key.lower() in _SENSITIVE_LOG_KEYS else value for key, value in fields.items()}
+
+
+def log_event(event: str, **fields: Any) -> None:
+    LOGGER.info(json.dumps(_safe_log_fields({"event": event, **fields}), separators=(",", ":"), default=str))
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -161,6 +171,7 @@ def append_event(session: dict, event_type: str, **payload: Any) -> None:
     events.append({"sequence": len(events) + 1, "type": event_type, "event_type": event_type,
                    "event_id": uuid.uuid4().hex, "schema_version": 1, "session_id": session.get("session_id"),
                    "case_id": session.get("case_id"), "created_at": datetime.now(timezone.utc).isoformat(), **payload})
+    log_event(event_type.lower(), session_id=session.get("session_id"), case_id=session.get("case_id"), **payload)
 
 
 def session_breaker(session: dict) -> SessionCircuitBreaker:
