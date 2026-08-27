@@ -66,6 +66,10 @@ async def request_id_middleware(request: Request, call_next):
         response = await call_next(request)
     except AppError as exc:
         response = JSONResponse(status_code=exc.status_code, content=envelope(exc, request_id))
+    except Exception:
+        LOGGER.exception("unhandled request failure")
+        error = AppError("APP_RESOURCE_UNAVAILABLE", "The application could not complete this request.", 503, True, diagnostic_code="UNHANDLED_REQUEST")
+        response = JSONResponse(status_code=503, content=envelope(error, request_id))
     response.headers["X-Request-ID"] = request_id
     LOGGER.info(json.dumps({"event": "request_completed", "request_id": request_id, "method": request.method, "path": request.url.path, "status_code": response.status_code}, separators=(",", ":")))
     return response

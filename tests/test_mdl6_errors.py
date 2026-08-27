@@ -1,4 +1,6 @@
+import asyncio
 from fastapi.testclient import TestClient
+from starlette.requests import Request
 
 from server.errors import AppError, ERROR_CODES, envelope
 from server.main import app
@@ -27,3 +29,13 @@ def test_validation_errors_use_stable_error_envelope():
 def test_mdl6_error_taxonomy_contains_required_categories():
     required = {"GENIE_TIMEOUT", "GENIE_FAILED", "GENIE_MALFORMED_PROTOCOL", "CASE_NOT_FOUND", "EVIDENCE_SCHEMA_MISMATCH", "RECONCILIATION_FAILED", "DATA_INVARIANT_FAILED", "ILLEGAL_STATE_TRANSITION", "SESSION_NOT_FOUND", "DUPLICATE_ACTION", "WAREHOUSE_PENDING", "WAREHOUSE_QUOTA_EXHAUSTED", "APP_RESOURCE_UNAVAILABLE"}
     assert required <= ERROR_CODES
+
+
+def test_unhandled_request_failure_is_safe():
+    async def fail(_request):
+        raise RuntimeError("secret backend traceback")
+    scope = {"type": "http", "method": "GET", "path": "/boom", "headers": [], "query_string": b"", "scheme": "http", "server": ("test", 80), "client": ("test", 1), "root_path": ""}
+    response = asyncio.run(__import__("server.main", fromlist=["request_id_middleware"]).request_id_middleware(Request(scope), fail))
+    assert response.status_code == 503
+    assert response.body.find(b"APP_RESOURCE_UNAVAILABLE") >= 0
+    assert b"secret backend traceback" not in response.body
