@@ -1,4 +1,4 @@
-command: ["python", "python/source_code/server/run.py"]
+command: ["python", "server/run.py"]
 env:
   - name: GENIE_SPACE_ID
     valueFrom: genie-space
