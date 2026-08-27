@@ -379,7 +379,21 @@ class GenieAdapter:
             )
             response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
             try:
-                return {"conversation_id": conversation_id, "message": self._control_message(response, case_id, allowed)}
+                message = self._control_message(response, case_id, allowed)
+                # The canonical V3 protocol nests the selection, while the
+                # session ledger consumes the bounded flattened experiment
+                # DTO. Normalize at this boundary so live and fixture paths
+                # share one state-mutation shape.
+                selected = message.get("selected_experiment") or {}
+                instrument = message.get("instrument") or {}
+                if selected.get("id"):
+                    message = message | {
+                        "experiment_id": selected["id"],
+                        "name": selected.get("question") or selected["id"],
+                        "instrument": instrument.get("id"),
+                        "rationale": message.get("scientist_line", ""),
+                    }
+                return {"conversation_id": conversation_id, "message": message}
             except ValueError as exc:
                 last_error = exc
         raise ValueError("Genie did not produce a valid experiment response after retries") from last_error
