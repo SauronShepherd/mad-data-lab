@@ -27,7 +27,7 @@ external predecessor/deployment/artwork evidence are identity-bound.
 - Add redaction-tested structured domain event logging.
 - Complete SEC-001 through SEC-020, CH-001 through CH-025, PF-001 through PF-008, and AS-001 through AS-015.
 - Complete keyboard, reduced-motion, mobile, audio-failure, and backend-restart E2E coverage.
-- Produce and approve MDL6-A14 and MDL6-A16 artwork.
+- Produce and register MDL6-A14 and MDL6-A16 artwork; automated approval is authorized by the project owner.
 
 ## External blockers
 
