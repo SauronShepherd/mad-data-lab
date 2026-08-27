@@ -8,6 +8,12 @@ def test_release_candidate_gate_order_is_deterministic():
     assert release_candidate.ORDER == tuple(release_candidate.release_gate.GATES)
 
 
+def test_python_release_gates_use_project_environment_when_uv_is_available(monkeypatch):
+    monkeypatch.setattr(release_candidate.shutil, "which", lambda name: "uv.exe" if name == "uv" else None)
+    assert release_candidate._project_command(["python", "scripts/assets_gate.py"]) == ["uv", "run", "python", "scripts/assets_gate.py"]
+    assert release_candidate._project_command(["npm.cmd", "run", "build"]) == ["npm.cmd", "run", "build"]
+
+
 def test_release_candidate_never_reuses_stale_live_pass(monkeypatch, tmp_path):
     calls = []
     monkeypatch.setattr(release_candidate, "OUTPUT", tmp_path / "release-candidate.json")

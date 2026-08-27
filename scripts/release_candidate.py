@@ -6,6 +6,7 @@ import json
 import os
 import subprocess
 import sys
+import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -52,9 +53,16 @@ def test_counts() -> dict[str, int]:
     return {key: int(suite.attrib.get(key, 0)) for key in ("tests", "skipped", "failures", "errors")}
 
 
+def _project_command(command: list[str]) -> list[str]:
+    """Run Python gates in the project environment, including when launched by uv."""
+    if command and Path(command[0]).name.lower().startswith("python") and shutil.which("uv"):
+        return ["uv", "run", *command]
+    return command
+
+
 def run_gate(name: str) -> dict:
     print(f"release candidate: running {name}", flush=True)
-    result = release_gate.run(name, release_gate.GATES[name])
+    result = release_gate.run(name, _project_command(release_gate.GATES[name]))
     print(f"release candidate: {name}={result['status']}", flush=True)
     return result
 
@@ -75,7 +83,7 @@ def main() -> int:
         }
         for name in live_names:
             print(f"release candidate: running {name}", flush=True)
-            item = release_gate.run(name, commands[name])
+            item = release_gate.run(name, _project_command(commands[name]))
             print(f"release candidate: {name}={item['status']}", flush=True)
             item["source_identity"] = source
             live[name] = item
