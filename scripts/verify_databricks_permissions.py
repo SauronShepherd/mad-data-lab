@@ -9,7 +9,7 @@ def main():
         print(json.dumps({'status':'PASS','target':'local','checks':['no private API route','app manifest binds Genie only']}))
         return
     app_name = os.getenv('DATABRICKS_APP_NAME', 'mad-data-lab')
-    profile = os.getenv('DATABRICKS_CONFIG_PROFILE', 'sda')
+    profile = os.getenv('DATABRICKS_CONFIG_PROFILE', 'mdl')
     raw = subprocess.check_output(['databricks','apps','get',app_name,'--profile',profile,'--output','json'], text=True)
     app = json.loads(raw)
     resources = app.get('resources', [])

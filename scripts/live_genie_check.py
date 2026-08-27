@@ -23,7 +23,7 @@ def main() -> None:
     from databricks.sdk import WorkspaceClient
 
     config = json.loads((ROOT / "resources/genie/case_0042.space.json").read_text(encoding="utf-8"))
-    profile = os.getenv("DATABRICKS_CONFIG_PROFILE", "sda")
+    profile = os.getenv("DATABRICKS_CONFIG_PROFILE", "mdl")
     space_id = os.getenv("GENIE_SPACE_ID", config["space_id"])
     client = WorkspaceClient(profile=profile)
     answer = client.genie.start_conversation_and_wait(

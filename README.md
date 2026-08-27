@@ -25,7 +25,7 @@ Runtime configuration is centralized in `server/config.py`. Local development ma
 Set the Databricks CLI profile and Genie Space before starting the API:
 
 ```powershell
-$env:DATABRICKS_CONFIG_PROFILE = "sda"
+$env:DATABRICKS_CONFIG_PROFILE = "mdl"
 $env:GENIE_SPACE_ID = "01f19eb4ac691d2c88e7b18a6da39b3b"
 uvicorn server.main:app --port 8000
 ```

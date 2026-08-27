@@ -11,7 +11,7 @@ from pathlib import Path
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--space-id", default=os.getenv("GENIE_SPACE_ID"))
-    parser.add_argument("--profile", default=os.getenv("DATABRICKS_CONFIG_PROFILE", "sda"))
+    parser.add_argument("--profile", default=os.getenv("DATABRICKS_CONFIG_PROFILE", "mdl"))
     parser.add_argument("--output", default="release-report/MDL-3/genie-live-config.json")
     args = parser.parse_args()
     if not args.space_id:

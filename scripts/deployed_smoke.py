@@ -15,12 +15,12 @@ def main() -> None:
         raise SystemExit("deployed smoke: NOT RUN; set DEPLOYED_APP_URL")
     token = os.getenv("DATABRICKS_APP_TOKEN")
     if not token:
-        profile = os.getenv("DATABRICKS_CONFIG_PROFILE", "sda")
+        profile = os.getenv("DATABRICKS_CONFIG_PROFILE", "mdl")
         token = json.loads(subprocess.check_output(["databricks", "auth", "token", profile, "-o", "json"], text=True))["access_token"]
     base = url.rstrip("/")
 
     def refresh_token() -> str:
-        profile = os.getenv("DATABRICKS_CONFIG_PROFILE", "sda")
+        profile = os.getenv("DATABRICKS_CONFIG_PROFILE", "mdl")
         return json.loads(subprocess.check_output(["databricks", "auth", "token", profile, "-o", "json"], text=True))["access_token"]
 
     def call(path: str, method: str = "GET", body: dict | None = None) -> dict:
