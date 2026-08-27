@@ -14,7 +14,7 @@ external predecessor/deployment evidence are identity-bound.
 - Session circuit breaker: implemented and covered by `tests/test_mdl6_circuit_breaker.py`.
 - Audio preflight: `scripts/audio_preflight.py`; current bundled track passes duration/size/decode/channel/sample-rate checks.
 - Performance gate: `scripts/performance_gate.py`; current production bundle passes JS/CSS/file budgets.
-- Browser contracts: full existing suite previously passed 11/11; current MDL-6 contracts pass 3/3, including production artwork decode checks.
+- Browser contracts: complete Playwright suite passes 14/14, including MDL-6 recovery, responsive, accessibility, performance, and production artwork checks.
 - Canonical MDL-6 catalogue: 83 IDs locked in `backend/mdl6_contract.py` (AX 15, PF 8, AS 15, SEC 20, CH 25); implementation coverage remains partial until each scenario has a dedicated assertion.
 - Python repository suite: 216 passed, 7 skipped on the current implementation baseline.
 - Image preflight: `scripts/image_preflight.py`; current production and review asset inventory passes (15 assets).
