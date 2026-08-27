@@ -12,6 +12,14 @@ def paths():
     return sorted(set(out), key=lambda p:p.relative_to(ROOT).as_posix())
 def digest():
     h=hashlib.sha256()
-    for p in paths(): h.update(p.relative_to(ROOT).as_posix().encode()); h.update(b'\0'); h.update(p.read_bytes()); h.update(b'\0')
+    for p in paths():
+        raw = p.read_bytes()
+        try:
+            # Keep the contract identity stable across Windows/Linux checkout
+            # line-ending normalization, just like the runtime digest.
+            content = raw.decode('utf-8').replace('\r\n', '\n').replace('\r', '\n').encode('utf-8')
+        except UnicodeDecodeError:
+            content = raw
+        h.update(p.relative_to(ROOT).as_posix().encode()); h.update(b'\0'); h.update(content); h.update(b'\0')
     return h.hexdigest()
 if __name__=='__main__': print(digest())
