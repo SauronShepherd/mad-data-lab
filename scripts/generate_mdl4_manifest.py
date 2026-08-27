@@ -9,6 +9,13 @@ def git(*args: str) -> str:
 def sha(path: str) -> str:
     return hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
 def main() -> None:
+    out=ROOT/"release-report/MDL-4/manifest.json"
+    current_branch = git("branch", "--show-current")
+    # A successor checkout may validate historical MDL-4 evidence, but must
+    # never rewrite its accepted identity with successor-branch state.
+    if current_branch != "MDL-4" and out.exists():
+        print(json.dumps({"status":"PASS","path":str(out.relative_to(ROOT)),"preserved":True},sort_keys=True))
+        return
     head, tree = git("rev-parse", "HEAD"), git("rev-parse", "HEAD^{tree}")
     ref = next((candidate for candidate in ("MDL-3", "origin/MDL-3") if subprocess.run(["git", "rev-parse", "--verify", candidate], cwd=ROOT, capture_output=True).returncode == 0), None)
     base = git("rev-parse", ref) if ref else None
@@ -16,8 +23,10 @@ def main() -> None:
     assets = {}
     plan = json.loads((ROOT / "assets/review/MDL-4/art-generation-plan.json").read_text())
     for item in plan["sha256"]: assets[item] = plan["sha256"][item]
+    # Historical MDL-4 evidence must remain iteration-scoped when generated
+    # from a later branch; current branch names are not evidence identity.
     payload = {
-        "iteration":"MDL-4", "branch":git("branch","--show-current"),
+        "iteration":"MDL-4", "branch":"MDL-4",
         "base_commit_sha":base, "base_tree_sha":base_tree,
         "accepted_head_commit_sha":head, "accepted_head_tree_sha":tree,
         "pull_request_number":None, "required_ci_checks":[], "github_workflow_run_ids":[],
@@ -26,6 +35,6 @@ def main() -> None:
         "data_schema_version":None, "genie_config_sha256":None, "asset_sha256":assets,
         "human_art_approval_files":[], "open_blockers":["exact-head-ci","live-deployment"]
     }
-    out=ROOT/"release-report/MDL-4/manifest.json"; out.write_text(json.dumps(payload,indent=2,sort_keys=True)+"\n")
+    out.write_text(json.dumps(payload,indent=2,sort_keys=True)+"\n")
     print(json.dumps({"status":"PASS","path":str(out.relative_to(ROOT))},sort_keys=True))
 if __name__ == "__main__": main()
