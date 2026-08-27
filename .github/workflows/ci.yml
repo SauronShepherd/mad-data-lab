@@ -64,6 +64,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: {node-version: '22', cache: npm}
       - run: npm ci
+      - run: npm audit --audit-level=critical --omit=dev
       - run: npm run build
       - run: python scripts/performance_gate.py
       - run: npx playwright install --with-deps chromium
