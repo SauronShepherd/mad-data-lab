@@ -393,7 +393,8 @@ function App() {
         </div>
       )}
       {serviceError && (
-        <section className="error-panel" role="alert" aria-labelledby="error-title">
+        <section className="error-panel mdl6-recovery-state" role="alert" aria-labelledby="error-title">
+          <img className="mdl6-recovery-art" src="/assets/mdl6-recovery-background.png" alt="" aria-hidden="true" />
           <p className="eyebrow">LAB RECOVERY</p>
           <h2 id="error-title">The investigation needs attention.</h2>
           <p>{serviceError}</p>
@@ -753,6 +754,7 @@ function App() {
             </div>
             <div className="badges" aria-label="Earned badges">
               <span className="eyebrow">BADGES</span>
+              <img className="mdl6-badge-art" src="/assets/mdl6-achievement-badges.png" alt="MDL-6 achievement badges: resilience, accessibility, security, and performance" />
               {earnedBadges.length ? earnedBadges.map((badge) => <strong key={badge}>✦ {badge}</strong>) : <small>Complete the investigation to earn your first badges.</small>}
             </div>
             <div className="debrief-grid">

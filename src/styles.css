@@ -657,6 +657,11 @@ h1 {
   gap: 10px;
   margin: 24px 0;
 }
+
+.mdl6-recovery-state { position: relative; overflow: hidden; isolation: isolate; }
+.mdl6-recovery-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .22; z-index: -1; }
+.mdl6-badge-art { display: block; width: min(100%, 360px); height: auto; margin: .75rem auto 1rem; border-radius: 1rem; }
+@media (prefers-reduced-motion: reduce) { .mdl6-recovery-art { opacity: .16; } }
 .debrief-grid div {
   padding: 15px;
   background: #0c1420;
