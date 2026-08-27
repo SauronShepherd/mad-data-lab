@@ -15,7 +15,7 @@
 }
 body {
   margin: 0;
-  min-width: 1100px;
+  min-width: 0;
   background: radial-gradient(circle at 50% 25%, #162339 0, #070b13 58%);
   color: #eee8da;
 }
@@ -728,10 +728,18 @@ h1 {
   .overlay { min-height: 650px; }
 }
 @media (max-width: 800px) {
+  .topbar { height: auto; min-height: 64px; padding: 10px 12px; gap: 10px; }
+  .brand { font-size: 13px; }
+  .case-title { display: none; }
+  .controls { margin-left: auto; gap: 5px; }
+  .controls button { width: 36px; height: 36px; font-size: 16px; }
+  .hub { padding: 20px 12px; width: 100%; }
+  .hero { min-height: 390px; }
+  .hero-copy { padding: 24px 18px; }
   .investigation { display: block; }
   .stage { min-height: 430px; }
   .overlay { min-height: 430px; gap: 10px; padding: 18px; }
-  .observation, .instrument { width: min(45%, 300px); padding: 15px; }
+  .observation, .instrument { width: min(100%, 300px); padding: 15px; }
   .map-node { grid-template-columns: 68px 1fr; }
   .map-node small { grid-column: 2; }
   .side { max-height: none; overflow-y: visible; }
