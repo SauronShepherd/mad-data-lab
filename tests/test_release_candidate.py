@@ -10,7 +10,7 @@ def test_release_candidate_gate_order_is_deterministic():
 
 def test_python_release_gates_use_project_environment_when_uv_is_available(monkeypatch):
     monkeypatch.setattr(release_candidate.shutil, "which", lambda name: "uv.exe" if name == "uv" else None)
-    assert release_candidate._project_command(["C:/python.exe", "scripts/assets_gate.py"]) == ["uv", "run", "python", "scripts/assets_gate.py"]
+    assert release_candidate._project_command(["C:/python.exe", "scripts/assets_gate.py"]) == ["uv", "run", "--with", "Pillow", "python", "scripts/assets_gate.py"]
     assert release_candidate._project_command(["npm.cmd", "run", "build"]) == ["npm.cmd", "run", "build"]
 
 

@@ -56,7 +56,13 @@ def test_counts() -> dict[str, int]:
 def _project_command(command: list[str]) -> list[str]:
     """Run Python gates in the project environment, including when launched by uv."""
     if command and Path(command[0]).name.lower().startswith("python") and shutil.which("uv"):
-        return ["uv", "run", "python", *command[1:]]
+        extras = []
+        joined = " ".join(command[1:])
+        if "pytest" in joined:
+            extras.append("pytest")
+        if any(name in joined for name in ("assets_gate", "art_contact", "art_review")):
+            extras.append("Pillow")
+        return ["uv", "run", *(sum((["--with", package] for package in extras), [])), "python", *command[1:]]
     return command
 
 
