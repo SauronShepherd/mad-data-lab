@@ -14,10 +14,10 @@ external predecessor/deployment/artwork evidence are identity-bound.
 - Session circuit breaker: implemented and covered by `tests/test_mdl6_circuit_breaker.py`.
 - Audio preflight: `scripts/audio_preflight.py`; current bundled track passes duration/size/decode/channel/sample-rate checks.
 - Performance gate: `scripts/performance_gate.py`; current production bundle passes JS/CSS/file budgets.
-- Browser contracts: full existing suite 11/11 passed; MDL-6 contracts 2/2 passed.
+- Browser contracts: full existing suite previously passed 11/11; current MDL-6 contracts pass 3/3, including production artwork decode checks.
 - Canonical MDL-6 catalogue: 83 IDs locked in `backend/mdl6_contract.py` (AX 15, PF 8, AS 15, SEC 20, CH 25); implementation coverage remains partial until each scenario has a dedicated assertion.
-- Python repository suite: 215 passed, 7 skipped on the current implementation baseline.
-- Image preflight: `scripts/image_preflight.py`; currently fails on existing oversized production assets and remains blocking.
+- Python repository suite: 216 passed, 7 skipped on the current implementation baseline.
+- Image preflight: `scripts/image_preflight.py`; current production and review asset inventory passes (15 assets).
 - Frontend typecheck/build: passing.
 - Browser baseline: existing 3-test MDL-5 browser artifact passed; full MDL-6 resilience matrix is not yet implemented.
 
@@ -27,7 +27,7 @@ external predecessor/deployment/artwork evidence are identity-bound.
 - Add redaction-tested structured domain event logging.
 - Complete SEC-001 through SEC-020, CH-001 through CH-025, PF-001 through PF-008, and AS-001 through AS-015.
 - Complete keyboard, reduced-motion, mobile, audio-failure, and backend-restart E2E coverage.
-- Produce and register MDL6-A14 and MDL6-A16 artwork; automated approval is authorized by the project owner.
+- Produce and register MDL6-A14 and MDL6-A16 artwork; automated approval is authorized by the project owner and both assets are wired into the UI.
 
 ## External blockers
 
