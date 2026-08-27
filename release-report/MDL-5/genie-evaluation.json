@@ -1,1 +1,12 @@
-{"status":"PENDING","profile":"mdl","mode":"live","reason":"fixture benchmark passes; authenticated live evaluation pending"}
+{
+  "status": "LIVE_BENCHMARK_PASS_DEPLOYMENT_RECONCILIATION_PENDING",
+  "profile": "mdl",
+  "mode": "live",
+  "benchmark_status": "PASS",
+  "benchmark_attempts": 30,
+  "benchmark_sha": "7539de2640733bf7e38eecc071f3d401cff2b2f3",
+  "current_sha": "b983f720a0d5d87fa0b6be5d37957b4cbd9a85d5",
+  "runtime_digest": "e9d7443d2338aa207b4b8e41d762aa54a3b28fdcc16c8371d054e24cde743d69",
+  "deployment_id_pending": "01f1a233f4151181b3a7b1c783d63dc1",
+  "reason": "Live benchmark passed against the immediately preceding hardened SHA; direct deployment of current SHA remains IN_PROGRESS, so this is not claimed as final-SHA evidence."
+}
