@@ -70,7 +70,10 @@ jobs:
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
           DATABRICKS_AUTH_TYPE: ${{ secrets.DATABRICKS_TOKEN != '' && 'pat' || 'github-oidc' }}
           GENIE_SPACE_ID: 01f1a11f6c281e79bd1e0c448055fbdd
-          MDL3_BENCHMARK_ATTEMPT_TIMEOUT_SECONDS: '120'
+          # Keep the whole 30-case batch within the job timeout when a remote
+          # Genie request is unavailable; the benchmark records that attempt
+          # as a bounded failure instead of hanging the workflow.
+          MDL3_BENCHMARK_ATTEMPT_TIMEOUT_SECONDS: '30'
           MDL3_BENCHMARK_DELAY_SECONDS: '1'
         run: |
           set -o pipefail
