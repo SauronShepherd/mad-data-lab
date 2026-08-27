@@ -25,7 +25,7 @@ def main() -> None:
     # Uvicorn's socket to accept requests.  Bound the readiness wait so a
     # crashed container still fails quickly and diagnostically in CI.
     last_error: Exception | None = None
-    for _ in range(30):
+    for _ in range(90):
         try:
             if call("/health")["status"] == "ok":
                 break

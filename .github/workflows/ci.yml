@@ -94,5 +94,7 @@ jobs:
       - run: docker compose up -d
       - run: python scripts/container_smoke.py
       - run: python scripts/container_shutdown_smoke.py
+      - if: failure()
+        run: docker compose logs --no-color
       - if: always()
         run: docker compose down
