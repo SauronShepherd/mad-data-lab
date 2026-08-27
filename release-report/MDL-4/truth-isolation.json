@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "private_oracle_module": "backend/private/case_oracle.py",
+  "genie_imports_private_oracle": false,
+  "public_session_projection_excludes_score_ledger": true,
+  "public_session_projection_excludes_private_truth": true,
+  "frontend_truth_fixture": false
+}

@@ -15,6 +15,12 @@ import {
   restartSession,
   listCases,
   startInvestigation,
+  createSession,
+  startSession,
+  submitFinalPrediction,
+  enterDebrief,
+  inspectEvidence,
+  getSession,
 } from "./api";
 
 const CASES = [];
@@ -51,6 +57,11 @@ function App() {
   const [caseCatalog, setCaseCatalog] = useState(CASES);
   const [selectedCaseId, setSelectedCaseId] = useState("CASE_0042");
   const [experimentRegistry, setExperimentRegistry] = useState([]);
+  const [finalPrediction, setFinalPrediction] = useState("");
+  const [finalStage, setFinalStage] = useState(false);
+  const [initialSubmitted, setInitialSubmitted] = useState(false);
+  const [inspectedCapabilities, setInspectedCapabilities] = useState([]);
+  const recoveryAttempted = useRef(false);
   const audioRef = useRef(null);
   useEffect(() => {
     listCases()
@@ -82,16 +93,51 @@ function App() {
     }).catch(() => setExperimentRegistry([]));
   }, [active.id]);
   useEffect(() => {
+    if (recoveryAttempted.current) return;
+    const savedSessionId = localStorage.getItem("mad-data-lab-session-id");
+    if (!savedSessionId) { recoveryAttempted.current = true; return; }
+    getSession(savedSessionId).then(async (session) => {
+      recoveryAttempted.current = true;
+      setSelectedCaseId(session.case_id || "CASE_0042");
+      setSessionId(savedSessionId);
+      setConversationId(session.conversation_id || null);
+      setDiagnosticId(session.diagnostic_id || null);
+      setPrediction(session.initial_prediction || "");
+      setFinalPrediction(session.final_prediction && session.final_prediction !== "SKIPPED_BY_EARLY_REVEAL" ? session.final_prediction : "");
+      setInitialSubmitted(Boolean(session.initial_prediction));
+      setCompleted(session.completed || []);
+      setHintsUsed(Number(session.hints || 0));
+      setInspectedCapabilities(session.inspected_capabilities || []);
+      const lastExperiment = [...(session.events || [])].reverse().find((event) => event.type === "EXPERIMENT" && event.result);
+      if (lastExperiment?.result) {
+        setExperiment(lastExperiment.result);
+        setExp(Number(lastExperiment.result.experiment_number || 1) - 1);
+      }
+      if (session.state === "DEBRIEF") {
+        setConclusion(session); setScreen("debrief");
+      } else if (session.state === "CONCLUDING") {
+        setConclusion(session); setScreen("verdict");
+      } else {
+        setFinalStage(session.state === "PLAYER_PREDICTION_FINAL");
+        if (session.state !== "CASE_BRIEFING") setScreen("investigation");
+      }
+      try {
+        const evidenceResult = await getSessionEvidence(savedSessionId);
+        setEvidenceRecords(evidenceResult.evidence || []);
+      } catch { /* the session projection remains usable without evidence details */ }
+    }).catch(() => {
+      recoveryAttempted.current = true;
+      localStorage.removeItem("mad-data-lab-session-id");
+    });
+  }, []);
+  useEffect(() => {
     document.documentElement.classList.toggle("reduced-motion", reducedMotion);
   }, [reducedMotion]);
   useEffect(() => {
     if (screen !== "debrief" || !conclusion?.badges?.length) return;
     const newBadges = conclusion.badges;
-    setEarnedBadges((currentBadges) => {
-      const merged = [...new Set([...currentBadges, ...newBadges])];
-      localStorage.setItem("mad-data-lab-badges", JSON.stringify(merged));
-      return merged;
-    });
+    setEarnedBadges(newBadges);
+    localStorage.setItem("mad-data-lab-badges", JSON.stringify(newBadges));
   }, [screen, conclusion]);
   const toggleAudio = () => {
     const audio = audioRef.current;
@@ -120,11 +166,16 @@ function App() {
     setEvidenceRecords([]);
     setConclusion(null);
     setPrediction("");
+    setFinalPrediction("");
+    setFinalStage(false);
+    setInitialSubmitted(false);
+    setInspectedCapabilities([]);
     setAnswer("");
     setQuestion("");
     setServiceError("");
     setHintsUsed(0);
     setHintText("");
+    setInspectedCapabilities([]);
   };
   const showHint = () => {
     if (hintsUsed >= 3) return;
@@ -145,24 +196,38 @@ function App() {
   }, [reducedMotion]);
   const begin = async () => {
     setScreen("investigation");
+    setLoading(true);
     setServiceError("");
     try {
-      const session = await startInvestigation(active.id);
+      const created = await createSession(active.id);
+      const createdSessionId = String(created.session_id || "");
+      if (createdSessionId) {
+        setSessionId(createdSessionId);
+        localStorage.setItem("mad-data-lab-session-id", createdSessionId);
+      }
+      const session = await startSession(createdSessionId);
       setConversationId(session.conversation_id || null);
       setSessionId(session.session_id || session.investigation_id || null);
+      localStorage.setItem("mad-data-lab-session-id", session.session_id || session.investigation_id || "");
       setDiagnosticId(session.diagnostic_id || null);
     } catch {
       setServiceError("Investigation service unavailable. Start the API to continue.");
+    } finally {
+      setLoading(false);
     }
   };
   const run = async () => {
     setLoading(true);
     setServiceError("");
     try {
-      if (sessionId && prediction) await submitPrediction(sessionId, prediction);
+      if (sessionId && prediction && !initialSubmitted) {
+        await submitPrediction(sessionId, prediction);
+        setInitialSubmitted(true);
+      }
       const next = sessionId
         ? await getNextSessionExperiment(sessionId, prediction)
         : await getNextExperiment(active.id, completed, prediction, conversationId);
+      if (next.ready_for_final_prediction) { setFinalStage(true); setExperiment(null); return; }
       setExperiment(next);
       setCompleted((v) => [...v, next.experiment_id]);
       setExp(next.experiment_number - 1);
@@ -181,8 +246,10 @@ function App() {
   const revealVerdict = async () => {
     if (sessionId) {
       try {
+        if (finalStage && finalPrediction) await submitFinalPrediction(sessionId, finalPrediction);
         const result = await concludeSession(sessionId);
         setConclusion(result);
+        setScreen("verdict");
         try {
           const stored = JSON.parse(localStorage.getItem("mad-data-lab-progression") || "{}");
           const completedCaseIds = new Set(stored.completed_case_ids || []);
@@ -198,7 +265,11 @@ function App() {
         return;
       }
     }
-    if (conclusion) setScreen("verdict");
+  };
+  const openDebrief = async () => {
+    if (!sessionId) return;
+    try { const result = await enterDebrief(sessionId); setConclusion((current) => ({...current, ...result})); setScreen("debrief"); }
+    catch { setServiceError("The Debrief could not be opened yet."); }
   };
   const recoverInvestigation = async () => {
     if (sessionId) {
@@ -232,6 +303,13 @@ function App() {
     } finally {
       setAsking(false);
     }
+  };
+  const inspect = async (capability) => {
+    if (!sessionId || inspectedCapabilities.includes(capability)) return;
+    try {
+      await inspectEvidence(sessionId, capability);
+      setInspectedCapabilities((items) => [...items, capability]);
+    } catch { setServiceError("That evidence is not unlocked yet."); }
   };
   const current = experiment || (exp >= 0 ? experimentRegistry[exp] : null);
   const updates = current?.hypothesis_updates || current?.updates || [];
@@ -523,6 +601,11 @@ function App() {
                     {evidenceRecords.length} curated source records available in the server ledger.
                   </small>
                 )}
+                {evidenceRecords.length > 0 && <div className="evidence-actions">
+                  <button className="secondary" onClick={() => inspect("CASE_0042:RECORD:TX-004291")} disabled={inspectedCapabilities.includes("CASE_0042:RECORD:TX-004291")}>INSPECT TX-004291 · +100</button>
+                  <button className="secondary" onClick={() => inspect("CASE_0042:LINEAGE:V2_SOURCE_PATH")} disabled={inspectedCapabilities.includes("CASE_0042:LINEAGE:V2_SOURCE_PATH")}>OPEN V2 LINEAGE · +75</button>
+                  <button className="secondary" onClick={() => inspect("CASE_0042:DQ:MATERIALITY")} disabled={inspectedCapabilities.includes("CASE_0042:DQ:MATERIALITY")}>INSPECT DQ MATERIALITY</button>
+                </div>}
               </section>
             )}
             {exp >= 0 && current && (
@@ -543,12 +626,30 @@ function App() {
                 onChange={(e) => setPrediction(e.target.value)}
               >
                 <option value="">What is most likely?</option>
-                <option>Component movement</option>
-                <option>Data quality issue</option>
-                <option>Formula change</option>
+                <option value="PRED_SOURCE_VALUES_CHANGED">Component movement</option>
+                <option value="PRED_DATA_QUALITY_PRIMARY">Data quality issue</option>
+                <option value="PRED_FORMULA_CHANGED">Formula change</option>
+                <option value="PRED_INSUFFICIENT_EVIDENCE">Insufficient evidence</option>
               </select>
             </div>
-            {experimentRegistry.length > 0 && exp < experimentRegistry.length - 1 ? (
+            {finalStage ? (
+              <>
+                <label htmlFor="final-prediction">FINAL PREDICTION</label>
+                <select id="final-prediction" value={finalPrediction} onChange={(e) => setFinalPrediction(e.target.value)}>
+                  <option value="">Choose the evidence-grounded conclusion</option>
+                  <option value="FINAL_CHANGED_V2_SOURCE_RECORDS">Changed V2 source records</option>
+                  <option value="FINAL_DATA_QUALITY_PRIMARY">Primary data quality issue</option>
+                  <option value="FINAL_FORMULA_CHANGED">Formula changed</option>
+                  <option value="FINAL_INSUFFICIENT_EVIDENCE">Insufficient evidence</option>
+                </select>
+                <button className="primary wide" onClick={revealVerdict} disabled={!finalPrediction || loading}>ACCEPT SCIENTIFIC VERDICT <span>→</span></button>
+                <button className="text-button wide" onClick={async () => {
+                  if (!window.confirm("Reveal now and skip the final prediction? This costs 150 points.")) return;
+                  try { const result = await concludeSession(sessionId, {mode: "EARLY_REVEAL"}); setConclusion(result); setScreen("verdict"); }
+                  catch { setServiceError("Early reveal is available only after all analytical requirements are complete."); }
+                }}>REVEAL NOW · SKIP FINAL PREDICTION (-150)</button>
+              </>
+            ) : experimentRegistry.length > 0 && exp < experimentRegistry.length - 1 ? (
               <button className="primary wide" onClick={run} disabled={loading}>
                 {loading
                   ? "GENIE IS INVESTIGATING…"
@@ -560,9 +661,10 @@ function App() {
             ) : experimentRegistry.length > 0 ? (
               <button
                 className="primary wide"
-                onClick={revealVerdict}
+                onClick={run}
+                disabled={loading}
               >
-                REVEAL SCIENTIFIC VERDICT <span>→</span>
+                {loading ? "PREPARING FINAL PREDICTION…" : "CONTINUE TO FINAL PREDICTION"} <span>→</span>
               </button>
             ) : (
               <button className="primary wide" disabled>No experiment contract available</button>
@@ -606,7 +708,7 @@ function App() {
               “Excellent work. A warning can be real without being the root
               cause. Follow the evidence.”
             </p>
-            <button className="primary" onClick={() => setScreen("debrief")}>
+            <button className="primary" onClick={openDebrief}>
               OPEN DEBRIEF <span>→</span>
             </button>
           </div>

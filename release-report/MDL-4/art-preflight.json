@@ -1,0 +1,11 @@
+{
+  "status": "CANDIDATES_PREFLIGHT_PASS",
+  "approval": "PENDING_HUMAN_APPROVAL",
+  "assets": ["A03", "A06"],
+  "candidate_count": 10,
+  "exact_byte_hashes_recorded": true,
+  "contact_sheets": {
+    "A03": "assets/review/MDL-4/contact-sheets/A03.png",
+    "A06": "assets/review/MDL-4/contact-sheets/A06.png"
+  }
+}

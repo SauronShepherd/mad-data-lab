@@ -19,12 +19,18 @@ class Settings:
     genie_space_id: str | None
     genie_request_timeout_seconds: float
     genie_poll_interval_ms: int
+    session_ttl_seconds: int
+    max_active_sessions: int
 
     @classmethod
     def from_env(cls) -> "Settings":
         deployed = bool(os.getenv("DATABRICKS_APP_PORT"))
         genie_timeout = float(os.getenv("GENIE_REQUEST_TIMEOUT_SECONDS", "75"))
         genie_poll = int(os.getenv("GENIE_POLL_INTERVAL_MS", "1000"))
+        session_ttl = int(os.getenv("SESSION_TTL_SECONDS", "7200"))
+        max_sessions = int(os.getenv("MAX_ACTIVE_SESSIONS", "256"))
+        if session_ttl <= 0 or max_sessions <= 0:
+            raise ValueError("SESSION_TTL_SECONDS and MAX_ACTIVE_SESSIONS must be positive")
         if genie_timeout <= 0:
             raise ValueError("GENIE_REQUEST_TIMEOUT_SECONDS must be positive")
         if genie_poll <= 0:
@@ -38,6 +44,8 @@ class Settings:
             genie_space_id=os.getenv("GENIE_SPACE_ID") or os.getenv("DATABRICKS_GENIE_SPACE_ID"),
             genie_request_timeout_seconds=genie_timeout,
             genie_poll_interval_ms=genie_poll,
+            session_ttl_seconds=session_ttl,
+            max_active_sessions=max_sessions,
         )
 
 

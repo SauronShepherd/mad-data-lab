@@ -11,12 +11,16 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def build(iteration: str) -> dict:
     plan = json.loads((ROOT / f"assets/review/{iteration}/art-generation-plan.json").read_text(encoding="utf-8"))
+    slots = plan.get("slots")
+    if slots is None:
+        slots = [{"asset_id": item["asset_id"], "candidates": item["candidates"]} for item in plan["assets"]]
     entries: list[tuple[str, Path, Image.Image]] = []
     slot_sheets: dict[str, list[tuple[str, Path, Image.Image]]] = {}
-    for slot in plan["slots"]:
+    for slot in slots:
         slot_entries = []
         for rel in slot["candidates"]:
-            path = ROOT / (rel["path"] if isinstance(rel, dict) else rel)
+            raw_path = rel["path"] if isinstance(rel, dict) else rel
+            path = ROOT / (raw_path if str(raw_path).startswith("assets/") else f"assets/review/{iteration}/{raw_path}")
             with Image.open(path) as image:
                 converted: Image.Image = image.convert("RGB")
                 item = (slot["asset_id"], path, converted)
@@ -54,7 +58,7 @@ def build(iteration: str) -> dict:
     return {"iteration": iteration, "status": "PASS", "candidate_count": len(entries), "path": output.relative_to(ROOT).as_posix(), "width": sheet.width, "height": sheet.height, "per_asset": per_asset}
 
 def main() -> None:
-    result = {iteration: build(iteration) for iteration in ("MDL-1", "MDL-2")}
+    result = {iteration: build(iteration) for iteration in ("MDL-1", "MDL-2", "MDL-3", "MDL-4")}
     (ROOT / "release-report/art-contact-sheets.json").write_text(json.dumps(result, indent=2, sort_keys=True), encoding="utf-8")
     print(json.dumps(result, sort_keys=True))
 

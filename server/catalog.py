@@ -16,7 +16,7 @@ DEFAULT_CASE_ID = next(item["id"] for item in CANONICAL_PUBLIC_CATALOG["cases"] 
 CASE_CONTRACT_METADATA = {
     "CASE_0042": {
         "required_experiment_families": ["COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "FORMULA_VALIDATION", "RECONCILIATION"],
-        "required_evidence_tags": ["COMPONENT_IMPACT", "SNAPSHOT_IMPACT", "FORMULA_MATCH"],
+        "required_evidence_tags": ["COMPONENT_IMPACT", "SNAPSHOT_IMPACT", "FORMULA_VERSION"],
     },
     "CASE_0107": {
         "required_experiment_families": ["ROW_COUNT_ANALYSIS", "DUPLICATE_KEY_ANALYSIS", "PIPELINE_RUN_COMPARISON", "RECONCILIATION"],

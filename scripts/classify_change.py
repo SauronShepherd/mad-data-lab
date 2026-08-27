@@ -24,7 +24,8 @@ def changed_paths(base: str | None) -> list[str]:
     else:
         command.extend(["HEAD^", "HEAD"])
     output = subprocess.check_output(command, cwd=ROOT, text=True)
-    return sorted(path for path in output.splitlines() if path)
+    untracked = subprocess.check_output(["git", "ls-files", "--others", "--exclude-standard"], cwd=ROOT, text=True)
+    return sorted({path for path in (*output.splitlines(), *untracked.splitlines()) if path})
 
 
 def main() -> None:
@@ -37,8 +38,12 @@ def main() -> None:
         for scope, prefixes in RULES.items()
     }
     scopes = {scope: paths for scope, paths in scopes.items() if paths}
-    result = {"head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(), "changed_paths": paths, "scopes": scopes}
+    known = {path for values in scopes.values() for path in values}
+    unknown = sorted(set(paths) - known)
+    result = {"head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(), "changed_paths": paths, "scopes": scopes, "unknown_paths": unknown, "status": "FAIL" if unknown else "PASS"}
     print(json.dumps(result, indent=2))
+    if unknown:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

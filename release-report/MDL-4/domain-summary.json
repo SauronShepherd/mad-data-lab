@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "case_id": "CASE_0042",
+  "required_experiment_families": ["COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "FORMULA_VALIDATION", "RECONCILIATION"],
+  "required_evidence_actions": ["CASE_0042:LINEAGE:V2_SOURCE_PATH"],
+  "final_state": "DEBRIEF"
+}

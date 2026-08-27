@@ -5,6 +5,7 @@ import json
 import hashlib
 import subprocess
 import sys
+import argparse
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,7 +22,38 @@ def run(name: str, command: list[str]) -> dict:
     }
 
 
+def run_mdl4(mode: str) -> int:
+    report = ROOT / "release-report/MDL-4"
+    report.mkdir(parents=True, exist_ok=True)
+    gates = [
+        ("contract", [sys.executable, "scripts/validate_mdl4_contract.py", "--strict"]),
+        ("openapi", [sys.executable, "scripts/openapi_contract_gate.py"]),
+        ("frontend-contract", [sys.executable, "scripts/frontend_contract_gate.py"]),
+        ("local-chaos", [sys.executable, "scripts/local_chaos.py"]),
+        ("python-tests", [sys.executable, "-m", "pytest", "tests/test_mdl4_game_flow.py", "tests/test_mdl4_contract_artifacts.py", "-q"]),
+        ("fake-e2e", [sys.executable, "scripts/run_mdl4_fake_e2e.py"]),
+        ("frontend-typecheck", ["npm.cmd", "run", "typecheck"]),
+        ("frontend-build", ["npm.cmd", "run", "build"]),
+    ]
+    if mode == "closure":
+        gates.extend([
+            ("exact-head-ci", [sys.executable, "scripts/require_external_evidence.py", "MDL-4", "github-ci"]),
+            ("live-deployment", [sys.executable, "scripts/require_external_evidence.py", "MDL-4", "live-deployment"]),
+        ])
+    results = [run(name, command) for name, command in gates]
+    payload = {"iteration": "MDL-4", "mode": mode, "status": "PASS" if all(x["status"] == "PASS" for x in results) else "FAIL", "gates": results}
+    (report / f"iteration-gate-{mode}.json").write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(payload, indent=2))
+    return 0 if payload["status"] == "PASS" else 1
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--iteration", default="MDL-2")
+    parser.add_argument("--mode", choices=("local", "closure"), default="local")
+    args = parser.parse_args()
+    if args.iteration == "MDL-4":
+        raise SystemExit(run_mdl4(args.mode))
     REPORT.mkdir(parents=True, exist_ok=True)
     gates = [
         ("generate", [sys.executable, "scripts/generate_cases.py"]),

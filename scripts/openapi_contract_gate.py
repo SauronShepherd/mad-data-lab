@@ -16,11 +16,17 @@ REQUIRED = {
     ("GET", "/api/cases"),
     ("GET", "/api/cases/{case_id}"),
     ("GET", "/api/cases/{case_id}/experiments"),
+    ("GET", "/api/progression"),
     ("POST", "/api/sessions"),
+    ("GET", "/api/sessions/{session_id}"),
     ("POST", "/api/sessions/{session_id}/start"),
     ("POST", "/api/sessions/{session_id}/next"),
     ("GET", "/api/sessions/{session_id}/evidence"),
+    ("POST", "/api/sessions/{session_id}/evidence/inspect"),
+    ("POST", "/api/sessions/{session_id}/hint"),
     ("POST", "/api/sessions/{session_id}/conclude"),
+    ("POST", "/api/sessions/{session_id}/debrief"),
+    ("POST", "/api/sessions/{session_id}/chat"),
     ("POST", "/api/genie/ask"),
 }
 

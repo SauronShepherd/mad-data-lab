@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "algorithm": "sha256",
+  "digest": "eb619a20de43749062eefa5e003ddad9b3a2a3e289e278cee4601e47f93c3664",
+  "implementation_scope": "MDL-4 gameplay contract files"
+}
