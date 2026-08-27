@@ -10,8 +10,9 @@ def sha(path: str) -> str:
     return hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
 def main() -> None:
     head, tree = git("rev-parse", "HEAD"), git("rev-parse", "HEAD^{tree}")
-    base = git("rev-parse", "MDL-3") if subprocess.run(["git","rev-parse","--verify","MDL-3"], cwd=ROOT, capture_output=True).returncode == 0 else None
-    base_tree = git("rev-parse", "MDL-3^{tree}") if base else None
+    ref = next((candidate for candidate in ("MDL-3", "origin/MDL-3") if subprocess.run(["git", "rev-parse", "--verify", candidate], cwd=ROOT, capture_output=True).returncode == 0), None)
+    base = git("rev-parse", ref) if ref else None
+    base_tree = git("rev-parse", f"{ref}^{{tree}}") if ref else None
     assets = {}
     plan = json.loads((ROOT / "assets/review/MDL-4/art-generation-plan.json").read_text())
     for item in plan["sha256"]: assets[item] = plan["sha256"][item]
