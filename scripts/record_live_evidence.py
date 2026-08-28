@@ -38,7 +38,7 @@ def main() -> None:
             output = captured.read_text(encoding="utf-8")
             marker = ("deployed soak: PASS (10 authenticated Case #042 journeys)"
                       if filename == "deployed-soak.json"
-                      else "deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)")
+                      else "deployed smoke: PASS (health, catalog, session, experiments, evidence inspection, verdict, debrief)")
             if marker not in output:
                 raise SystemExit("captured deployed evidence lacks the exact PASS marker")
             result = subprocess.CompletedProcess([sys.executable, script], 0, output, "")

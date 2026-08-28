@@ -1,4 +1,14 @@
 {
-  "status": "NOT_RUN",
-  "reason": "requires authenticated deployed app"
+  "status": "PASS",
+  "command": [
+    "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "scripts/deployed_smoke.py"
+  ],
+  "output": "deployed smoke: PASS (health, catalog, session, experiments, evidence inspection, verdict, debrief)\n",
+  "source_identity": {
+    "git_head": "afe37ff9ae9955a5bf0e42398de3af35e44b2031",
+    "runtime_digest": "f861f20dce6970a95a33bd020189d94f7f04d932ff7153a3bd5aeeaf4223d697",
+    "data_contract_digest": "07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524"
+  },
+  "generated_at_utc": "2026-08-28T18:05:55.673857+00:00"
 }
