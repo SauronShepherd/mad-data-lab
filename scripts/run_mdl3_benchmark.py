@@ -115,6 +115,35 @@ def extract_unfenced_control(text: str) -> dict:
     return candidates[0]
 
 
+def extract_valid_control_candidate(text: str, validator: object) -> dict:
+    """Select the sole candidate that passes the full control validator.
+
+    Genie can echo the protocol instructions alongside its final answer. Those
+    echoed examples are not control messages; only a candidate accepted by
+    the same schema/allowlist validator is operational. Two valid candidates
+    remain an ambiguity and are rejected.
+    """
+    decoder = json.JSONDecoder()
+    valid = []
+    for index, character in enumerate(text):
+        if character != "{":
+            continue
+        try:
+            value, _ = decoder.raw_decode(text[index:])
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(value, dict) or value.get("schema_version") != "1.0":
+            continue
+        try:
+            validator(value)
+        except Exception:
+            continue
+        valid.append(value)
+    if len(valid) != 1:
+        raise ValueError("expected exactly one valid strict control object")
+    return valid[0]
+
+
 def wait_for_message(client: object, space_id: str, conversation_id: str, message_id: str, timeout_seconds: int) -> object:
     """Poll Genie explicitly so the benchmark owns the deadline."""
     deadline = time.monotonic() + timeout_seconds
@@ -227,7 +256,7 @@ def live_run(corpus: dict) -> dict:
                             decoded = json.loads(candidate_text.strip())
                             payload = decoded if isinstance(decoded, dict) else extract_unfenced_control(candidate_text)
                         except json.JSONDecodeError:
-                            payload = extract_unfenced_control(candidate_text)
+                            payload = extract_valid_control_candidate(candidate_text, lambda value: validate_control_response(value, active_case_id="CASE_0042", allowed_experiments=allowed, instrument_for_experiment=lambda experiment: instruments[experiment]))
                     return validate_control_response(payload, active_case_id="CASE_0042", allowed_experiments=allowed, instrument_for_experiment=lambda experiment: instruments[experiment])
                 try:
                     validated = parse_and_validate(text)
