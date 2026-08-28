@@ -60,7 +60,8 @@ def system_prompt(case_id: str = DEFAULT_CASE_ID) -> str:
         "For RUN_EXPERIMENT, include selected_experiment {id, question, target_component} and instrument {id, title}; "
         "choose only a currently allowed registered Experiment/Instrument and never use hidden truth or arbitrary SQL. "
         "Set target_component to null for every Experiment except SNAPSHOT_DIFF; for SNAPSHOT_DIFF use exactly one of V1, V2, V3, or V4. "
-        "Include observation, next_action, and a concise scientist_line. Do not return multiple JSON objects."
+        "Include observation, next_action, and a concise scientist_line. Do not return multiple JSON objects. "
+        "Begin the investigation now: return the first control object for the registered experiment that best tests the leading hypothesis."
     )
 
 
