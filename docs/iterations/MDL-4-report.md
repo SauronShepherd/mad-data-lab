@@ -4,8 +4,8 @@ Status: `IN_PROGRESS`
 
 Local identity evidence: branch `MDL-4`, current head is maintained on the pushed
 remote branch. The worktree contains pre-existing unrelated MDL-2/3 generated
-changes, which are intentionally preserved. Exact-head CI and live deployment
-evidence remain separate closure requirements.
+changes, which are intentionally preserved. Exact-head CI remains a separate
+closure requirement; authenticated deployment evidence is recorded below.
 
 Architecture mapping is recorded in
 `docs/decisions/ADR-mdl4-architecture-mapping.md`.
@@ -44,6 +44,7 @@ Local evidence:
 - full historical suite: 168 passed, 7 explicitly allowed compatibility skips;
 - current gameplay digest: `eb619a20de43749062eefa5e003ddad9b3a2a3e289e278cee4601e47f93c3664`.
 
-Closure remains pending exact-head CI, deployment smoke, and post-deployment
-inspection. Final A03/A06 visual inspection is an end-of-task review and is
-not a closure gate. No completion status is inferred from the local checks above.
+Deployment smoke and post-deployment inspection are verified: five unique
+experiments, explicit evidence inspections, final prediction, `DEBRIEF`, and
+score `1000`. Closure remains pending exact-head CI. Final A03/A06 visual
+inspection is an end-of-task review and is not a closure gate.

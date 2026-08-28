@@ -42,7 +42,7 @@ def migration(catalog, case):
     return '\n'.join(statements)+'\n'
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument('--target',default='local'); ap.add_argument('--case',default='CASE_0042'); ap.add_argument('--plan',action='store_true'); ap.add_argument('--apply',action='store_true'); ap.add_argument('--verify',action='store_true'); ap.add_argument('--manifest',default='release-report/MDL-2/seed-manifest.json'); ap.add_argument('--sql-out',default='release-report/MDL-2/seed-case-0042.sql'); a=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument('--target',default='local'); ap.add_argument('--case',default='CASE_0042'); ap.add_argument('--plan',action='store_true'); ap.add_argument('--apply',action='store_true'); ap.add_argument('--verify',action='store_true'); ap.add_argument('--profile',default=os.getenv('DATABRICKS_CONFIG_PROFILE','')); ap.add_argument('--warehouse-id',default=os.getenv('MDL_WAREHOUSE_ID','')); ap.add_argument('--manifest',default='release-report/MDL-2/seed-manifest.json'); ap.add_argument('--sql-out',default='release-report/MDL-2/seed-case-0042.sql'); a=ap.parse_args()
     if a.case != 'CASE_0042': raise SystemExit('only CASE_0042 is in the locked MDL-2 seed scope')
     if a.target not in ('local','staging') or (a.apply and a.target!='staging') or (a.verify and a.target!='staging'): raise SystemExit('target/apply/verify combination is not permitted')
     if a.apply and a.plan: raise SystemExit('--plan and --apply are mutually exclusive')
@@ -52,7 +52,14 @@ def main():
     if a.apply or a.verify:
         if catalog.startswith('{{'): raise SystemExit('staging apply requires MDL_CATALOG')
         try:
-            with connect_from_env() as connection:
+            if a.profile:
+                if not a.warehouse_id: raise SystemExit('--warehouse-id or MDL_WAREHOUSE_ID is required with --profile')
+                from databricks.sdk import WorkspaceClient
+                from scripts.live_sql_check import SdkConnection
+                connection = SdkConnection(WorkspaceClient(profile=a.profile), a.warehouse_id)
+            else:
+                connection = connect_from_env()
+            with connection:
                 with connection.cursor() as cursor:
                     if a.apply:
                         for statement in sql.splitlines():

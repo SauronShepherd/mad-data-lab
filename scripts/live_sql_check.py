@@ -43,6 +43,11 @@ class SdkCursor:
             statement=rendered, warehouse_id=self.warehouse_id,
             disposition=Disposition.INLINE, format=Format.JSON_ARRAY, wait_timeout="30s",
         )
+        status = getattr(response, "status", None)
+        error = getattr(status, "error", None)
+        if error is not None or getattr(status, "state", None) == "FAILED":
+            message = getattr(error, "message", None) or "statement execution failed"
+            raise RuntimeError(message)
         result = getattr(response, "result", None)
         self.rows = list(getattr(result, "data_array", None) or [])
         schema = getattr(getattr(response, "manifest", None), "schema", None)

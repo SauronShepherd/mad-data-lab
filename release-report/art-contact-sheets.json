@@ -63,5 +63,45 @@
     },
     "status": "PASS",
     "width": 640
+  },
+  "MDL-3": {
+    "candidate_count": 10,
+    "height": 1270,
+    "iteration": "MDL-3",
+    "path": "release-report/MDL-3/art-contact-sheet.png",
+    "per_asset": {
+      "A05": {
+        "candidate_count": 6,
+        "path": "assets/review/MDL-3/contact-sheets/A05.png",
+        "sha256": "f789358753d1a92d83fb58612acc9f306e826154925085a5aa8d213f120c5ab5"
+      },
+      "A07": {
+        "candidate_count": 4,
+        "path": "assets/review/MDL-3/contact-sheets/A07.png",
+        "sha256": "52877b08c6be3e9ca7688a28f361d5d673a2c925ede26dfd5a7f1a4a3a2a0575"
+      }
+    },
+    "status": "PASS",
+    "width": 640
+  },
+  "MDL-4": {
+    "candidate_count": 10,
+    "height": 1270,
+    "iteration": "MDL-4",
+    "path": "release-report/MDL-4/art-contact-sheet.png",
+    "per_asset": {
+      "A03": {
+        "candidate_count": 6,
+        "path": "assets/review/MDL-4/contact-sheets/A03.png",
+        "sha256": "fab24fe88dfc9acebe484727f9790aa5365c65cf0aa8f9f4cd501b31ed9bb120"
+      },
+      "A06": {
+        "candidate_count": 4,
+        "path": "assets/review/MDL-4/contact-sheets/A06.png",
+        "sha256": "a26af85c9a9891040dd0ea1d2d8a75fb70a6890e5798131d3a086e21da346a70"
+      }
+    },
+    "status": "PASS",
+    "width": 640
   }
 }

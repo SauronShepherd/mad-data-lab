@@ -1,16 +1,31 @@
 {
   "status": "FAIL",
+  "generated_at_utc": "2026-08-27T21:37:33.866007+00:00",
   "source_identity": {
-    "git_head": "ee511b68c846a08d1899a238caf6c4e4642416de",
-    "git_worktree_dirty": true,
-    "runtime_digest": "3d3d632a3d820bf14f7368c54055433c927d462ba02b580db55b007e167b7bf5",
-    "data_contract_digest": "d7d9b26f4c79b6572fb4e4044ef66a60be9796f2145293df67cc174492b25461"
+    "branch": "MDL-6",
+    "commit_sha": "4c5d4b2936e32c7e0eeee29229113a3e5f801593",
+    "tree_sha": "8205d6de115e1b8b519bbe05a15d99426660b217",
+    "runtime_digest": "abcb9cc73497991b67074a589ee354efb8436024f5beb460858c7529733eb58a",
+    "data_contract_digest": "3bdb61c7e45386c085249bfc05b3cf67c603a036eb81239b17e53147b1315bb0"
+  },
+  "identity_stable": true,
+  "build_identity": {
+    "runtime_digest": "abcb9cc73497991b67074a589ee354efb8436024f5beb460858c7529733eb58a",
+    "data_contract_digest": "3bdb61c7e45386c085249bfc05b3cf67c603a036eb81239b17e53147b1315bb0"
+  },
+  "test_counts": {
+    "tests": 201,
+    "skipped": 7,
+    "failures": 0,
+    "errors": 0
   },
   "gates": [
     {
       "name": "lint",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "-m",
         "compileall",
         "-q",
@@ -34,18 +49,28 @@
     {
       "name": "unit",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "--with",
+        "pytest",
+        "--with",
+        "Pillow",
+        "python",
         "scripts/pytest_gate.py",
         "--junitxml=release-report/pytest-results.xml",
         "-q"
       ],
-      "status": "FAIL",
-      "output": "................s...............s.......ss.ss........................... [ 31%]\n........................................................................ [ 62%]\n.....s.............................F.................................... [ 93%]\n..............                                                           [100%]\n================================== FAILURES ===================================\n_________ test_mdl5_traceability_rows_are_complete_and_evidence_bound _________\n\n    def test_mdl5_traceability_rows_are_complete_and_evidence_bound():\n        rows = list(csv.DictReader((ROOT / \"docs/traceability/mdl5-requirements.csv\").open(encoding=\"utf-8\")))\n        assert len(rows) == 25\n        assert len({row[\"requirement_id\"] for row in rows}) == len(rows)\n        for row in rows:\n            assert row[\"implementation\"] and row[\"tests\"] and row[\"release_evidence\"]\n>           assert row[\"status\"] in {\"implemented\", \"partial\", \"pending\"}\nE           AssertionError: assert None in {'implemented', 'partial', 'pending'}\n\ntests\\test_mdl5_traceability.py:14: AssertionError\n=========================== short test summary info ===========================\nFAILED tests/test_mdl5_traceability.py::test_mdl5_traceability_rows_are_complete_and_evidence_bound\n1 failed, 222 passed, 7 skipped in 31.83s\n"
+      "status": "PASS",
+      "output": "................s...............s.......ss.ss........................... [ 31%]\n........................................................................ [ 63%]\n.....s.................................................................. [ 94%]\n............                                                             [100%]\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\fastapi\\testclient.py:1\n  C:\\Users\\angel.alvarez\\PycharmProjects\\mad-data-lab\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n- generated xml file: C:\\Users\\angel.alvarez\\PycharmProjects\\mad-data-lab\\release-report\\pytest-results.xml -\n221 passed, 7 skipped, 1 warning in 33.63s\npytest gate: PASS: 228 tests\n"
     },
     {
       "name": "data",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "--with",
+        "pytest",
+        "python",
         "-m",
         "pytest",
         "-q",
@@ -53,12 +78,14 @@
         "tests/test_mutation.py"
       ],
       "status": "PASS",
-      "output": ".......                                                                  [100%]\n7 passed in 0.07s\n"
+      "output": ".......                                                                  [100%]\n7 passed in 0.05s\n"
     },
     {
       "name": "mdl2_property",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/mdl2_property_suite.py"
       ],
       "status": "PASS",
@@ -67,7 +94,9 @@
     {
       "name": "mdl2_data_deploy_local",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/verify_databricks_data.py",
         "--target",
         "local"
@@ -78,7 +107,9 @@
     {
       "name": "mdl2_sql_preflight",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/mdl2_sql_preflight.py"
       ],
       "status": "PASS",
@@ -87,28 +118,36 @@
     {
       "name": "contract",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "--with",
+        "pytest",
+        "python",
         "-m",
         "pytest",
         "-q",
         "tests/test_case_contract.py"
       ],
       "status": "PASS",
-      "output": ".........s...............s.......ss.ss..                                 [100%]\n34 passed, 6 skipped in 2.56s\n"
+      "output": ".........s...............s.......ss.ss..                                 [100%]\n============================== warnings summary ===============================\n.venv\\Lib\\site-packages\\fastapi\\testclient.py:1\n  C:\\Users\\angel.alvarez\\PycharmProjects\\mad-data-lab\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n    from starlette.testclient import TestClient as TestClient  # noqa\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n34 passed, 6 skipped, 1 warning in 1.06s\n"
     },
     {
       "name": "e2e",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/local_e2e.py"
       ],
       "status": "PASS",
-      "output": "local e2e: PASS (Case #042 journey; secondary Cases remain locked)\n"
+      "output": "local e2e: PASS (Case #042 journey; secondary Cases remain locked)\nC:\\Users\\angel.alvarez\\PycharmProjects\\mad-data-lab\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n"
     },
     {
       "name": "visual",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/visual_gate.py"
       ],
       "status": "PASS",
@@ -117,7 +156,11 @@
     {
       "name": "assets",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "--with",
+        "Pillow",
+        "python",
         "scripts/assets_gate.py"
       ],
       "status": "PASS",
@@ -126,7 +169,9 @@
     {
       "name": "security",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/security_gate.py"
       ],
       "status": "PASS",
@@ -135,7 +180,9 @@
     {
       "name": "frontend_contract",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/frontend_contract_gate.py"
       ],
       "status": "PASS",
@@ -144,16 +191,24 @@
     {
       "name": "art_contact_sheets",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "--with",
+        "Pillow",
+        "python",
         "scripts/build_art_contact_sheets.py"
       ],
       "status": "PASS",
-      "output": "{\"MDL-1\": {\"candidate_count\": 18, \"height\": 2286, \"iteration\": \"MDL-1\", \"path\": \"release-report/MDL-1/art-contact-sheet.png\", \"per_asset\": {\"A01\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-1/contact-sheets/A01.png\", \"sha256\": \"9e2cddc6178bb441f9c5799f6b684b7be72a68f32fc40302516fc95c16338898\"}, \"A02\": {\"candidate_count\": 6, \"path\": \"assets/review/MDL-1/contact-sheets/A02.png\", \"sha256\": \"e829eac891744e095a4d6d45762b38bd90c3f79f50c54c5e8525d967bcf557a7\"}, \"A21\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-1/contact-sheets/A21.png\", \"sha256\": \"10223f2fa565b51b1d9a0d9c75586c1692f9da9f90e79ac26f3d965cfeef9313\"}, \"A28\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-1/contact-sheets/A28.png\", \"sha256\": \"f01471fa445c68b97b91e257a93f1f23bf2d295457723646f244dae988e42dbd\"}}, \"status\": \"PASS\", \"width\": 640}, \"MDL-2\": {\"candidate_count\": 15, \"height\": 2032, \"iteration\": \"MDL-2\", \"path\": \"release-report/MDL-2/art-contact-sheet.png\", \"per_asset\": {\"A08\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A08.png\", \"sha256\": \"a46b6edb2f05ce02902d01e031805791daf842ac30949ec7b93803571f495208\"}, \"A09\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A09.png\", \"sha256\": \"ff1e196be32e96d55cb303f75190651e910d96396fd87849e016096ae1444b1c\"}, \"A10\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A10.png\", \"sha256\": \"2c9aec53e010211c5149f70dfb4e0a98a0952d21bb13284b719619a784521e90\"}, \"A11\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A11.png\", \"sha256\": \"2f900b98a092c5e5287fde166b1301ce2fd66d6a364fc491ff2aa074f12f80eb\"}, \"A12\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A12.png\", \"sha256\": \"4fc1e06856682ff197e9ab20f07b282dd9608fee7c3bc0a5ce1af274188aacab\"}}, \"status\": \"PASS\", \"width\": 640}, \"MDL-3\": {\"candidate_count\": 10, \"height\": 1270, \"iteration\": \"MDL-3\", \"path\": \"release-report/MDL-3/art-contact-sheet.png\", \"per_asset\": {\"A05\": {\"candidate_count\": 6, \"path\": \"assets/review/MDL-3/contact-sheets/A05.png\", \"sha256\": \"f789358753d1a92d83fb58612acc9f306e826154925085a5aa8d213f120c5ab5\"}, \"A07\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-3/contact-sheets/A07.png\", \"sha256\": \"52877b08c6be3e9ca7688a28f361d5d673a2c925ede26dfd5a7f1a4a3a2a0575\"}}, \"status\": \"PASS\", \"width\": 640}, \"MDL-4\": {\"candidate_count\": 10, \"height\": 1270, \"iteration\": \"MDL-4\", \"path\": \"release-report/MDL-4/art-contact-sheet.png\", \"per_asset\": {\"A03\": {\"candidate_count\": 6, \"path\": \"assets/review/MDL-4/contact-sheets/A03.png\", \"sha256\": \"fab24fe88dfc9acebe484727f9790aa5365c65cf0aa8f9f4cd501b31ed9bb120\"}, \"A06\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-4/contact-sheets/A06.png\", \"sha256\": \"a26af85c9a9891040dd0ea1d2d8a75fb70a6890e5798131d3a086e21da346a70\"}}, \"status\": \"PASS\", \"width\": 640}}\n"
+      "output": "{\"MDL-1\": {\"candidate_count\": 18, \"height\": 2286, \"iteration\": \"MDL-1\", \"path\": \"release-report/MDL-1/art-contact-sheet.png\", \"per_asset\": {\"A01\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-1/contact-sheets/A01.png\", \"sha256\": \"ed5a40bba6313d02b29950265073f7a743d55feff241a4a0062ab808cbca6abd\"}, \"A02\": {\"candidate_count\": 6, \"path\": \"assets/review/MDL-1/contact-sheets/A02.png\", \"sha256\": \"2e4b63104b5bce7ea29997df463cafb70d125940d387451e17fbd310364cd887\"}, \"A21\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-1/contact-sheets/A21.png\", \"sha256\": \"c9466f8ebcd2d9a759ea994e85719d7a66243ece802328fdabb2b8b2e7b1e523\"}, \"A28\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-1/contact-sheets/A28.png\", \"sha256\": \"eb0cc02cb1efaeae83ccd97cbad6656354e1b02234269a3f6a9d37a241b9bf44\"}}, \"status\": \"PASS\", \"width\": 640}, \"MDL-2\": {\"candidate_count\": 15, \"height\": 2032, \"iteration\": \"MDL-2\", \"path\": \"release-report/MDL-2/art-contact-sheet.png\", \"per_asset\": {\"A08\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A08.png\", \"sha256\": \"c11a161f03ca70d1e328d2515a6870dc7adc1b2c8cb57078aba20eca19783d88\"}, \"A09\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A09.png\", \"sha256\": \"534fd0aee5ea2f0e7f9888eef751178431595bffc12bc8450e2f798ee295bf4b\"}, \"A10\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A10.png\", \"sha256\": \"64a2fd81dd67b52fd92671c1ec54534d3334cdf17360cd7ada193723ec02db67\"}, \"A11\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A11.png\", \"sha256\": \"23419be84f82fd00cc0ceab329bfbfa12d77727d25e50e70eca9325352608013\"}, \"A12\": {\"candidate_count\": 3, \"path\": \"assets/review/MDL-2/contact-sheets/A12.png\", \"sha256\": \"79868d3279f82a88cbe68d81ba5788ef7848768bd9ebced125c45f1d5999b33f\"}}, \"status\": \"PASS\", \"width\": 640}, \"MDL-3\": {\"candidate_count\": 10, \"height\": 1270, \"iteration\": \"MDL-3\", \"path\": \"release-report/MDL-3/art-contact-sheet.png\", \"per_asset\": {\"A05\": {\"candidate_count\": 6, \"path\": \"assets/review/MDL-3/contact-sheets/A05.png\", \"sha256\": \"df126c6f936c9ec494156da817646155ed6b3016e65007bc2c722f8337bb80aa\"}, \"A07\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-3/contact-sheets/A07.png\", \"sha256\": \"f0c4571654e3785cc14a1fc8edb918a66703a79f5705aa58886597167113cc7e\"}}, \"status\": \"PASS\", \"width\": 640}, \"MDL-4\": {\"candidate_count\": 10, \"height\": 1270, \"iteration\": \"MDL-4\", \"path\": \"release-report/MDL-4/art-contact-sheet.png\", \"per_asset\": {\"A03\": {\"candidate_count\": 6, \"path\": \"assets/review/MDL-4/contact-sheets/A03.png\", \"sha256\": \"bde1b799c742e3c5a2d41a8912ec9f57f86d17a621e8523afa163489342fdef2\"}, \"A06\": {\"candidate_count\": 4, \"path\": \"assets/review/MDL-4/contact-sheets/A06.png\", \"sha256\": \"4ad08e139e1255e994db2eb78195fc93da81175919f6dbec778f0b287706b988\"}}, \"status\": \"PASS\", \"width\": 640}}\n"
     },
     {
       "name": "art_preflight",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "--with",
+        "Pillow",
+        "python",
         "scripts/build_mdl3_art_review.py"
       ],
       "status": "PASS",
@@ -162,7 +217,11 @@
     {
       "name": "mdl1_art_preflight",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "--with",
+        "Pillow",
+        "python",
         "scripts/build_mdl1_art_review.py"
       ],
       "status": "PASS",
@@ -175,22 +234,26 @@
         "run",
         "test:browser"
       ],
-      "status": "FAIL",
-      "output": "erious or critical violations (6.5s)\n  ok 11 [chromium] \u00e2\u20ac\u00ba tests\\browser\\responsive.spec.ts:4:3 \u00e2\u20ac\u00ba Case #042 investigation layout fits 1366x768 (3.3s)\n  ok 12 [chromium] \u00e2\u20ac\u00ba tests\\browser\\app.spec.ts:22:1 \u00e2\u20ac\u00ba music control persists mute preference and uses a looped track (6.0s)\n  ok 13 [chromium] \u00e2\u20ac\u00ba tests\\browser\\mdl6.spec.ts:29:1 \u00e2\u20ac\u00ba MDL-6 production artwork is reachable and decodable (4.1s)\n  ok 14 [chromium] \u00e2\u20ac\u00ba tests\\browser\\app.spec.ts:33:1 \u00e2\u20ac\u00ba Case #042 visible flow reaches final prediction and Debrief (4.8s)\n  ok 15 [chromium] \u00e2\u20ac\u00ba tests\\browser\\mdl6.spec.ts:49:1 \u00e2\u20ac\u00ba MDL-6 keyboard-only path reaches the investigation briefing (3.6s)\n  ok 16 [chromium] \u00e2\u20ac\u00ba tests\\browser\\mdl6.spec.ts:65:1 \u00e2\u20ac\u00ba MDL-6 failed catalog request does not expose a playable analytical fallback (3.1s)\n\n\n  1) [chromium] \u00e2\u20ac\u00ba tests\\browser\\mdl6.spec.ts:12:1 \u00e2\u20ac\u00ba MDL-6 mobile shell keeps primary action reachable \n\n    Error: {\"width\":394,\"viewport\":390,\"offenders\":[{\"tag\":\"DIV\",\"cls\":\"brief-panel\",\"right\":394}]}\n\n    expect(received).toBeLessThanOrEqual(expected)\n\n    Expected: <= 391\n    Received:    394\n\n      24 |       .map((item) => ({ tag: item.tagName, cls: item.className, right: item.getBoundingClientRect().right })),\n      25 |   }));\n    > 26 |   expect(layout.width, JSON.stringify(layout)).toBeLessThanOrEqual(layout.viewport + 1);\n         |                                                ^\n      27 | });\n      28 |\n      29 | test('MDL-6 production artwork is reachable and decodable', async ({ page, request }) => {\n        at C:\\Users\\angel.alvarez\\PycharmProjects\\mad-data-lab\\tests\\browser\\mdl6.spec.ts:26:48\n\n    Error Context: test-results\\mdl6-MDL-6-mobile-shell-keeps-primary-action-reachable-chromium\\error-context.md\n\n    attachment #2: trace (application/zip) \u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\n    test-results\\mdl6-MDL-6-mobile-shell-keeps-primary-action-reachable-chromium\\trace.zip\n    Usage:\n\n        npx playwright show-trace test-results\\mdl6-MDL-6-mobile-shell-keeps-primary-action-reachable-chromium\\trace.zip\n\n    \u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\u00e2\u201d\u20ac\n\n  1 failed\n    [chromium] \u00e2\u20ac\u00ba tests\\browser\\mdl6.spec.ts:12:1 \u00e2\u20ac\u00ba MDL-6 mobile shell keeps primary action reachable \n  15 passed (36.2s)\n[WebServer] INFO:     Started server process [26860]\n[WebServer] INFO:     Waiting for application startup.\n[WebServer] INFO:     Application startup complete.\n[WebServer] INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)\n(node:24716) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:34508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:19492) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:32044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:13800) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:24692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:29508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+      "status": "PASS",
+      "output": "\n> mad-data-lab@0.1.0 test:browser\n> playwright test\n\n\nRunning 14 tests using 6 workers\n\n  ok  2 [chromium] \u00e2\u20ac\u00ba tests\\browser\\mdl6.spec.ts:3:1 \u00e2\u20ac\u00ba MDL-6 missing-session API exposes a safe recoverable envelope (108ms)\n  ok  6 [chromium] \u00e2\u20ac\u00ba tests\\browser\\app.spec.ts:3:1 \u00e2\u20ac\u00ba same-origin Case #042 browser contract (9.2s)\n  ok  7 [chromium] \u00e2\u20ac\u00ba tests\\browser\\mdl6.spec.ts:12:1 \u00e2\u20ac\u00ba MDL-6 mobile shell keeps primary action reachable (9.6s)\n  ok  1 [chromium] \u00e2\u20ac\u00ba tests\\browser\\responsive.spec.ts:4:3 \u00e2\u20ac\u00ba Case #042 investigation layout fits 1920x1080 (9.8s)\n  ok  5 [chromium] \u00e2\u20ac\u00ba tests\\browser\\experiment-rationale.spec.ts:3:1 \u00e2\u20ac\u00ba experiment rationale is rendered from the registered experiment model (9.8s)\n  ok  4 [chromium] \u00e2\u20ac\u00ba tests\\browser\\a11y.spec.ts:4:1 \u00e2\u20ac\u00ba keyboard and dialog accessibility contract (10.0s)\nMDL-5 performance checkpoints {\"first_usable_screen_ms\":4022,\"case_start_ms\":319,\"genie_response_ms\":319,\"experiment_execution_ms\":83,\"evidence_rendering_ms\":15,\"verdict_submission_ms\":94}\n  ok  3 [chromium] \u00e2\u20ac\u00ba tests\\browser\\performance.spec.ts:3:1 \u00e2\u20ac\u00ba Case #042 performance checkpoints remain bounded (11.1s)\n  ok  8 [chromium] \u00e2\u20ac\u00ba tests\\browser\\app.spec.ts:13:1 \u00e2\u20ac\u00ba audio failure does not block first interaction (3.1s)\n  ok  9 [chromium] \u00e2\u20ac\u00ba tests\\browser\\mdl6.spec.ts:21:1 \u00e2\u20ac\u00ba MDL-6 production artwork is reachable and decodable (3.2s)\n  ok 10 [chromium] \u00e2\u20ac\u00ba tests\\browser\\responsive.spec.ts:4:3 \u00e2\u20ac\u00ba Case #042 investigation layout fits 1440x900 (3.5s)\n  ok 11 [chromium] \u00e2\u20ac\u00ba tests\\browser\\a11y.spec.ts:24:1 \u00e2\u20ac\u00ba runtime axe reports no serious or critical violations (4.4s)\n  ok 13 [chromium] \u00e2\u20ac\u00ba tests\\browser\\responsive.spec.ts:4:3 \u00e2\u20ac\u00ba Case #042 investigation layout fits 1366x768 (2.3s)\n  ok 12 [chromium] \u00e2\u20ac\u00ba tests\\browser\\app.spec.ts:22:1 \u00e2\u20ac\u00ba music control persists mute preference and uses a looped track (4.3s)\n  ok 14 [chromium] \u00e2\u20ac\u00ba tests\\browser\\app.spec.ts:33:1 \u00e2\u20ac\u00ba Case #042 visible flow reaches final prediction and Debrief (2.5s)\n\n  14 passed (26.1s)\n[WebServer] INFO:     Started server process [11588]\n[WebServer] INFO:     Waiting for application startup.\n[WebServer] INFO:     Application startup complete.\n[WebServer] INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)\n(node:23916) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:2944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:23868) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:21088) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:8464) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n(node:24056) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
     },
     {
       "name": "mdl2_contract",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/validate_mdl2_contract.py"
       ],
       "status": "PASS",
-      "output": "{\n  \"status\": \"IN_PROGRESS\",\n  \"checks\": 63,\n  \"failed\": [],\n  \"pending\": [\n    \"predecessor-mdl1\",\n    \"live-evidence-refresh:genie-eval.json\",\n    \"live-evidence-refresh:deployed-smoke.json\",\n    \"live-evidence-refresh:deployed-soak.json\"\n  ],\n  \"diagnostics\": {\n    \"current_identity\": {\n      \"git_head\": \"ee511b68c846a08d1899a238caf6c4e4642416de\",\n      \"runtime_digest\": \"3d3d632a3d820bf14f7368c54055433c927d462ba02b580db55b007e167b7bf5\",\n      \"data_contract_digest\": \"d7d9b26f4c79b6572fb4e4044ef66a60be9796f2145293df67cc174492b25461\"\n    },\n    \"expected_data_digest\": \"d7d9b26f4c79b6572fb4e4044ef66a60be9796f2145293df67cc174492b25461\",\n    \"recorded_data_digest\": \"d7d9b26f4c79b6572fb4e4044ef66a60be9796f2145293df67cc174492b25461\"\n  }\n}\n"
+      "output": "{\n  \"status\": \"IN_PROGRESS\",\n  \"checks\": 63,\n  \"failed\": [],\n  \"pending\": [\n    \"predecessor-mdl1\",\n    \"live-evidence-refresh:genie-eval.json\",\n    \"live-evidence-refresh:deployed-smoke.json\",\n    \"live-evidence-refresh:deployed-soak.json\"\n  ],\n  \"diagnostics\": {\n    \"current_identity\": {\n      \"git_head\": \"4c5d4b2936e32c7e0eeee29229113a3e5f801593\",\n      \"runtime_digest\": \"abcb9cc73497991b67074a589ee354efb8436024f5beb460858c7529733eb58a\",\n      \"data_contract_digest\": \"3bdb61c7e45386c085249bfc05b3cf67c603a036eb81239b17e53147b1315bb0\"\n    },\n    \"expected_data_digest\": \"3bdb61c7e45386c085249bfc05b3cf67c603a036eb81239b17e53147b1315bb0\",\n    \"recorded_data_digest\": \"3bdb61c7e45386c085249bfc05b3cf67c603a036eb81239b17e53147b1315bb0\"\n  }\n}\n"
     },
     {
       "name": "mdl3_contract",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/validate_mdl3_contract.py",
         "--strict"
       ],
@@ -200,7 +263,9 @@
     {
       "name": "mdl3_benchmark",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/run_mdl3_benchmark.py"
       ],
       "status": "PASS",
@@ -209,7 +274,9 @@
     {
       "name": "live_sql_plan",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/live_sql_check.py",
         "--plan"
       ],
@@ -219,7 +286,9 @@
     {
       "name": "traceability",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/validate_traceability.py"
       ],
       "status": "PASS",
@@ -228,7 +297,9 @@
     {
       "name": "a11y",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/a11y_gate.py"
       ],
       "status": "PASS",
@@ -237,20 +308,66 @@
     {
       "name": "chaos",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/local_chaos.py"
       ],
       "status": "PASS",
-      "output": "local chaos: PASS (live timeout fails closed, missing session, oversized chat, invalid identifier)\n"
+      "output": "local chaos: PASS (live timeout fails closed, missing session, oversized chat, invalid identifier)\nC:\\Users\\angel.alvarez\\PycharmProjects\\mad-data-lab\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n"
     },
     {
       "name": "soak",
       "command": [
-        "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+        "uv",
+        "run",
+        "python",
         "scripts/local_soak.py"
       ],
       "status": "PASS",
-      "output": "local soak: PASS (10 Case #042 investigations)\n"
+      "output": "local soak: PASS (10 Case #042 investigations)\nC:\\Users\\angel.alvarez\\PycharmProjects\\mad-data-lab\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n"
     }
+  ],
+  "genie_result": {
+    "name": "genie-eval",
+    "status": "BLOCKED_EXTERNAL",
+    "reason": "RUN_LIVE_GATES=1 is required; stale PASS evidence is never reused"
+  },
+  "deployment_result": {
+    "name": "deployed-smoke",
+    "status": "BLOCKED_EXTERNAL",
+    "reason": "RUN_LIVE_GATES=1 is required; stale PASS evidence is never reused"
+  },
+  "soak_result": {
+    "name": "deployed-soak",
+    "status": "BLOCKED_EXTERNAL",
+    "reason": "RUN_LIVE_GATES=1 is required; stale PASS evidence is never reused"
+  },
+  "asset_sha256": {
+    "public/assets/board.png": "f00bd2a7398397544d7cc342305b767596688195dc2db8f223b8ebc3d3d84acb",
+    "public/assets/Mad_Data_Lab.png": "72922c280a3b84588f6abb91b501d11e1fd6df9b36b9eacc7c672f42876d2632",
+    "public/assets/mdl6-achievement-badges.png": "8f24738fcde164da79f0000063f2ceb56965ce61d6653973b4bdc9f92067e54c",
+    "public/assets/mdl6-recovery-background.png": "35caa257cfe1a78102a70072fcbeda4c0113e6ce604d75e1f706f461e1b0db81",
+    "public/assets/pixelart/case-042.png": "7b0aa6e042d67bbcc56af31c31fc2128e6e079b59a73b4d25dde0f067bbbc772",
+    "public/assets/pixelart/decomposer.png": "7bbc76aafc3d867de4078798579184d2758b9014ce2457135d276a06c0ff37aa",
+    "public/assets/pixelart/dr-genie-mdl3.png": "70f566cb3c917bba808ff19a33af87f31d313d7d3a518826cdf2e5f6a582fc2b",
+    "public/assets/pixelart/dr-genie.png": "bf3d4684d8b6e73d3bc2e7a4b1ec27f4dbcba992657756a76f4cc7aeaec4a23b",
+    "public/assets/pixelart/hypothesis-chamber.png": "7d8021f527b45c46503848f22859dd6f4af3531ee07121b38db3450012e67879",
+    "public/assets/pixelart/lab-hub.png": "27591ce3e8d459ed7879bb9e991ff2d29608efb0b687fa65b9e4f603e30dc285",
+    "public/assets/pixelart/lab-mark.png": "946f01ca371dd3cedb5f69a95c57e55a10ca1d695133eebbe6cae0927815b9ac",
+    "public/assets/pixelart/microscope.png": "2dcbef7b48bd916eea3bd3e21915c5ab36463bdb2531c9ae44c60e050544fb23",
+    "public/assets/pixelart/reactor.png": "f4e9b0d3bb4b568f0038cae6a1cf3f3c9c0dbcf72870e36dfb1ba2761b3093fa",
+    "public/assets/pixelart/scanner.png": "8d471c34d6560a8eac206b8a133597a7e2f70f9eb5ce0b95b57d47e400f4982f",
+    "public/assets/pixelart/telescope.png": "84d26041883b777800b1a9021c3dd492915d54e07700590c7b7d0df74034d0e8"
+  },
+  "unresolved_external_human_blockers": [
+    "genie-eval",
+    "deployed-smoke",
+    "deployed-soak"
+  ],
+  "failed_requirements": [
+    "genie-eval",
+    "deployed-smoke",
+    "deployed-soak"
   ]
 }

@@ -1,4 +1,4 @@
-from backend.mdl6_contract import ASSET_IDS, ACCESSIBILITY_IDS, CHAOS_IDS, PERFORMANCE_IDS, REQUIRED_TEST_IDS, SECURITY_IDS, validate_catalog
+from backend.mdl6_contract import ASSET_IDS, ACCESSIBILITY_IDS, CHAOS_IDS, PERFORMANCE_IDS, REQUIRED_TEST_IDS, SECURITY_IDS, REQUIREMENT_EXPECTATIONS, validate_catalog
 
 
 def test_mdl6_catalog_has_all_specified_ids():
@@ -9,3 +9,5 @@ def test_mdl6_catalog_has_all_specified_ids():
     assert SECURITY_IDS[0] == "SEC-001" and SECURITY_IDS[-1] == "SEC-020"
     assert CHAOS_IDS[0] == "CH-001" and CHAOS_IDS[-1] == "CH-025"
     assert len(REQUIRED_TEST_IDS) == 83
+    assert len(REQUIREMENT_EXPECTATIONS) == 58
+    assert all(REQUIREMENT_EXPECTATIONS[item].strip() for item in REQUIREMENT_EXPECTATIONS)

@@ -26,7 +26,7 @@ Set the Databricks CLI profile and Genie Space before starting the API:
 
 ```powershell
 $env:DATABRICKS_CONFIG_PROFILE = "mdl"
-$env:GENIE_SPACE_ID = "01f19eb4ac691d2c88e7b18a6da39b3b"
+$env:GENIE_SPACE_ID = "01f1a11f6c281e79bd1e0c448055fbdd"
 uvicorn server.main:app --port 8000
 ```
 
@@ -81,7 +81,7 @@ The deterministic local checks for the Genie-at-the-core boundary are:
 ```text
 python scripts/validate_mdl3_contract.py --strict
 python scripts/run_mdl3_benchmark.py
-python scripts/configure_genie.py --catalog sda_dev --schema mad_data_lab
+python scripts/configure_genie.py --catalog workspace --schema mad_data_lab
 ```
 
 `run_mdl3_benchmark.py` is a fixture contract check, not live Genie evidence.

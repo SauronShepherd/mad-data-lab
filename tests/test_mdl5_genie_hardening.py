@@ -44,6 +44,11 @@ def test_protocol_and_query_boundary_reject_cross_case_evidence_and_invalid_filt
         render_query("not-registered", case_id="CASE_0042")
 
 
+def test_protocol_rejects_a_valid_payload_for_the_wrong_active_case():
+    with pytest.raises(ValueError, match="Case ID"):
+        validate_control_response(_payload(case_id="CASE_0107"), active_case_id="CASE_0042", allowed_experiments={"SNAPSHOT_DIFF"})
+
+
 def test_public_genie_boundaries_exclude_private_truth_and_scoring_oracle():
     source = (ROOT / "server/genie.py").read_text(encoding="utf-8")
     assert "backend.private" not in source
@@ -76,3 +81,14 @@ def test_genie_turn_failures_never_become_success(failure):
     )
     with pytest.raises(type(failure)):
         result.run()
+
+
+def test_legacy_boundary_rejects_unsafe_nested_hypothesis_content():
+    payload = {
+        "experiment_id": "SNAPSHOT_DIFF", "name": "Snapshot",
+        "instrument": "SNAPSHOT_DIFF", "rationale": "inspect changes",
+        "evidence": "curated evidence",
+        "hypothesis_updates": [{"name": "H1", "status": "POSSIBLE", "note": "<script>alert(1)</script>"}],
+    }
+    with pytest.raises(ValueError, match="unsafe"):
+        parse_control_json(json.dumps(payload), {"SNAPSHOT_DIFF"})

@@ -15,7 +15,7 @@ MDL5-013,Evidence inspection reward,src/main.jsx;server/main.py,tests/test_case_
 MDL5-014,No CSS analytical claims,src/evidence-polish.css,tests/test_mdl5_instruments.py,release-report/MDL-5/local-gate.json,implemented
 MDL5-015,MDL-4 historical manifest preservation,scripts/generate_mdl4_manifest.py,tests/test_mdl4_manifest.py,release-report/MDL-4/manifest.json,implemented
 MDL5-016,Full Python gate,scripts/pytest_gate.py,tests/test_pytest_gate.py,release-report/MDL-5/pytest-gate.xml,implemented
-MDL5-017,Local contract gate matrix,.github/workflows/ci.yml;scripts/,tests/test_mdl5_traceability.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-017,Local contract gate matrix,scripts/,tests/test_mdl5_traceability.py,release-report/MDL-5/local-gate.json,implemented
 MDL5-018,Playwright browser coverage,tests/browser/,tests/browser/app.spec.ts,release-report/MDL-5/browser-report.json,implemented
 MDL5-019,Accessibility automation,scripts/a11y_gate.py;src/,tests/test_mdl5_traceability.py,release-report/MDL-5/a11y.json,partial
 MDL5-020,Visual regression coverage,scripts/visual_gate.py;tests/browser/,tests/test_mdl5_traceability.py,release-report/MDL-5/visual.json,partial

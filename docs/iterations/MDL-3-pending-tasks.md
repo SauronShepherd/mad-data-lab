@@ -3,6 +3,11 @@
 The repository-owned implementation is verified locally. These are the remaining
 closure tasks, separated by ownership so evidence is not claimed prematurely.
 
+GitHub Actions have been intentionally removed from this project. The GitHub CI,
+OIDC, environment, and workflow-artifact tasks below are therefore historical
+and not applicable; local gates and direct Databricks CLI verification are the
+authoritative execution path.
+
 ## External GitHub/Databricks tasks
 
 - [ ] Configure the GitHub `staging` environment with `DATABRICKS_HOST`.

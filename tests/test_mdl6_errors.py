@@ -4,7 +4,8 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 from starlette.requests import Request
 
-from server.errors import AppError, ERROR_CODES, envelope
+from server.errors import AppError, ERROR_CODES, app_error_from_exception, envelope
+from backend.data.sql_client import SqlAdapterError
 from server.main import app
 
 
@@ -53,3 +54,12 @@ def test_unhandled_request_failure_is_safe():
     assert response.status_code == 503
     assert response.body.find(b"APP_RESOURCE_UNAVAILABLE") >= 0
     assert b"secret backend traceback" not in response.body
+
+
+def test_adapter_errors_convert_to_safe_public_platform_envelopes():
+    error = app_error_from_exception(SqlAdapterError("private provider detail", code="WAREHOUSE_PENDING"))
+    body = envelope(error, "req-platform")
+    assert body["error"]["code"] == "WAREHOUSE_PENDING"
+    assert body["error"]["retryable"] is True
+    assert body["error"]["preserve_evidence"] is True
+    assert "private provider" not in str(body)

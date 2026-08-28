@@ -31,5 +31,27 @@ EVIDENCE_BY_ID = {
 }
 
 def experiment_payload(experiment: Experiment, index: int, case_id: str = "CASE_0042") -> dict:
-    evidence = EVIDENCE_BY_ID.get(experiment.id, lambda c: experiment.evidence)(generate_case()) if case_id == "CASE_0042" else experiment.evidence
-    return {"case_id": case_id, "experiment_id": experiment.id, "experiment_number": index + 1, "name": experiment.name, "instrument": experiment.instrument, "rationale": experiment.rationale, "evidence": evidence, "hypothesis_updates": [{"name": n, "status": s} for n, s in experiment.updates], "source": "generated_case_data" if case_id == "CASE_0042" else "contract"}
+    fixture = generate_case(case_id)
+    evidence = EVIDENCE_BY_ID.get(experiment.id, lambda c: experiment.evidence)(fixture) if case_id == "CASE_0042" else experiment.evidence
+    projection = fixture.public if case_id == "CASE_0042" else {}
+    observation = projection.get("observation", {})
+    model = {"expected": float(observation.get("expected", 0)), "observed": float(observation.get("observed", 0)), "deviation": float(observation.get("deviation", 0))}
+    if experiment.instrument == "WATERFALL":
+        model["components"] = [{"component_id": x["component"], "label": x["component"], "delta": float(x["contribution_delta"])} for x in projection.get("component_evidence", [])]
+    elif experiment.instrument == "SNAPSHOT_DIFF":
+        rows = projection.get("snapshot_evidence", [])
+        model["groups"] = [{"change_type": kind, "count": sum(x["change_type"] == kind for x in rows), "impact": round(sum(float(x["impact"]) for x in rows if x["change_type"] == kind), 2)} for kind in ("MODIFIED", "REMOVED", "ADDED")]
+        model["net_impact"] = round(sum(float(x["impact"]) for x in rows), 2)
+    elif experiment.instrument == "EVIDENCE_TABLE":
+        model["records"] = projection.get("snapshot_evidence", [])
+    elif experiment.instrument == "DQ_PANEL":
+        quality = (projection.get("quality_evidence") or [{}])[0]
+        model.update({"rule_name": quality.get("rule_name"), "severity": "MEDIUM", "affected_rows": quality.get("affected_row_count"), "estimated_impact": float(quality.get("estimated_impact", 0)), "overlap": quality.get("impact_is_overlapping")})
+    elif experiment.instrument in {"FORMULA_CHECK", "FORMULA_DIFF"}:
+        formula = projection.get("semantic_evidence", [{}])[0]
+        model.update(formula)
+    elif experiment.instrument == "LINEAGE_GRAPH":
+        model["nodes"] = projection.get("value_lineage", [])
+    elif experiment.instrument == "RECONCILIATION":
+        model.update({"total": -6.8, "v2": -5.9, "other": -0.9, "explained": -6.8, "unreconciled": 0.0})
+    return {"case_id": case_id, "experiment_id": experiment.id, "experiment_number": index + 1, "name": experiment.name, "instrument": experiment.instrument, "rationale": experiment.rationale, "evidence": evidence, "hypothesis_updates": [{"name": n, "status": s} for n, s in experiment.updates], "instrument_model": model, "source": "generated_case_data" if case_id == "CASE_0042" else "contract"}

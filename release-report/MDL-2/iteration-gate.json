@@ -55,7 +55,7 @@
         "scripts/validate_traceability.py"
       ],
       "status": "PASS",
-      "output": "{\n  \"status\": \"PASS\",\n  \"required_ids\": 77,\n  \"definitions\": 81,\n  \"missing\": [],\n  \"duplicates\": []\n}\n"
+      "output": "{\n  \"status\": \"PASS\",\n  \"required_ids\": 77,\n  \"definitions\": 81,\n  \"missing\": [],\n  \"duplicates\": [],\n  \"v3_sections\": 54,\n  \"v3_section_error\": false\n}\n"
     },
     {
       "name": "contract",
@@ -64,7 +64,7 @@
         "scripts/validate_mdl2_contract.py"
       ],
       "status": "PASS",
-      "output": "{\n  \"status\": \"IN_PROGRESS\",\n  \"checks\": 63,\n  \"failed\": [],\n  \"pending\": [\n    \"predecessor-mdl1\",\n    \"live-evidence-refresh:deployed-soak.json\"\n  ],\n  \"diagnostics\": {\n    \"current_identity\": {\n      \"git_head\": \"d7f1568d88dd14d8252877da251aebbbc2f7e890\",\n      \"runtime_digest\": \"6b516e91100ee4cb9c9486be1adc9cfcdc6573afa0466d035751037b13b27019\",\n      \"data_contract_digest\": \"11b6585772fbb7b1e1094a0a4dce7743ce6973496c8399e289d3ddfe6df61eb3\"\n    },\n    \"expected_data_digest\": \"11b6585772fbb7b1e1094a0a4dce7743ce6973496c8399e289d3ddfe6df61eb3\",\n    \"recorded_data_digest\": \"11b6585772fbb7b1e1094a0a4dce7743ce6973496c8399e289d3ddfe6df61eb3\"\n  }\n}\n"
+      "output": "{\n  \"status\": \"IN_PROGRESS\",\n  \"checks\": 63,\n  \"failed\": [],\n  \"pending\": [\n    \"predecessor-mdl1\",\n    \"live-evidence-refresh:genie-eval.json\",\n    \"live-evidence-refresh:deployed-smoke.json\",\n    \"live-evidence-refresh:deployed-soak.json\"\n  ],\n  \"diagnostics\": {\n    \"current_identity\": {\n      \"git_head\": \"ee511b68c846a08d1899a238caf6c4e4642416de\",\n      \"runtime_digest\": \"f861f20dce6970a95a33bd020189d94f7f04d932ff7153a3bd5aeeaf4223d697\",\n      \"data_contract_digest\": \"07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524\"\n    },\n    \"expected_data_digest\": \"07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524\",\n    \"recorded_data_digest\": \"07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524\"\n  }\n}\n"
     }
   ]
 }

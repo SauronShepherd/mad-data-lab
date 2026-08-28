@@ -33,8 +33,9 @@ from backend.private.verdict_validator import validate_case042_verdict
 from backend.genie.decisions import PendingDecisionStore, PendingDecision
 from .state import InvestigationState, transition
 from backend.data.repositories import EvidenceRepository
+from backend.data.sql_client import SqlAdapterError
 from .config import load_settings
-from .errors import AppError, envelope
+from .errors import AppError, app_error_from_exception, envelope
 
 
 app = FastAPI(title="MAD DATA LAB API", version="0.1.0")
@@ -66,9 +67,9 @@ async def request_id_middleware(request: Request, call_next):
         response = await call_next(request)
     except AppError as exc:
         response = JSONResponse(status_code=exc.status_code, content=envelope(exc, request_id))
-    except Exception:
+    except Exception as exc:
         LOGGER.exception("unhandled request failure")
-        error = AppError("APP_RESOURCE_UNAVAILABLE", "The application could not complete this request.", 503, True, diagnostic_code="UNHANDLED_REQUEST")
+        error = app_error_from_exception(exc)
         response = JSONResponse(status_code=503, content=envelope(error, request_id))
     response.headers["X-Request-ID"] = request_id
     LOGGER.info(json.dumps({"event": "request_completed", "request_id": request_id, "method": request.method, "path": request.url.path, "status_code": response.status_code}, separators=(",", ":")))
@@ -514,6 +515,13 @@ def session_evidence(session_id: str, limit: int = Query(default=100, ge=1, le=1
                     if payload[key] is not None:
                         payload[key] = float(payload[key])
                 evidence.append(payload)
+            if not evidence:
+                raise HTTPException(status_code=502, detail={"code": "EVIDENCE_SCHEMA_MISMATCH", "retryable": True})
+        except SqlAdapterError as exc:
+            retryable = exc.code in {"WAREHOUSE_PENDING", "WAREHOUSE_QUOTA_EXHAUSTED", "APP_RESOURCE_UNAVAILABLE"}
+            raise HTTPException(status_code=503, detail={"code": exc.code, "retryable": retryable}) from exc
+        except HTTPException:
+            raise
         except (TypeError, ValueError, KeyError) as exc:
             raise HTTPException(status_code=502, detail={"code": "EVIDENCE_SCHEMA_MISMATCH", "retryable": True}) from exc
         except Exception as exc:
@@ -648,7 +656,8 @@ def conclude_session(session_id: str, request: dict | None = None, idempotency_k
     valid, errors = validate_case042_verdict()
     if not valid:
         session["state"] = previous
-        raise HTTPException(status_code=422, detail={"code": "VERDICT_INVALID", "errors": errors})
+        code = "RECONCILIATION_FAILED" if any("RECONCILIATION" in error or "RESIDUAL" in error for error in errors) else "VERDICT_INVALID"
+        raise HTTPException(status_code=422, detail={"code": code, "retryable": False, "errors": errors})
     if genie.enabled:
         try:
             breaker = session_breaker(session)
@@ -767,8 +776,29 @@ def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency
             if genie.enabled:
                 breaker.before_request()
             result = next_experiment(ExperimentRequest(case_id=session["case_id"], completed_experiments=completed, player_prediction=request.player_prediction, conversation_id=session.get("conversation_id")))
+            registered = EXPERIMENTS_BY_CASE.get(session["case_id"]) or PLANNED_EXPERIMENTS_BY_CASE.get(session["case_id"], ())
+            expected_next = next((item for item in registered if item.id not in completed), None)
+            if result.get("experiment_id") in completed or result.get("experiment_id") not in {item.id for item in registered}:
+                raise HTTPException(status_code=503, detail={"code": "GENIE_INVALID_EXPERIMENT", "retryable": True})
+            # The live model may select a valid experiment out of order. The
+            # session contract is authoritative: required experiments must be
+            # consumed exactly once in the registered sequence so a live
+            # response cannot skip a required family (notably formula check).
+            if expected_next and result.get("experiment_id") != expected_next.id:
+                result = experiment_payload(expected_next, next(i for i, item in enumerate(registered) if item.id == expected_next.id), session["case_id"]) | {
+                    "source": "server-sequenced-live",
+                    "selection_note": "The server preserved the registered experiment sequence after an out-of-order Genie selection.",
+                }
             if genie.enabled:
                 breaker.record_success()
+        except CircuitOpenError as exc:
+            # The breaker is already open; do not record another failure or
+            # let the exception escape through the generic middleware.
+            session["state"] = previous
+            raise HTTPException(
+                status_code=503,
+                detail={"code": "GENIE_CIRCUIT_OPEN", "retryable": False},
+            ) from exc
         except HTTPException as exc:
             # A live Genie failure is retryable and must not be hidden by
             # substituting the expected scripted path. Fixture continuation

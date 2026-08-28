@@ -64,5 +64,8 @@ test('Case #042 visible flow reaches final prediction and Debrief', async ({ pag
   await expect(page.getByRole('button', {name: 'OPEN DEBRIEF →'})).toBeVisible();
   await page.getByRole('button', {name: 'OPEN DEBRIEF →'}).click();
   await expect(page.getByText('LAB SCORE')).toBeVisible();
+  await expect(page.getByText('1000', {exact: true})).toBeVisible();
   await expect(page.getByText('✦ DATA_APPRENTICE', {exact: true})).toHaveCount(1);
+  await page.getByRole('button', {name: 'REPLAY CASE'}).click();
+  await expect(page.getByRole('button', {name: 'START INVESTIGATION →'})).toBeVisible();
 });

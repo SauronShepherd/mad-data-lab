@@ -1,0 +1,27 @@
+:root {
+  --background-deep: #07101a;
+  --surface-1: #0d1825;
+  --surface-2: #142438;
+  --text-primary: #edf6ff;
+  --text-secondary: #a9bbcc;
+  --border-subtle: #2b4962;
+  --accent-science: #62ddff;
+  --accent-energy: #ff7964;
+  --accent-evidence: #c28cff;
+  --status-confirmed: #65e6a4;
+  --status-supported: #62ddff;
+  --status-possible: #ffd166;
+  --status-ruled-out: #a5afbd;
+  --focus-ring: #ffd166;
+}
+
+.instrument-model { color: var(--text-primary); }
+.instrument-model h3 { margin: 0 0 .7rem; color: var(--accent-science); }
+.instrument-model .exact-values { margin: 0; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.instrument-model table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.instrument-model th, .instrument-model td { padding: .45rem; border-bottom: 1px solid var(--border-subtle); text-align: left; }
+.instrument-model th { color: var(--text-secondary); font-size: .72rem; letter-spacing: .06em; }
+.instrument-model .dominant { color: var(--accent-energy); font-weight: 700; }
+.instrument-model .warning { padding: .65rem; border: 1px solid var(--status-possible); color: #ffe4a3; }
+.instrument-model .lineage-list { display: flex; flex-wrap: wrap; gap: .4rem; padding: 0; list-style: none; }
+.instrument-model .lineage-list li { padding: .35rem .5rem; border: 1px solid var(--accent-evidence); border-radius: 999px; }

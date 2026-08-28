@@ -6,4 +6,4 @@ MDL4-TRUTH-001,Private truth isolated from projection,backend/private/;server/ma
 MDL4-GENIE-001,Retry and protocol boundary,server/genie.py;backend/genie/,tests/test_genie_retry_policy.py,implemented
 MDL4-UI-001,Final prediction and Debrief UI,src/main.jsx;src/api.ts,tests/browser/app.spec.ts,implemented
 MDL4-DEPLOY-001,Deployed real-Genie Case 042 session,scripts/run_mdl4_live_session.py,release-report/MDL-4/live-session.json,blocked-live-deployment
-MDL4-CI-001,Exact-head CI validation,.github/workflows/ci.yml,release-report/MDL-4/manifest.json,verified
+MDL4-CI-001,Exact-head CI validation,not applicable (GitHub Actions removed),release-report/MDL-4/manifest.json,not applicable

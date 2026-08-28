@@ -35,6 +35,24 @@ class MDL4DomainTests(unittest.TestCase):
         self.assertEqual(validate_case042_verdict(formula_changed=True)[0], False)
         self.assertEqual(validate_case042_verdict(dq_primary=True)[0], False)
 
+    def test_reconciliation_failure_uses_stable_error_and_rolls_back_conclusion(self):
+        SESSIONS.clear()
+        client = TestClient(app)
+        sid = client.post("/api/sessions", json={"case_id": "CASE_0042"}).json()["session_id"]
+        session = SESSIONS[sid]
+        session.update({"completed": ["COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "FORMULA_VALIDATION", "RECONCILIATION"],
+                        "evidence_tags": ["COMPONENT_IMPACT", "SNAPSHOT_IMPACT", "DQ_MATERIALITY", "FORMULA_VERSION", "RECONCILIATION"],
+                        "inspected_capabilities": ["CASE_0042:LINEAGE:V2_SOURCE_PATH"],
+                        "final_prediction": "FINAL_CHANGED_V2_SOURCE_RECORDS"})
+        with patch("server.main.validate_case042_verdict", return_value=(False, ["NONZERO_UNRECONCILED_RESIDUAL"])):
+            response = client.post(f"/api/sessions/{sid}/conclude")
+        assert response.status_code == 422
+        assert response.json()["error"]["code"] == "RECONCILIATION_FAILED"
+        assert response.json()["error"]["retryable"] is False
+        assert session.get("conclusion") is None
+        assert session["score"] == 0
+        assert session["state"] != "CONCLUDING"
+
     def test_prediction_ids_are_closed_for_case042(self):
         client = TestClient(app)
         SESSIONS.clear()
@@ -111,6 +129,19 @@ class MDL4FlowTests(unittest.TestCase):
         self.assertEqual(second_debrief.status_code, 200)
         self.assertEqual(second_debrief.json()["score"], debrief.json()["score"])
         self.assertEqual(SESSIONS[sid]["score_events"], score_events)
+
+    def test_live_duplicate_experiment_cannot_be_committed(self):
+        sid = self.client.post("/api/sessions", json={"case_id": "CASE_0042"}).json()["session_id"]
+        self.client.post(f"/api/sessions/{sid}/start")
+        from unittest.mock import patch
+        with patch("server.main.next_experiment", return_value={"experiment_id": "SNAPSHOT_DIFF", "source": "genie"}):
+            first = self.client.post(f"/api/sessions/{sid}/next", json={})
+            self.assertEqual(first.status_code, 200)
+            second = self.client.post(f"/api/sessions/{sid}/next", json={})
+        self.assertEqual(second.status_code, 200)
+        self.assertEqual(first.json()["experiment_id"], "COMPONENT_DECOMPOSITION")
+        self.assertEqual(second.json()["experiment_id"], "SNAPSHOT_DIFF")
+        self.assertEqual(len(SESSIONS[sid]["completed"]), 2)
 
     def test_session_projection_never_exposes_private_truth_or_score_ledger(self):
         sid = self.client.post("/api/sessions", json={"case_id": "CASE_0042"}).json()["session_id"]

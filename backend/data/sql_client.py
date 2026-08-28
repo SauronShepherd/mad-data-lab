@@ -6,6 +6,19 @@ from contextlib import contextmanager
 
 class SqlAdapterError(RuntimeError):
     """A platform/connection error, never a malformed evidence response."""
+    def __init__(self, message: str, *, code: str = "APP_RESOURCE_UNAVAILABLE") -> None:
+        super().__init__(message)
+        self.code = code
+
+
+def classify_sql_error(exc: BaseException) -> str:
+    """Map provider failures to the public platform taxonomy without leaking text."""
+    text = str(exc).lower()
+    if any(token in text for token in ("pending", "starting", "starting_up", "provisioning")):
+        return "WAREHOUSE_PENDING"
+    if any(token in text for token in ("quota", "limit exceeded", "resource exhausted")):
+        return "WAREHOUSE_QUOTA_EXHAUSTED"
+    return "APP_RESOURCE_UNAVAILABLE"
 
 _IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
@@ -51,4 +64,4 @@ def connect_from_env():
         with sql.connect(server_hostname=host, http_path=http_path, **options) as connection:
             yield connection
     except Exception as exc:
-        raise SqlAdapterError("Databricks SQL connection failed") from exc
+        raise SqlAdapterError("Databricks SQL connection failed", code=classify_sql_error(exc)) from exc

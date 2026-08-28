@@ -5,5 +5,5 @@
     "scripts/assets_gate.py"
   ],
   "status": "PASS",
-  "output": "assets gate: PASS (2 images, 417.5s audio, 6681145 bytes)\n"
+  "output": "assets gate: PASS (4 images, 417.5s audio, 6681145 bytes)\n"
 }

@@ -1,14 +1,14 @@
 # MAD DATA LAB release report
 
-Generated: 2026-08-26T19:11:11.793829+00:00
-Source identity: git_head=9f58b4989d052d7e7558edafd31b4dc3ceaa3242 dirty=True
-Runtime digest: 5975c775581ad75e9695bdb41fc6c39fe53c4e2423aac98e77149d58dea94e12
-Data contract digest: 485bb9eab08d1e6140b3107cf1f3e11f2ac70bffc19784343a3c80f528f99515
+Generated: 2026-08-28T07:39:41.426573+00:00
+Source identity: git_head=ee511b68c846a08d1899a238caf6c4e4642416de dirty=True
+Runtime digest: 3d3d632a3d820bf14f7368c54055433c927d462ba02b580db55b007e167b7bf5
+Data contract digest: d7d9b26f4c79b6572fb4e4044ef66a60be9796f2145293df67cc174492b25461
 
-Local gates: PASS
+Local gates: FAIL
 - lint: PASS
 - typecheck: PASS
-- unit: PASS
+- unit: FAIL
 - data: PASS
 - mdl2_property: PASS
 - mdl2_data_deploy_local: PASS
@@ -22,7 +22,7 @@ Local gates: PASS
 - art_contact_sheets: PASS
 - art_preflight: PASS
 - mdl1_art_preflight: PASS
-- browser: PASS
+- browser: FAIL
 - mdl2_contract: PASS
 - mdl3_contract: PASS
 - mdl3_benchmark: PASS

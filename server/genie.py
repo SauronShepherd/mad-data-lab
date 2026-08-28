@@ -60,7 +60,14 @@ def system_prompt(case_id: str = DEFAULT_CASE_ID) -> str:
         "For RUN_EXPERIMENT, include selected_experiment {id, question, target_component} and instrument {id, title}; "
         "choose only a currently allowed registered Experiment/Instrument and never use hidden truth or arbitrary SQL. "
         "Set target_component to null for every Experiment except SNAPSHOT_DIFF; for SNAPSHOT_DIFF use exactly one of V1, V2, V3, or V4. "
-        "Include observation, next_action, and a concise scientist_line. Do not return multiple JSON objects. "
+        "Include observation, next_action, and a concise scientist_line. Every hypotheses[].evidence item must be a string, never an object. "
+        "Return exactly one unfenced JSON object with this shape: "
+        '{"schema_version":"1.0","case_id":"CASE_0042","observation":"...",'
+        '"hypotheses":[{"id":"H1","title":"...","status":"POSSIBLE","evidence":[]}],'
+        '"selected_experiment":{"id":"COMPONENT_DECOMPOSITION","question":"...","target_component":null},'
+        '"instrument":{"id":"WATERFALL","title":"..."},"next_action":"RUN_EXPERIMENT",'
+        '"scientist_line":"..."}. Do not use legacy flat fields such as experiment_id, name, '
+        "rationale, evidence, or hypothesis_updates. Do not return multiple JSON objects. "
         "Begin the investigation now: return the first control object for the registered experiment that best tests the leading hypothesis."
     )
 
@@ -150,7 +157,16 @@ def validate_control_payload(payload: dict, registered_ids: set[str] | None = No
     """Validate the closed orchestration contract before state mutation."""
     if not isinstance(payload, dict):
         raise ValueError("Genie control response must be an object")
-    if any(isinstance(value, str) and ("<script" in value.lower() or "javascript:" in value.lower()) for value in payload.values()):
+    def unsafe(value: Any) -> bool:
+        if isinstance(value, str):
+            lowered = value.lower()
+            return "<script" in lowered or "javascript:" in lowered or "http://" in lowered or "https://" in lowered
+        if isinstance(value, dict):
+            return any(unsafe(item) for item in value.values())
+        if isinstance(value, (list, tuple)):
+            return any(unsafe(item) for item in value)
+        return False
+    if unsafe(payload):
         raise ValueError("unsafe Genie control content")
     if not isinstance(payload.get("experiment_id"), str) or not isinstance(payload.get("instrument"), str):
         raise ValueError("experiment_id and instrument must be strings")

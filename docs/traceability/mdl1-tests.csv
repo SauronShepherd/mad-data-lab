@@ -2,10 +2,10 @@ test_id,owner,automated_evidence,status,notes
 MDL1-ARCH-001,architecture,scripts/production_architecture_gate.py,PASS,Production runtime has no retired-domain imports or prototype analytical markers
 MDL1-ARCH-002,security,scripts/security_gate.py,PASS,Public fixtures and built frontend are scanned for private truth
 MDL1-API-001,backend,scripts/openapi_contract_gate.py,PASS,Canonical public route surface is present and private routes are absent
-MDL1-CI-001,ci,.github/workflows/ci.yml,PASS,Local contract and frontend jobs are defined with diagnostic artifacts
+MDL1-CI-001,ci,not applicable (GitHub Actions removed),NOT_APPLICABLE,Local gates remain available without GitHub Actions
 MDL1-CI-002,ci,scripts/branch_guard.py,PASS,Canonical iteration branch names are enforced
 MDL1-CI-003,ci,scripts/classify_change.py,PASS,Changed paths are classified for gate selection
-MDL1-DEP-001,deployment,.github/workflows/deploy.yml,PASS_LOCAL,OIDC deployment workflow records exact SHA and app identity; environment setup remains external
+MDL1-DEP-001,deployment,scripts/upload_clean_app.py;databricks CLI,PASS_REMOTE,Deployment is performed and verified directly with Databricks CLI profile mdl
 MDL1-DATA-001,data,scripts/verify_databricks_data.py,PASS_REMOTE,Case #042 staging SQL verification is available through profile sda
 MDL1-ART-001,art,docs/approvals/MDL-1-art.md,PASS_LOCAL,Pixel-art artwork is implementation-owned and hash-bound candidates are present
 MDL1-PRE-001,release,docs/traceability/MDL-2-predecessor.json,PENDING,MDL-1 predecessor closure evidence is not provable in this workspace

@@ -2,12 +2,12 @@
   "checks": 63,
   "diagnostics": {
     "current_identity": {
-      "data_contract_digest": "41f8e307c2420eb4b9e2627575572f32a0791e39e6ddedea5ed5199416cad471",
-      "git_head": "9d54ef38786d852d4b42eff4a7dc2c3d02d5d294",
-      "runtime_digest": "4974aae717af547977175723fdfbe4e0642cbadb279f1cfa1604186574bce19e"
+      "data_contract_digest": "07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524",
+      "git_head": "ee511b68c846a08d1899a238caf6c4e4642416de",
+      "runtime_digest": "f861f20dce6970a95a33bd020189d94f7f04d932ff7153a3bd5aeeaf4223d697"
     },
-    "expected_data_digest": "41f8e307c2420eb4b9e2627575572f32a0791e39e6ddedea5ed5199416cad471",
-    "recorded_data_digest": "41f8e307c2420eb4b9e2627575572f32a0791e39e6ddedea5ed5199416cad471"
+    "expected_data_digest": "07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524",
+    "recorded_data_digest": "07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524"
   },
   "failed": [],
   "pending": [

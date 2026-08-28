@@ -56,6 +56,7 @@ function App() {
   const [panel, setPanel] = useState(null);
   const [reducedMotion, setReducedMotion] = useState(() => localStorage.getItem("mad-data-lab-reduced-motion") === "on");
   const [caseCatalog, setCaseCatalog] = useState(CASES);
+  const [catalogLoading, setCatalogLoading] = useState(true);
   const [selectedCaseId, setSelectedCaseId] = useState("CASE_0042");
   const [experimentRegistry, setExperimentRegistry] = useState([]);
   const [finalPrediction, setFinalPrediction] = useState("");
@@ -78,7 +79,8 @@ function App() {
         setServiceError(
           "Local case catalog active — remote catalog unavailable.",
         ),
-      );
+      )
+      .finally(() => setCatalogLoading(false));
   }, []);
   const active = caseCatalog.find((item) => item.id === selectedCaseId) || caseCatalog[0] || INITIAL_CASE;
   // Analytical values come only from the case catalog response.  The loading
@@ -127,9 +129,15 @@ function App() {
         const evidenceResult = await getSessionEvidence(savedSessionId);
         setEvidenceRecords(evidenceResult.evidence || []);
       } catch { /* the session projection remains usable without evidence details */ }
-    }).catch(() => {
+    }).catch((error) => {
       recoveryAttempted.current = true;
-      localStorage.removeItem("mad-data-lab-session-id");
+      const code = error?.code;
+      if (code === "SESSION_EXPIRED") {
+        setSessionId(savedSessionId);
+        setServiceError("This investigation expired. Restart it to continue safely.");
+      } else {
+        localStorage.removeItem("mad-data-lab-session-id");
+      }
     });
   }, []);
   useEffect(() => {
@@ -231,6 +239,11 @@ function App() {
       setSessionId(session.session_id || session.investigation_id || null);
       localStorage.setItem("mad-data-lab-session-id", session.session_id || session.investigation_id || "");
       setDiagnosticId(session.diagnostic_id || null);
+      // Load the registered experiment contract before releasing the briefing
+      // loading state. This prevents a transient disabled "No experiment
+      // contract available" control on slow authenticated deployments.
+      const registry = await getCaseExperiments(active.id);
+      if (Array.isArray(registry.catalog)) setExperimentRegistry(registry.catalog);
     } catch {
       setServiceError("Investigation service unavailable. Start the API to continue.");
     } finally {
@@ -408,6 +421,7 @@ function App() {
       {screen === "board" && (
         <main className="hub">
           <div className="hero">
+            <img className="hero-art" src="/assets/Mad_Data_Lab.png" alt="MAD DATA LAB pixel-art laboratory" />
             <div className="lab-mark" role="img" aria-label="Pixel-art MAD DATA LAB laboratory flask mark" />
             <div className="hero-copy">
               <p className="eyebrow">
@@ -425,7 +439,7 @@ function App() {
                 <p className="eyebrow">CASE BOARD</p>
                 <h2>Choose an anomaly to investigate</h2>
               </div>
-              <span className="chip">{caseCatalog.filter((item) => (item.availability || item.state) === "AVAILABLE" || item.state === "CORE").length} CASE READY · {earnedBadges.length ? "BADGE EARNED" : "NEW SCIENTIST"}</span>
+              <span className="chip">{catalogLoading ? "LOADING CASES…" : `${caseCatalog.filter((item) => (item.availability || item.state) === "AVAILABLE" || item.state === "CORE").length} CASE READY · ${earnedBadges.length ? "BADGE EARNED" : "NEW SCIENTIST"}`}</span>
             </div>
             <div className="cards">
               {caseCatalog.map((c) => (
@@ -789,13 +803,8 @@ function App() {
             <button
               className="text-button"
               onClick={() => {
-                setScreen("briefing");
-                setExp(-1);
-                setExperiment(null);
-                setCompleted([]);
-                setPrediction("");
-                setHintsUsed(0);
-                setHintText("");
+                localStorage.removeItem("mad-data-lab-session-id");
+                start(active);
               }}
             >
               REPLAY CASE

@@ -27,6 +27,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--catalog", default=os.getenv("MDL_CATALOG", ""))
     parser.add_argument("--target", choices=("plan", "staging"), default="plan")
+    parser.add_argument("--profile", default=os.getenv("DATABRICKS_CONFIG_PROFILE", ""))
+    parser.add_argument("--warehouse-id", default=os.getenv("MDL_WAREHOUSE_ID", ""))
     args = parser.parse_args()
     if not args.catalog:
         raise SystemExit("--catalog is required")
@@ -42,7 +44,15 @@ def main() -> None:
     payload = {"status": "PLAN", "target": args.target, "catalog": args.catalog, "ddl_files": len(paths), "source_digest": digest}
     if args.target == "staging":
         try:
-            with connect_from_env() as connection:
+            if args.profile:
+                if not args.warehouse_id:
+                    raise SystemExit("--warehouse-id or MDL_WAREHOUSE_ID is required with --profile")
+                from databricks.sdk import WorkspaceClient
+                from scripts.live_sql_check import SdkConnection
+                connection = SdkConnection(WorkspaceClient(profile=args.profile), args.warehouse_id)
+            else:
+                connection = connect_from_env()
+            with connection:
                 with connection.cursor() as cursor:
                     for _, text in rendered:
                         for statement in statements(text):

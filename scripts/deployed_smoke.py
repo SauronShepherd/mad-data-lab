@@ -63,6 +63,7 @@ def main() -> None:
     session_id = session["session_id"]
     started = call(f"/api/sessions/{session_id}/start", "POST", {})
     assert started["state"] == "HYPOTHESES_READY"
+    call(f"/api/sessions/{session_id}/prediction", "POST", {"prediction": "PRED_SOURCE_VALUES_CHANGED"})
     experiments = [call(f"/api/sessions/{session_id}/next", "POST", {}) for _ in range(5)]
     actual_experiment_ids = [item["experiment_id"] for item in experiments]
     expected_experiment_ids = {
@@ -74,9 +75,20 @@ def main() -> None:
     assert set(actual_experiment_ids) == expected_experiment_ids, (
         f"unexpected deployed experiment set: {actual_experiment_ids}"
     )
+    final_stage = call(f"/api/sessions/{session_id}/next", "POST", {})
+    assert final_stage.get("phase") == "PLAYER_PREDICTION_FINAL"
     assert call(f"/api/sessions/{session_id}/evidence")["total"] >= 1
-    assert call(f"/api/sessions/{session_id}/conclude", "POST", {})["status"] == "COMPLETE"
-    print("deployed smoke: PASS (health, catalog, session, experiments, evidence, conclusion)")
+    for capability in (
+        "CASE_0042:RECORD:TX-004291",
+        "CASE_0042:LINEAGE:V2_SOURCE_PATH",
+        "CASE_0042:DQ:MATERIALITY",
+    ):
+        call(f"/api/sessions/{session_id}/evidence/inspect", "POST", {"capability": capability})
+    call(f"/api/sessions/{session_id}/prediction", "POST", {"prediction": "FINAL_CHANGED_V2_SOURCE_RECORDS", "final": True})
+    assert call(f"/api/sessions/{session_id}/conclude", "POST", {})["state"] == "CONCLUDING"
+    debrief = call(f"/api/sessions/{session_id}/debrief", "POST", {})
+    assert debrief["score"] == 1000
+    print("deployed smoke: PASS (health, catalog, session, experiments, evidence inspection, verdict, debrief)")
 
 
 if __name__ == "__main__":

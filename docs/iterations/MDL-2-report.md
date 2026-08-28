@@ -7,7 +7,7 @@ scope: deterministic Case #042 evidence generator, canonical fixtures, curated S
 predecessor_record: NOT_PROVABLE_IN_LOCAL_REPOSITORY
 accepted_v3_source: VERIFIED (SHA-256 matches accepted V3 source)
 art_status: CANDIDATES_PREFLIGHT_PASS_HUMAN_APPROVAL_PENDING
-sql_integration_status: PASS_REMOTE (Q1-Q8; sda_dev; serverless warehouse e444f39962128242)
+sql_integration_status: PASS_REMOTE (Q1-Q8; workspace; serverless warehouse 02addf2c2a0a755b)
 deployment_status: PASS_REMOTE (bundle validation, serverless job run, schema/view apply, canonical seed, deployed app)
 local_status: IMPLEMENTED
 canonical_case042_registry: PASS (5 approved experiment families)
@@ -22,7 +22,7 @@ canonical_case042_hash: 88f885383fe8eb6d1ed6c2aeae1ff93df1be0549fcc51dbf49e2c7d2
 canonical_fixture_diff: PASS (generated release fixture matches repository fixture)
 seed_run_id: remote seed manifest recorded in release-report/MDL-2/seed-manifest.json
 rollback_manifest: release-report/MDL-2/rollback-before.json
-catalog_schema_mapping: sda_dev.mad_data_lab_public / sda_dev.mad_data_lab_private / sda_dev.mad_data_lab_curated
+catalog_schema_mapping: workspace.mad_data_lab_public / workspace.mad_data_lab_private / workspace.mad_data_lab_curated
 generator_phases: PASS (21 phases)
 property_suite: PASS (10,000 seeds across Level 1/Level 2 × 10 mutation operators = 100,000 property runs)
 local_test_count: 67

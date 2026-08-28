@@ -38,7 +38,7 @@
         "scripts/local_chaos.py"
       ],
       "status": "PASS",
-      "output": "local chaos: PASS (timeout fallback, missing session, oversized chat, invalid identifier)\n"
+      "output": "local chaos: PASS (live timeout fails closed, missing session, oversized chat, invalid identifier)\n"
     },
     {
       "name": "python-tests",
@@ -51,7 +51,7 @@
         "-q"
       ],
       "status": "PASS",
-      "output": "......s..........                                                        [100%]\n16 passed, 1 skipped in 4.13s\n"
+      "output": ".......s...........                                                      [100%]\n18 passed, 1 skipped in 2.41s\n"
     },
     {
       "name": "fake-e2e",
@@ -60,7 +60,7 @@
         "scripts/run_mdl4_fake_e2e.py"
       ],
       "status": "PASS",
-      "output": "{\n  \"status\": \"PASS\",\n  \"session_id\": \"d8bd08e7-891d-4d61-9dcb-a7c0765e81c8\",\n  \"experiments\": [\n    \"COMPONENT_DECOMPOSITION\",\n    \"SNAPSHOT_DIFF\",\n    \"DQ_MATERIALITY\",\n    \"FORMULA_VALIDATION\",\n    \"RECONCILIATION\"\n  ],\n  \"state\": \"DEBRIEF\",\n  \"score\": 1000\n}\n"
+      "output": "{\n  \"status\": \"PASS\",\n  \"session_id\": \"5b8f548c-d8dc-4f47-b009-62c9b0f689d7\",\n  \"experiments\": [\n    \"COMPONENT_DECOMPOSITION\",\n    \"SNAPSHOT_DIFF\",\n    \"DQ_MATERIALITY\",\n    \"FORMULA_VALIDATION\",\n    \"RECONCILIATION\"\n  ],\n  \"state\": \"DEBRIEF\",\n  \"score\": 1000\n}\n"
     },
     {
       "name": "frontend-typecheck",
@@ -80,7 +80,7 @@
         "build"
       ],
       "status": "PASS",
-      "output": "\n> mad-data-lab@0.1.0 build\n> vite build\n\nvite v8.2.2 building client environment for production...\ntransforming...\n\u00e2\u0153\u201c 19 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.44 kB \u00e2\u201d\u201a gzip:  0.31 kB\ndist/assets/index-rbhqkHbq.css   12.71 kB \u00e2\u201d\u201a gzip:  3.83 kB\ndist/assets/index-sSbEQ_wN.js   215.45 kB \u00e2\u201d\u201a gzip: 67.30 kB\n\n\u00e2\u0153\u201c built in 4.01s\n\u001b[33m[PLUGIN_TIMINGS] \u001b[0mYour build spent 93% of 4.0s inside plugin hooks (3.7s).\nMeasured inside the callback, so queue time is excluded and time the callback itself awaited is not:\n  - vite:css transform (74%, 3.0s, 3 calls)\nSee https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.\n\n"
+      "output": "\n> mad-data-lab@0.1.0 build\n> vite build\n\nvite v8.2.2 building client environment for production...\ntransforming...\n\u00e2\u0153\u201c 20 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/index.html                   0.44 kB \u00e2\u201d\u201a gzip:  0.31 kB\ndist/assets/index-fNV4oNJB.css   15.38 kB \u00e2\u201d\u201a gzip:  4.44 kB\ndist/assets/index-CHh7y951.js   222.33 kB \u00e2\u201d\u201a gzip: 69.09 kB\n\n\u00e2\u0153\u201c built in 4.02s\n\u001b[33m[PLUGIN_TIMINGS] \u001b[0mYour build spent 98% of 4.0s inside plugin hooks (3.9s).\nMeasured inside the callback, so queue time is excluded and time the callback itself awaited is not:\n  - vite:css transform (82%, 3.3s, 3 calls)\nSee https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.\n\n"
     }
   ]
 }
