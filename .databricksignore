@@ -5,6 +5,7 @@
 .pytest_cache/
 **/.pytest_cache/**
 node_modules/
+.mdl3-venv/
 dist/
 __pycache__/
 *.pyc
