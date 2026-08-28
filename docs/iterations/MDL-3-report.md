@@ -2,8 +2,8 @@
 
 status: IN_PROGRESS
 implementation_sha: fa5b5a4ae79e9cff826387dd4e1a9e2686b62ccb
-runtime_digest: f861f20dce6970a95a33bd020189d94f7f04d932ff7153a3bd5aeeaf4223d697
-genie_contract_digest: a8cd0c4110005670f924f056e5e22cd3633abba9682d20e3ab8286b5f4d78fda
+runtime_digest: a735508fc2ba4546cba98ec5bed984df0d2f063ae83113629ebe9224b5cd9e81
+genie_contract_digest: fdd440feb9db1fa35a048c1b57008bd1b0fdd64bb451611f183f0a57244794e9
 genie_live_config_sha256: 0aa19a3f70f0318058f467d9173208b46ec30ec2b2859a96e7ff52b5aef14ebd
 mdl2_data_contract_digest: 41f8e307c2420eb4b9e2627575572f32a0791e39e6ddedea5ed5199416cad471
 benchmark_batch_id: mdl3-accepted-baseline
@@ -14,7 +14,7 @@ benchmark_batch_id: mdl3-accepted-baseline
 - One-repair lifecycle and safe protocol/query failure separation: `backend/genie/lifecycle.py`.
 - Pending first-Experiment decision persistence/consumption: `backend/genie/decisions.py`, `server/main.py`.
 - Closed Experiment registry and permanent instructions: `genie/registry.json`, `genie/instructions.md`.
-- Frozen 30-attempt corpus: `genie/benchmarks/mdl3-live.yaml`.
+- Frozen 40-attempt corpus: `genie/benchmarks/mdl3-live.yaml`.
 - Local contract gate: `release-report/MDL-3/contract-validation.json`.
 - Local fixture benchmark JSON/JUnit: `release-report/MDL-3/benchmark.json`, `release-report/MDL-3/benchmark.junit.xml`.
 - Live benchmark harness now binds implementation SHA, runtime digest, Genie config digest, MDL-2 data digest, and public Case #042 hash into its output; live execution still requires authenticated credentials.
@@ -24,7 +24,7 @@ benchmark_batch_id: mdl3-accepted-baseline
 
 - [x] Exact accepted implementation SHA after all runtime-affecting changes (`8a0564616fe94f18ac3543d94d7e6943a9b496ae`; exact-head CI passed).
 - [x] Authenticated Genie Agent configuration export/read-back and `genie_live_config_sha256` (`release-report/MDL-3/genie-live-config.json`).
-- [x] Protected 30-attempt live batch with immutable workflow artifact and JUnit result.
+- [x] Protected 40-attempt live batch with immutable workflow artifact and JUnit result.
 - [x] Databricks deployed smoke/soak against frozen implementation `9d54ef38786d852d4b42eff4a7dc2c3d02d5d294` and matching runtime/data/config evidence (`release-report/deployed-smoke.json`, `release-report/deployed-soak.json`).
 - [x] A05/A07 implementation-owned review candidates, hashes, contact sheets, preflight, and selected production derivatives (`release-report/MDL-3/art-preflight.json`, `release-report/MDL-3/art-contact-sheet.png`, `public/assets/pixelart/dr-genie-mdl3.png`, `public/assets/pixelart/hypothesis-chamber.png`).
 - [ ] Final-head CI and post-merge verification.

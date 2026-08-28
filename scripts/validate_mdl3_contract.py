@@ -84,7 +84,7 @@ def main() -> None:
     corpus = None
     try:
         corpus = load_benchmark()
-        checks.append(("benchmark:exact-30", len(corpus["attempts"]) == 30))
+        checks.append(("benchmark:exact-40", len(corpus["attempts"]) == 40))
     except Exception as exc:
         checks.append((f"benchmark:valid ({exc})", False))
     checks.append(("protocol:strict-models", "extra=\"forbid\"" in (ROOT / "backend/genie/protocol.py").read_text(encoding="utf-8")))

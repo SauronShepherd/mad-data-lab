@@ -8,12 +8,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_fixture_benchmark_emits_30_attempts_and_junit():
+def test_fixture_benchmark_emits_40_attempts_and_junit():
     result = subprocess.run([sys.executable, "scripts/run_mdl3_benchmark.py"], cwd=ROOT, capture_output=True, text=True)
     assert result.returncode == 0, result.stdout + result.stderr
     payload = json.loads((ROOT / "release-report/MDL-3/benchmark.json").read_text(encoding="utf-8"))
     assert payload["status"] == "PASS"
-    assert payload["summary"] == {"total": 30, "passed": 30, "failed": 0}
+    assert payload["summary"] == {"total": 40, "passed": 40, "failed": 0}
     assert payload["attempts"][0]["conversation_id"] == "fixture-obs-01"
     assert payload["started_at_utc"] == "FIXTURE_DETERMINISTIC"
     assert (ROOT / "release-report/MDL-3/benchmark.junit.xml").is_file()

@@ -39,10 +39,10 @@ def load_benchmark(path: Path | None = None) -> dict[str, Any]:
         *(f"SNP-{i:02d}" for i in range(1, 4)), *(f"DQ-{i:02d}" for i in range(1, 4)),
         *(f"FOR-{i:02d}" for i in range(1, 4)), *(f"LIN-{i:02d}" for i in range(1, 3)),
         *(f"GSTART-{i:02d}" for i in range(1, 6)), *(f"GNEXT-{i:02d}" for i in range(1, 6)),
-        *(f"SEC-{i:02d}" for i in range(1, 4)),
+        *(f"SEC-{i:02d}" for i in range(1, 4)), *(f"ALT-{i:02d}" for i in range(1, 11)),
     ]
-    if ids != expected or len(set(ids)) != 30:
-        raise ValueError("benchmark IDs do not match the locked 30-attempt corpus")
+    if ids != expected or len(set(ids)) != 40:
+        raise ValueError("benchmark IDs do not match the locked 40-attempt corpus")
     required = {"id", "turn_type", "phrasing_id", "prompt", "critical_grader"}
     if any(not required.issubset(item) for item in value["attempts"]):
         raise ValueError("benchmark row is missing required fields")

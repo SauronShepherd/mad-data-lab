@@ -27,8 +27,8 @@ def validate_evidence_identity(payload: dict[str, Any], expected: EvidenceIdenti
     if mismatches:
         raise ValueError(f"stale live evidence identity: {', '.join(mismatches)}")
     attempts = payload.get("attempts")
-    if not isinstance(attempts, list) or len(attempts) != 30:
-        raise ValueError("live evidence must contain exactly 30 attempts")
+    if not isinstance(attempts, list) or len(attempts) != 40:
+        raise ValueError("live evidence must contain exactly 40 attempts")
     batch_ids = {item.get("batch_id") for item in attempts if isinstance(item, dict) and item.get("batch_id") is not None}
     if not batch_ids and payload.get("batch_id"):
         batch_ids = {payload["batch_id"]}
@@ -39,7 +39,7 @@ def validate_evidence_identity(payload: dict[str, Any], expected: EvidenceIdenti
         *(f"SNP-{i:02d}" for i in range(1, 4)), *(f"DQ-{i:02d}" for i in range(1, 4)),
         *(f"FOR-{i:02d}" for i in range(1, 4)), *(f"LIN-{i:02d}" for i in range(1, 3)),
         *(f"GSTART-{i:02d}" for i in range(1, 6)), *(f"GNEXT-{i:02d}" for i in range(1, 6)),
-        *(f"SEC-{i:02d}" for i in range(1, 4)),
+        *(f"SEC-{i:02d}" for i in range(1, 4)), *(f"ALT-{i:02d}" for i in range(1, 11)),
     }
     actual_ids = {item.get("benchmark_id") for item in attempts if isinstance(item, dict)}
     if actual_ids != expected_ids:

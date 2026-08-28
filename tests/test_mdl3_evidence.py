@@ -15,12 +15,12 @@ def payload():
         "mdl2_data_contract_digest": "data",
         "case_hash": "case",
         "status": "PASS",
-        "attempts": [{"batch_id": "batch-1", "benchmark_id": benchmark_id(i), "status": "PASS"} for i in range(30)],
+        "attempts": [{"batch_id": "batch-1", "benchmark_id": benchmark_id(i), "status": "PASS"} for i in range(40)],
     }
 
 
 def benchmark_id(i):
-    groups = [("OBS", 3), ("CMP", 3), ("SNP", 3), ("DQ", 3), ("FOR", 3), ("LIN", 2), ("GSTART", 5), ("GNEXT", 5), ("SEC", 3)]
+    groups = [("OBS", 3), ("CMP", 3), ("SNP", 3), ("DQ", 3), ("FOR", 3), ("LIN", 2), ("GSTART", 5), ("GNEXT", 5), ("SEC", 3), ("ALT", 10)]
     for prefix, count in groups:
         if i < count:
             return f"{prefix}-{i + 1:02d}"
@@ -47,7 +47,7 @@ def test_mixed_or_incomplete_batches_are_rejected():
         validate_evidence_identity(value, identity())
     value = payload()
     value["attempts"] = value["attempts"][:29]
-    with pytest.raises(ValueError, match="30"):
+    with pytest.raises(ValueError, match="40"):
         validate_evidence_identity(value, identity())
 
 

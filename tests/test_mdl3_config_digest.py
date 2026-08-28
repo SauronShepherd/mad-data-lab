@@ -5,11 +5,11 @@ import pytest
 from backend.genie.config_digest import file_digest, genie_contract_digest, load_benchmark, render_agent_source
 
 
-def test_locked_benchmark_contains_exact_30_attempts():
+def test_locked_benchmark_contains_exact_40_attempts():
     corpus = load_benchmark()
-    assert len(corpus["attempts"]) == 30
+    assert len(corpus["attempts"]) == 40
     assert corpus["attempts"][0]["id"] == "OBS-01"
-    assert corpus["attempts"][-1]["id"] == "SEC-03"
+    assert corpus["attempts"][-1]["id"] == "ALT-10"
 
 
 def test_contract_digest_changes_when_instruction_changes(tmp_path: Path):

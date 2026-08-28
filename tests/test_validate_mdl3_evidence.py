@@ -16,12 +16,12 @@ def artifact():
         "case_hash": "case",
         "batch_id": "batch-1",
         "status": "PASS",
-        "attempts": [{"benchmark_id": benchmark_id(i), "status": "PASS"} for i in range(30)],
+        "attempts": [{"benchmark_id": benchmark_id(i), "status": "PASS"} for i in range(40)],
     }
 
 
 def benchmark_id(i):
-    groups = [("OBS", 3), ("CMP", 3), ("SNP", 3), ("DQ", 3), ("FOR", 3), ("LIN", 2), ("GSTART", 5), ("GNEXT", 5), ("SEC", 3)]
+    groups = [("OBS", 3), ("CMP", 3), ("SNP", 3), ("DQ", 3), ("FOR", 3), ("LIN", 2), ("GSTART", 5), ("GNEXT", 5), ("SEC", 3), ("ALT", 10)]
     for prefix, count in groups:
         if i < count:
             return f"{prefix}-{i + 1:02d}"
