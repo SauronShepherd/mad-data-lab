@@ -50,7 +50,7 @@ def main() -> None:
                         f"deployed smoke: {path} HTTP {error.code}"
                         + (f"; detail={detail[:512]}" if detail else "")
                     ) from error
-            except URLError:
+            except (URLError, TimeoutError):
                 if attempt == 2:
                     raise
                 time.sleep(2 ** attempt)
