@@ -1,11 +1,9 @@
-# MAD DATA LAB release report
+# MDL-7 release report
 
-Generated: 2026-08-28T20:10:10.958864+00:00
-Source identity: git_head=cfe4ea970938cdb5cf651aed669cdebb89b0c3d0 dirty=True
-Runtime digest: f861f20dce6970a95a33bd020189d94f7f04d932ff7153a3bd5aeeaf4223d697
-Data contract digest: 07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524
+Source: `cfe4ea970938cdb5cf651aed669cdebb89b0c3d0`
 
-Local gates: PASS
+## Gates
+
 - lint: PASS
 - typecheck: PASS
 - unit: PASS
@@ -31,5 +29,8 @@ Local gates: PASS
 - a11y: PASS
 - chaos: PASS
 - soak: PASS
+- live-genie: NOT_RUN
+- deployed-smoke: NOT_RUN
+- deployed-soak: NOT_RUN
 
-Live Genie/deployed gates: NOT RUN.
+Live PASS requires authenticated execution for the current source identity; no stale PASS is reused.

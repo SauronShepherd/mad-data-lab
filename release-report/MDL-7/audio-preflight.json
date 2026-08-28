@@ -1,0 +1,9 @@
+{
+  "name": "audio-preflight",
+  "command": [
+    "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "scripts/audio_preflight.py"
+  ],
+  "status": "PASS",
+  "output": "{\"audio_lufs\": -16.4, \"true_peak_dbfs\": -2.5}\n{\n  \"status\": \"PASS\",\n  \"path\": \"public\\\\audio\\\\mad_data_lab_curiosity.mp3\",\n  \"duration_seconds\": 479.213515,\n  \"bytes\": 6710072\n}\n"
+}

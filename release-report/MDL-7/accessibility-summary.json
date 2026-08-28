@@ -1,0 +1,9 @@
+{
+  "name": "a11y",
+  "command": [
+    "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "scripts/a11y_gate.py"
+  ],
+  "status": "PASS",
+  "output": "a11y gate: PASS (static semantics; runtime axe is deployment-only)\n"
+}

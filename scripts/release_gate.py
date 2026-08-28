@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -132,6 +133,37 @@ def main() -> None:
     )
     summary += ["", f"Live Genie/deployed gates: {live_status}."]
     (REPORT / "summary.md").write_text("\n".join(summary) + "\n", encoding="utf-8")
+    # MDL-7 requires a self-contained release bundle. Keep each artifact
+    # truthful: live evidence is produced only when RUN_LIVE_GATES=1.
+    mdl7 = REPORT / "MDL-7"
+    mdl7.mkdir(parents=True, exist_ok=True)
+    local_by_name = {item["name"]: item for item in results}
+    artifact_map = {
+        "genie-eval.json": live_payloads["genie-eval.json"],
+        "deployed-smoke.json": live_payloads["deployed-smoke.json"],
+        "live-soak.json": live_payloads["deployed-soak.json"],
+        "golden-case.json": {"status": "PASS" if not failed else "FAIL", "source_identity": identity},
+        "asset-preflight.json": local_by_name.get("assets", {"status": "NOT_RUN"}),
+        "accessibility-summary.json": local_by_name.get("a11y", {"status": "NOT_RUN"}),
+        "security-summary.json": local_by_name.get("security", {"status": "NOT_RUN"}),
+        "performance-summary.json": local_by_name.get("performance", {"status": "NOT_RUN"}),
+        "visual-diff-summary.json": local_by_name.get("visual", {"status": "NOT_RUN"}),
+    }
+    for filename, payload in artifact_map.items():
+        (mdl7 / filename).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    audio_result = run("audio-preflight", [sys.executable, "scripts/audio_preflight.py"])
+    (mdl7 / "audio-preflight.json").write_text(json.dumps(audio_result, indent=2) + "\n", encoding="utf-8")
+    (mdl7 / "test-results.xml").write_bytes((REPORT / "test-results.xml").read_bytes())
+    gate_lines = ["# MDL-7 release report", "", f"Source: `{identity['git_head']}`", "", "## Gates", ""]
+    gate_lines.extend(f"- {item['name']}: {item['status']}" for item in results)
+    gate_lines.extend([
+        f"- live-genie: {live_payloads['genie-eval.json'].get('status', 'NOT_RUN')}",
+        f"- deployed-smoke: {live_payloads['deployed-smoke.json'].get('status', 'NOT_RUN')}",
+        f"- deployed-soak: {live_payloads['deployed-soak.json'].get('status', 'NOT_RUN')}",
+        "",
+        "Live PASS requires authenticated execution for the current source identity; no stale PASS is reused.",
+    ])
+    (mdl7 / "summary.md").write_text("\n".join(gate_lines) + "\n", encoding="utf-8")
     if failed:
         raise SystemExit(f"release gate failed: {', '.join(failed)}")
     print(f"release gate: PASS ({len(results)} local gates; live gates: {live_status})")

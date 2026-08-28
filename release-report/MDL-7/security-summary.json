@@ -1,0 +1,9 @@
+{
+  "name": "security",
+  "command": [
+    "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+    "scripts/security_gate.py"
+  ],
+  "status": "PASS",
+  "output": "security gate: PASS\n"
+}

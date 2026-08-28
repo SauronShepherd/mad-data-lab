@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "source_identity": {
+    "git_head": "cfe4ea970938cdb5cf651aed669cdebb89b0c3d0",
+    "git_worktree_dirty": true,
+    "runtime_digest": "f861f20dce6970a95a33bd020189d94f7f04d932ff7153a3bd5aeeaf4223d697",
+    "data_contract_digest": "07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524"
+  }
+}
