@@ -44,7 +44,10 @@ def current_evidence_identity() -> dict[str, str]:
 
 
 def response_text(response: object, client: object | None = None, space_id: str | None = None) -> str:
-    parts = [getattr(response, "content", "") or ""]
+    # In the Databricks SDK, ``content`` is commonly the submitted prompt,
+    # not the assistant answer.  Including it contaminates strict guided
+    # responses with the protocol example and creates false ambiguity.
+    parts = []
     query_result = getattr(response, "query_result", None)
     statement = getattr(query_result, "statement_response", query_result)
     rows = getattr(getattr(statement, "result", None), "data_array", None) or []
@@ -82,6 +85,10 @@ def response_text(response: object, client: object | None = None, space_id: str 
                 for row in rows:
                     if row:
                         parts.append(str(row[0]))
+    if not parts:
+        content = getattr(response, "content", "") or ""
+        if content:
+            parts.append(content)
     return "\n".join(parts)
 
 
