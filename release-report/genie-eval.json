@@ -6,9 +6,9 @@
   ],
   "output": "live Genie gate: PASS (analytical benchmark and injection refusal)\n",
   "source_identity": {
-    "git_head": "9f5e805bef393a64dac2e4c76f371f233c98461b",
-    "runtime_digest": "f861f20dce6970a95a33bd020189d94f7f04d932ff7153a3bd5aeeaf4223d697",
+    "git_head": "b7d0f752aff8e3d171658d4ed7f58775a2bd17f6",
+    "runtime_digest": "a735508fc2ba4546cba98ec5bed984df0d2f063ae83113629ebe9224b5cd9e81",
     "data_contract_digest": "07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524"
   },
-  "generated_at_utc": "2026-08-28T20:17:06.913522+00:00"
+  "generated_at_utc": "2026-08-29T04:05:41.029810+00:00"
 }
