@@ -116,3 +116,20 @@ test('MDL-6 network restoration allows catalog retry', async ({ page }) => {
   await page.reload();
   await expect(page.getByRole('button', { name: 'OPEN CASE BOARD' })).toBeVisible();
 });
+
+test('recovery restart continues with the newly issued session', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'OPEN CASE BOARD' }).click();
+  await page.getByRole('button', { name: 'OPEN CASE' }).click();
+  await page.getByRole('button', { name: /START INVESTIGATION/ }).click();
+  await expect(page.getByRole('button', { name: /RUN GENIE’S FIRST EXPERIMENT/ })).toBeVisible({ timeout: 120_000 });
+
+  const originalSession = await page.evaluate(() => localStorage.getItem('mad-data-lab-session-id'));
+  expect(originalSession).toBeTruthy();
+  await page.route('**/api/sessions/*/next*', (route) => route.abort());
+  await page.getByRole('button', { name: /RUN GENIE’S FIRST EXPERIMENT/ }).click();
+  await expect(page.getByRole('alert')).toContainText(/needs attention|offline/i);
+  await page.unroute('**/api/sessions/*/next*');
+  await page.getByRole('button', { name: 'RESTART INVESTIGATION' }).click();
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('mad-data-lab-session-id'))).not.toBe(originalSession);
+});

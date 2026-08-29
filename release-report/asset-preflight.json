@@ -1,9 +1,0 @@
-{
-  "name": "assets",
-  "command": [
-    "C:\\Users\\angel.alvarez\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
-    "scripts/assets_gate.py"
-  ],
-  "status": "PASS",
-  "output": "assets gate: PASS (4 images, 479.2s audio, 6710072 bytes)\n"
-}

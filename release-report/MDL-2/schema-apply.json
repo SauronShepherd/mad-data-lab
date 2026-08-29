@@ -1,7 +1,0 @@
-{
-  "catalog": "workspace",
-  "ddl_files": 20,
-  "source_digest": "bf3ab7fa3ad1f5aee5be7357bfd3c8a7ce5abb7f429d0d17aa465e971a28b81d",
-  "status": "PASS",
-  "target": "staging"
-}

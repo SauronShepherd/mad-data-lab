@@ -1,5 +1,0 @@
-{
-  "status": "PASS",
-  "required_extensions": ["session_read", "evidence_inspect", "debrief", "revision_conflict", "score_privacy", "idempotent_replay"],
-  "openapi_gate": "PASS"
-}

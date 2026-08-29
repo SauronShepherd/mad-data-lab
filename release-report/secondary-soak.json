@@ -1,6 +1,0 @@
-{
-  "status": "PASS",
-  "cases": ["CASE_0107", "CASE_0213", "CASE_0314", "CASE_0441", "CASE_0520", "CASE_0812"],
-  "journeys_per_case": 5,
-  "mode": "CHALLENGE_REVIEW_MODE fixture"
-}

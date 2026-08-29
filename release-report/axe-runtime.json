@@ -1,7 +1,0 @@
-{
-  "status": "PASS",
-  "violations": [],
-  "passes": 29,
-  "surface": "local built UI via LOCAL_A11Y_TEST harness",
-  "verified_at": "2026-08-24"
-}

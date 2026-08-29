@@ -294,8 +294,13 @@ function App() {
         } catch {
           setServiceError("The server completed the Case; local progression storage is unavailable.");
         }
-      } catch {
-        setServiceError("The evidence ledger is not complete yet. Run every required experiment.");
+      } catch (error) {
+        // Preserve the server's actionable completion detail (for example the
+        // missing evidence action) instead of masking every 409/422 as a
+        // generic Genie failure. This lets the player recover without
+        // guessing which requirement is still pending.
+        const message = error?.message;
+        setServiceError(message || "The evidence ledger is not complete yet. Run every required experiment.");
         return;
       }
     }
@@ -309,6 +314,14 @@ function App() {
     if (sessionId) {
       try {
         const restarted = await restartSession(sessionId);
+        // The API creates a new session on recovery. Keep the client aligned
+        // with that identity; continuing with the expired session makes the
+        // next experiment look like a Genie outage to the player.
+        const restartedSessionId = String(restarted.session_id || "");
+        if (restartedSessionId) {
+          setSessionId(restartedSessionId);
+          localStorage.setItem("mad-data-lab-session-id", restartedSessionId);
+        }
         setDiagnosticId(restarted.diagnostic_id || diagnosticId);
       } catch {
         setServiceError("Restart failed. Return to the Case Board and open a new investigation.");
