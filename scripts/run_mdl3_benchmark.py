@@ -200,6 +200,25 @@ def call_with_timeout(function: object, timeout_seconds: int) -> object:
     return value
 
 
+def retry_transient(function: object, attempts: int = 3) -> object:
+    """Retry only transport/auth failures before grading the response."""
+    transient_markers = (
+        "timed out", "timeout", "connection reset", "connection refused",
+        "cannot get access token", "failed to fetch host metadata",
+        "failed to get oauth endpoints", "name or service not known",
+        "no such host",
+    )
+    for attempt in range(attempts):
+        try:
+            return function()
+        except Exception as exc:
+            message = str(exc).lower()
+            if attempt == attempts - 1 or not any(marker in message for marker in transient_markers):
+                raise
+            time.sleep(2 ** attempt)
+    raise RuntimeError("transient retry exhausted")
+
+
 def start_and_wait(client: object, space_id: str, prompt: str, timeout_seconds: int) -> object:
     submitted = call_with_timeout(
         lambda: client.genie.start_conversation(space_id=space_id, content=prompt),
@@ -242,12 +261,12 @@ def live_run(corpus: dict) -> dict:
             start_prompt = first_prompt if item["turn_type"] == "fresh-2-turn" else item["prompt"]
             if item["turn_type"] in {"fresh-control", "fresh-2-turn"}:
                 start_prompt = guided_prompt(start_prompt)
-            started = start_and_wait(client, space_id, start_prompt, timeout_seconds)
+            started = retry_transient(lambda: start_and_wait(client, space_id, start_prompt, timeout_seconds))
             record["conversation_id"] = str(started.conversation_id)
             text = response_text(started, client, space_id)
             if item["turn_type"] == "fresh-2-turn":
                 second_prompt = guided_prompt(item["prompt"])
-                second = message_and_wait(client, space_id, str(started.conversation_id), second_prompt, timeout_seconds)
+                second = retry_transient(lambda: message_and_wait(client, space_id, str(started.conversation_id), second_prompt, timeout_seconds))
                 text = response_text(second, client, space_id)
                 record["turns"] = 2
             else:

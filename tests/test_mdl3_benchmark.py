@@ -39,6 +39,21 @@ def test_benchmark_polling_accepts_asking_ai_with_answer_attachment():
     assert wait_for_message(client, "space", "conversation", "message", 1) is message
 
 
+def test_live_transport_retries_transient_auth_failure():
+    from scripts.run_mdl3_benchmark import retry_transient
+
+    calls = []
+
+    def flaky():
+        calls.append(1)
+        if len(calls) < 2:
+            raise RuntimeError("cannot get access token: no such host")
+        return "ok"
+
+    assert retry_transient(flaky, attempts=2) == "ok"
+    assert len(calls) == 2
+
+
 def test_live_identity_uses_canonical_case_hash():
     from data.generation.case_0042 import generate_case
     from scripts.run_mdl3_benchmark import current_evidence_identity
