@@ -1,0 +1,9 @@
+test_id,requirement,implementation,evidence,status
+MDL4-FLOW-001,Case 042 guided lifecycle,server/main.py,tests/test_mdl4_game_flow.py,implemented
+MDL4-SCORE-001,Exact scoring and private correctness,backend/domain/scoring.py;backend/private/case_oracle.py,tests/test_mdl4_game_flow.py,implemented
+MDL4-COMPLETE-001,Five-family completion contract,backend/domain/completion.py,tests/test_mdl4_game_flow.py;tests/test_mdl4_contract_artifacts.py,implemented
+MDL4-TRUTH-001,Private truth isolated from projection,backend/private/;server/main.py,tests/test_mdl4_game_flow.py,implemented
+MDL4-GENIE-001,Retry and protocol boundary,server/genie.py;backend/genie/,tests/test_genie_retry_policy.py,implemented
+MDL4-UI-001,Final prediction and Debrief UI,src/main.jsx;src/api.ts,tests/browser/app.spec.ts,implemented
+MDL4-DEPLOY-001,Deployed real-Genie Case 042 session,scripts/run_mdl4_live_session.py,release-report/MDL-4/live-session.json,blocked-live-deployment
+MDL4-CI-001,Exact-head CI validation,.github/workflows/ci.yml,release-report/MDL-4/manifest.json,verified

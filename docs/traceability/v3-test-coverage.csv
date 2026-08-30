@@ -1,0 +1,12 @@
+requirement_id,owner,evidence,status,notes
+G42-001..G42-027,MDL-2,docs/traceability/mdl2-tests.csv,PASS,Canonical Case #042 golden suite
+DG-001,MDL-2,tests/test_mdl2_data.py,PASS,Same seed and generator versions are byte stable
+DG-002,MDL-2,scripts/mdl2_property_suite.py,PASS,500 deterministic property seeds
+DG-003..DG-010,MDL-2,tests/test_mdl2_data.py; scripts/verify_databricks_data.py,PASS,Generator metadata IDs populations and domains
+DP-001..DP-018,MDL-2,tests/test_mdl2_data.py; scripts/verify_databricks_data.py,PASS,Deterministic data and privacy invariants
+DP-019,MDL-2,scripts/mdl2_property_suite.py,PASS,Release property tier executes 10000 seeds across Level 1 and Level 2 templates
+DP-020,MDL-2,scripts/mdl2_property_suite.py,PASS,500 seeds x 10 operators property tier
+MDL2-SQL-001..MDL2-SQL-013,MDL-2,scripts/mdl2_sql_preflight.py; backend/data/models.py,PARTIAL,Local SQL/model contracts pass; live connector evidence pending
+MDL2-DEP-001..MDL2-DEP-004,MDL-2,databricks.yml; scripts/seed_databricks.py; Dockerfile; Docker image/container smoke,PASS_LOCAL,Remote bundle apply requires authenticated sda
+MDL1-PREDECESSOR,MDL-1,docs/traceability/MDL-2-predecessor.json,PENDING,Closure evidence is not present
+ART-IMPLEMENTATION-OWNED,MDL-2,docs/approvals/MDL-2-art.md,PASS_LOCAL,Pixel-art artwork is implementation-owned and does not gate release

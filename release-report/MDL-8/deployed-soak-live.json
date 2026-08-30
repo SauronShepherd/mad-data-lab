@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "profile": "mdl",
+  "app_url": "https://mad-data-lab-7474654810500477.aws.databricksapps.com",
+  "deployment_id": "01f1a37e66421a859a9b013b577bc7e7",
+  "journeys": 10,
+  "journey_assertions": ["health", "catalog", "session", "experiments", "evidence inspection", "verdict", "debrief"],
+  "raw_log": "release-report/MDL-8/deployed-soak-live.txt"
+}

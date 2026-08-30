@@ -5,6 +5,8 @@ dist/
 .env.*
 tmp_remote_bundle_*/
 tmp/
+tmp_*/
+*.zip
 __pycache__/
 *.py[cod]
 .mypy_cache/

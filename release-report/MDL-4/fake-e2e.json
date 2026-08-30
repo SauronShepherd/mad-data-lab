@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "runner": "scripts/run_mdl4_fake_e2e.py",
+  "case_id": "CASE_0042",
+  "final_state": "DEBRIEF",
+  "score": 1000,
+  "browser_smoke": "PASS"
+}

@@ -21,11 +21,15 @@ test('keyboard and dialog accessibility contract', async ({ page }) => {
   await expect(dialog).toBeHidden();
 });
 
-test('runtime axe reports no serious or critical violations', async ({ page }) => {
-  await page.goto('/');
+test('runtime axe reports no serious or critical violations on every public route', async ({ page }) => {
   const axeSource = fs.readFileSync('node_modules/axe-core/axe.min.js', 'utf8');
-  await page.addScriptTag({ content: axeSource });
-  const result = await page.evaluate(async () => await (window as any).axe.run(document));
-  const serious = result.violations.filter((item: any) => item.impact === 'serious' || item.impact === 'critical');
-  expect(serious, JSON.stringify(serious)).toEqual([]);
+  for (const route of ['/', '/library', '/articles', '/groups', '/variants', '/feedback', '/comments', '/account', '/admin']) {
+    await page.goto(route);
+    await page.addScriptTag({ content: axeSource });
+    const result = await page.evaluate(async () => await (window as any).axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa'] } }));
+    const serious = result.violations.filter((item: any) => item.impact === 'serious' || item.impact === 'critical');
+    expect(serious, `${route}: ${JSON.stringify(serious)}`).toEqual([]);
+    const contrast = result.violations.filter((item: any) => item.id === 'color-contrast');
+    expect(contrast, `${route}: contrast ${JSON.stringify(contrast)}`).toEqual([]);
+  }
 });

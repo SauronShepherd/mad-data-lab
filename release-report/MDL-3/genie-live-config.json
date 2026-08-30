@@ -1,0 +1,187 @@
+{
+  "status": "PASS",
+  "space_id": "01f19eb4ac691d2c88e7b18a6da39b3b",
+  "profile": "sda",
+  "genie_live_config_sha256": "0aa19a3f70f0318058f467d9173208b46ec30ec2b2859a96e7ff52b5aef14ebd",
+  "serialized_space": {
+    "version": 2,
+    "config": {
+      "sample_questions": [
+        {
+          "id": "a0420000000000000000000000000001",
+          "question": [
+            "Why is Capital Available \u20ac6.8M below expectation?"
+          ]
+        },
+        {
+          "id": "a0420000000000000000000000000002",
+          "question": [
+            "Which component explains most of the deviation?"
+          ]
+        },
+        {
+          "id": "a0420000000000000000000000000003",
+          "question": [
+            "Which V2 records changed between snapshots?"
+          ]
+        }
+      ]
+    },
+    "data_sources": {
+      "tables": [
+        {
+          "identifier": "sda_dev.mad_data_lab_curated.component_evidence",
+          "description": [
+            "Curated component movements that reconcile the metric deviation."
+          ]
+        },
+        {
+          "identifier": "sda_dev.mad_data_lab_curated.lineage_evidence",
+          "description": [
+            "Curated technical and value lineage evidence."
+          ]
+        },
+        {
+          "identifier": "sda_dev.mad_data_lab_curated.population_evidence",
+          "description": [
+            "Curated population-level evidence and source-record counts."
+          ]
+        },
+        {
+          "identifier": "sda_dev.mad_data_lab_curated.quality_evidence",
+          "description": [
+            "Curated quality signals assessed for overlapping materiality."
+          ]
+        },
+        {
+          "identifier": "sda_dev.mad_data_lab_curated.semantic_evidence",
+          "description": [
+            "Curated formula and semantic-change evidence."
+          ]
+        },
+        {
+          "identifier": "sda_dev.mad_data_lab_curated.snapshot_evidence",
+          "description": [
+            "Curated source snapshot differences for Case #042."
+          ]
+        },
+        {
+          "identifier": "sda_dev.mad_data_lab_public.case_definition",
+          "description": [
+            "Canonical public Case #042 definition and observed deviation."
+          ]
+        },
+        {
+          "identifier": "sda_dev.mad_data_lab_public.datapoint_result",
+          "description": [
+            "Canonical public metric results, formula identity, and population hashes."
+          ]
+        }
+      ]
+    },
+    "instructions": {
+      "text_instructions": [
+        {
+          "id": "a0420000000000000000000000000011",
+          "content": [
+            "# MAD DATA LAB Genie permanent instructions\n",
+            "\n",
+            "MAD DATA LAB Genie: use active Case curated evidence and server-allowed\n",
+            "experiments only. Never use `CASE_TRUTH`, private/raw tables, arbitrary SQL,\n",
+            "code, UI, hidden reasoning, or invented facts. For every guided investigation\n",
+            "request, return exactly one unfenced JSON object and no prose before or after it.\n",
+            "The object must contain `schema_version` `\"1.0\"`, `case_id`, `observation`, a\n",
+            "bounded `hypotheses` array using IDs H1/H2/H3 and statuses `CONFIRMED`,\n",
+            "`SUPPORTED`, `POSSIBLE`, or `RULED_OUT`; every hypothesis must include a\n",
+            "non-empty `title` and an `evidence` array. Include `next_action` and\n",
+            "`scientist_line`. When `next_action` is `RUN_EXPERIMENT`, also include\n",
+            "`selected_experiment` with `id`, `question`, and optional `target_component`,\n",
+            "plus `instrument` with `id` and `title`. The only valid instrument IDs are\n",
+            "`WATERFALL` for `COMPONENT_DECOMPOSITION`, `SNAPSHOT_DIFF` for `SNAPSHOT_DIFF`,\n",
+            "`DQ_PANEL` for `DQ_MATERIALITY`, `FORMULA_CHECK` for `FORMULA_VALIDATION`, and\n",
+            "`RECONCILIATION` for `RECONCILIATION`. Select only a currently allowed\n",
+            "registered Experiment and Instrument. Never return multiple objects, Markdown\n",
+            "fences, SQL, hidden truth, or invented facts. Normal chat is escaped prose and\n",
+            "cannot mutate state. A valid guided response has this shape (replace values\n",
+            "only with evidence-backed values): {\"schema_version\":\"1.0\",\"case_id\":\"CASE_0042\",\"observation\":\"...\",\"hypotheses\":[{\"id\":\"H1\",\"title\":\"...\",\"status\":\"POSSIBLE\",\"evidence\":[]}],\"selected_experiment\":{\"id\":\"COMPONENT_DECOMPOSITION\",\"question\":\"...\",\"target_component\":null},\"instrument\":{\"id\":\"WATERFALL\",\"title\":\"...\"},\"next_action\":\"RUN_EXPERIMENT\",\"scientist_line\":\"...\"}. Do not conclude before authorized evidence."
+          ]
+        }
+      ],
+      "example_question_sqls": [
+        {
+          "id": "a0420000000000000000000000000021",
+          "question": [
+            "Which component explains most of the deviation?"
+          ],
+          "sql": [
+            "SELECT * FROM sda_dev.mad_data_lab_curated.component_evidence WHERE case_id = 'CASE_0042' ORDER BY abs_contribution_rank;"
+          ]
+        },
+        {
+          "id": "a0420000000000000000000000000022",
+          "question": [
+            "What changed in V2 between snapshots?"
+          ],
+          "sql": [
+            "SELECT * FROM sda_dev.mad_data_lab_curated.snapshot_evidence WHERE case_id = 'CASE_0042' ORDER BY component, change_type;"
+          ]
+        },
+        {
+          "id": "a0420000000000000000000000000023",
+          "question": [
+            "Did the formula change?"
+          ],
+          "sql": [
+            "SELECT * FROM sda_dev.mad_data_lab_curated.semantic_evidence WHERE case_id = 'CASE_0042' AND semantic_type = 'FORMULA';"
+          ]
+        }
+      ]
+    },
+    "benchmarks": {
+      "questions": [
+        {
+          "id": "a0420000000000000000000000000033",
+          "question": [
+            "Did the capital available formula change?"
+          ],
+          "answer": [
+            {
+              "format": "SQL",
+              "content": [
+                "SELECT previous_id, current_id, previous_hash, current_hash FROM sda_dev.mad_data_lab_curated.semantic_evidence WHERE case_id = 'CASE_0042' AND semantic_type = 'FORMULA';"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "a0420000000000000000000000000032",
+          "question": [
+            "How many V2 records changed and what was their net impact?"
+          ],
+          "answer": [
+            {
+              "format": "SQL",
+              "content": [
+                "SELECT component, change_type, record_count, net_impact FROM sda_dev.mad_data_lab_curated.snapshot_evidence WHERE case_id = 'CASE_0042' ORDER BY component, change_type;"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "a0420000000000000000000000000031",
+          "question": [
+            "Which component explains most of the \u20ac6.8M loss?"
+          ],
+          "answer": [
+            {
+              "format": "SQL",
+              "content": [
+                "SELECT component, contribution_delta, share_of_abs_deviation FROM sda_dev.mad_data_lab_curated.component_evidence WHERE case_id = 'CASE_0042' ORDER BY abs_contribution_rank LIMIT 1;"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

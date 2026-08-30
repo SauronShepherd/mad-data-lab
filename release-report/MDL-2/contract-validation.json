@@ -1,0 +1,20 @@
+{
+  "checks": 63,
+  "diagnostics": {
+    "current_identity": {
+      "data_contract_digest": "07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524",
+      "git_head": "c37b2739fc32f9f463ef57f7947a2d7d159d0406",
+      "runtime_digest": "142c2f71573455355b8bae6a1b73d67a00f1906aa95e4d84169808ac4e7b9243"
+    },
+    "expected_data_digest": "07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524",
+    "recorded_data_digest": "07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524"
+  },
+  "failed": [],
+  "pending": [
+    "predecessor-mdl1",
+    "live-evidence-refresh:genie-eval.json",
+    "live-evidence-refresh:deployed-smoke.json",
+    "live-evidence-refresh:deployed-soak.json"
+  ],
+  "status": "IN_PROGRESS"
+}

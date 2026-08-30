@@ -1,0 +1,437 @@
+{
+    "status":  "ENGINEERING_COMPLETE_EXTERNAL_GATES_PENDING",
+    "generated_at_utc":  "2026-08-30T04:12:25.9095423Z",
+    "ci_scope":  "excluded_by_owner_instruction",
+    "file_count":  85,
+    "files":  [
+                  {
+                      "path":  "app.yaml",
+                      "sha256":  "60b9d1fe77c875056c1795f77f4c8228b6a937cae144c77dffbc603196836ab5",
+                      "bytes":  295
+                  },
+                  {
+                      "path":  "app.yml",
+                      "sha256":  "60b9d1fe77c875056c1795f77f4c8228b6a937cae144c77dffbc603196836ab5",
+                      "bytes":  295
+                  },
+                  {
+                      "path":  "docs/iterations/MDL-8-report.md",
+                      "sha256":  "e96b57c5e6f785fe3c7f94cb9c23c3780ad2da94a9a26cf6a024c28850719c84",
+                      "bytes":  5841
+                  },
+                  {
+                      "path":  "docs/MDL-8-build-plan.md",
+                      "sha256":  "f9691b04c58a0580e2bc9c4e0b2f75096e88be87b6986bb304b26be59a1af66d",
+                      "bytes":  5501
+                  },
+                  {
+                      "path":  "docs/canonical-source/MAD_DATA_LAB_1_2_combined_spec_gap_audit.md",
+                      "sha256":  "adf5f73b1e22d19e76be9b814c57245872c1b246b4958487b4bb3ae125649704",
+                      "bytes":  103902
+                  },
+                  {
+                      "path":  "docs/canonical-source/MAD_DATA_LAB_Community_Article.md",
+                      "sha256":  "fb991419457d9bf6910a14102f377ca882401458418ee85841ec09969b873c31",
+                      "bytes":  13598
+                  },
+                  {
+                      "path":  "docs/canonical-source/MAD_DATA_LAB_Complete_Game_Specification_and_Manual.md",
+                      "sha256":  "237570e5d62cee11e78ecced43c8449f62f53e7b547e9fe1bfbf4ed54eb0cc44",
+                      "bytes":  252719
+                  },
+                  {
+                      "path":  "docs/canonical-source/MDL-1_FOUNDATION_CANONICAL_DOMAIN_AND_CI_READY_TO_IMPLEMENT.md",
+                      "sha256":  "2041b334793bc83d240450c6ea29f560c5ace8ac9f1dff27cea855c75d165b01",
+                      "bytes":  236314
+                  },
+                  {
+                      "path":  "docs/canonical-source/MDL-2_CASE042_DATA_EVIDENCE_GENERATOR_AND_SQL_READY_TO_IMPLEMENT.md",
+                      "sha256":  "f8fcaa7224910e82eb5b39929fb243631a1c9488895c3c027bb4ad8af69c4e71",
+                      "bytes":  140143
+                  },
+                  {
+                      "path":  "docs/canonical-source/MDL-3_GENIE_AT_THE_CORE_ORCHESTRATION_PROTOCOL_AND_EVAL_READY_TO_IMPLEMENT.md",
+                      "sha256":  "8c01d425da3c76e4eab0037d47d6bab3e5aa103842ef284b6ecf87b8e1b30be8",
+                      "bytes":  168620
+                  },
+                  {
+                      "path":  "docs/canonical-source/MDL-4_COMPLETE_GUIDED_GAME_FLOW_SCORING_AND_VERDICT_READY_TO_IMPLEMENT.md",
+                      "sha256":  "d12a1235535b2852c8ad3fe9368a4d6f1436bd193ee22294de7c5f31c676f681",
+                      "bytes":  206745
+                  },
+                  {
+                      "path":  "docs/canonical-source/MDL-5_INSTRUMENTS_EVIDENCE_EXPLORER_VISUAL_SYSTEM_AND_ART.md",
+                      "sha256":  "71e992b423a96b3382349a1a0e40eafc171456ea10b961852e3aee1ca2d2efd6",
+                      "bytes":  26695
+                  },
+                  {
+                      "path":  "docs/canonical-source/MDL-6_HARDENING_RESILIENCE_ACCESSIBILITY_SECURITY_PERFORMANCE_AND_AUDIO.md",
+                      "sha256":  "80553c1dbfb6f4e48bdd1894c379a559575b66d95fd15b9029de2a168f508dad",
+                      "bytes":  21645
+                  },
+                  {
+                      "path":  "docs/canonical-source/MDL-7_RELEASE_CANDIDATE_LIVE_GENIE_SOAK_AND_FINAL_ACCEPTANCE.md",
+                      "sha256":  "162c7daba3f8f4613ebbe7f10aded8538e28e7142a7e290ebce8cb36f844092b",
+                      "bytes":  18118
+                  },
+                  {
+                      "path":  "docs/canonical-source/MDL-8_SUBMISSION_PACKAGE_FINAL_FREEZE_VIDEO_ARTICLE_AND_PRODUCTION.md",
+                      "sha256":  "fb232da0f2b8a5c3d3db7acc43ec97d22c7be89b9c0a9faa686bb961ada57a40",
+                      "bytes":  20586
+                  },
+                  {
+                      "path":  "pyproject.toml",
+                      "sha256":  "b1c810fbbc3d0246841f916d9f7a086302f403961a4b5ec6db2cf34757bdb195",
+                      "bytes":  658
+                  },
+                  {
+                      "path":  "release-report/MDL-8/databricks-app-deployment.json",
+                      "sha256":  "339b99738dde420e88226ec37080353689bd8ae23f3687e0f06cb7653d1c998f",
+                      "bytes":  715
+                  },
+                  {
+                      "path":  "release-report/MDL-8/databricks-remote-verification.json",
+                      "sha256":  "8de9a84932f883484af10da5ab543eb3a6ba76cce4b01627867d2caca0b60c99",
+                      "bytes":  596
+                  },
+                  {
+                      "path":  "release-report/MDL-8/demo-video-narrated-verification.json",
+                      "sha256":  "785ad9b8ca85209101110453a44a8d3f4c421d18a8ad057d17d402f555f83f3f",
+                      "bytes":  406
+                  },
+                  {
+                      "path":  "release-report/MDL-8/deployed-soak-live.json",
+                      "sha256":  "ff624a3b8342f7bb705504cf573eef8b1a8b1998529ab4d9f5eb287ede1f1fc4",
+                      "bytes":  371
+                  },
+                  {
+                      "path":  "release-report/MDL-8/final-acceptance-matrix.md",
+                      "sha256":  "fe35795a60b30760d3bef0d565540c10764d7519e3405d227d0733d14b63d72a",
+                      "bytes":  3150
+                  },
+                  {
+                      "path":  "release-report/MDL-8/MDL-8-demo-narrated.mp4",
+                      "sha256":  "fba2f547d33dd4f2bc3566b81d828ac242b85d681ab33c1dd0f9b14f5b3f5ab2",
+                      "bytes":  8695138
+                  },
+                  {
+                      "path":  "release-report/MDL-8/ui-diagnostic.json",
+                      "sha256":  "ea4df2d2cb3cd51e40266c73e1c000d169e1c7cc422e2e0957bac910a11bdf1d",
+                      "bytes":  596
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-01-landing.png",
+                      "sha256":  "0bbc9bca103e8451edcefb83349a68db746af3564fe6811fb1094ca140ec5fe9",
+                      "bytes":  428566
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-02-case-board.png",
+                      "sha256":  "d169f6007a5bf1e17eabd7a2d6a91d5dc938ece3e03b8062b4a58f80e28fc7c0",
+                      "bytes":  638336
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-03-briefing.png",
+                      "sha256":  "84dbbca05bbfbe91138e47d841941ef2f755065fc843baa173442d7f03d819b7",
+                      "bytes":  344928
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-04-investigation.png",
+                      "sha256":  "e976f3fde372fb7beb8e1aa15c3fbad5e2b5a1b5316e25a88adf85fd5c110e56",
+                      "bytes":  56664
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-05-experiment-1.png",
+                      "sha256":  "a78ee70922a40caaac1f4dbc7b672ec9ccd4d1b214f5faf5dc759dbc9d4cf8a0",
+                      "bytes":  629907
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-06-experiment-2.png",
+                      "sha256":  "d6eae2742f996a339f4fd16cbbd04a1538112c0be5233bb7161562b831425b51",
+                      "bytes":  620691
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-06-experiment-3.png",
+                      "sha256":  "f3c4ed14cd3164c1cd8a40181761a673109ce38a45ab12c9df194ee225b15085",
+                      "bytes":  636206
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-06-experiment-4.png",
+                      "sha256":  "3a9d1e0544d9ad9794c16da4a46967639358d3332bd303e070a9f7dc2ced8dea",
+                      "bytes":  628142
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-06-experiment-5.png",
+                      "sha256":  "24b63293750a362db840e63ed5e4ef38beac405abe114fb95dc067dcb99a7d52",
+                      "bytes":  635943
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-10-verdict.png",
+                      "sha256":  "bb8253952e40dacc7928f6720c2fb957af0acecfbb83eb68fa32ee44efdebff0",
+                      "bytes":  639399
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-11-debrief.png",
+                      "sha256":  "63b7d90b12e21817ce53b53feebb53fcc93b00521604def4f5d952e4e329ff15",
+                      "bytes":  1309316
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-public-account.png",
+                      "sha256":  "e845022a7d7a0b8f5c3f1cdee634817f6d06b2f848d350294a36db90714ff194",
+                      "bytes":  273236
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-public-admin.png",
+                      "sha256":  "c32be0fe4edc6c1706d429707cdd0c0dc10b1a76a43ad332cafcf7a1413cb5f6",
+                      "bytes":  317269
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-public-articles.png",
+                      "sha256":  "fc576c04f804786d2daa6f8222823b3b3a9f4503025300d145e8433a52f3c114",
+                      "bytes":  333604
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-public-comments.png",
+                      "sha256":  "bec124b17ea23c81bae19e5af611bf72d0c83f440730c5f825b3a538d03c8fd4",
+                      "bytes":  315948
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-public-feedback.png",
+                      "sha256":  "ccb0bd47c92110343d35e74b78673423c095496a697fc90c9092814c194b04ba",
+                      "bytes":  310754
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-public-groups.png",
+                      "sha256":  "582808c9ffc18bab7cfc267bca698b22fad5bd03a5df15c1dbdea34a0800edda",
+                      "bytes":  363892
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-public-library.png",
+                      "sha256":  "da0902a30c1f09c51afa3f7a0482081a11e904944d41a57d88d49c09c5eb8d36",
+                      "bytes":  304915
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/desktop-public-variants.png",
+                      "sha256":  "f383ee1c3a133fa27fd40fc235cf9a1cdaf9465c516629aa3515f327a4053b09",
+                      "bytes":  330265
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-01-landing.png",
+                      "sha256":  "790ea5e0494660fa500d8365551519cc93d6a494126fef8bc2c2a6b332fcd141",
+                      "bytes":  95024
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-02-case-board.png",
+                      "sha256":  "ef781e722f41368e6e9645981a9a3fc5252898469ee9b5aff8a826ef74124463",
+                      "bytes":  454291
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-03-briefing.png",
+                      "sha256":  "883258cffde2cfd70dedef2b8a4fe7cb9a4739d7c53c0a0d81bf54565fff7a34",
+                      "bytes":  167791
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-04-investigation.png",
+                      "sha256":  "6a79505e6a86829e05cec5f4da962c3f0bd8ff73c86b8df44143fc3a592a19ec",
+                      "bytes":  46227
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-05-experiment-1.png",
+                      "sha256":  "7dc3aa9f63ebec13127114528d2662aa6af6b7311ec6cd623d1e673e775e0f5d",
+                      "bytes":  97050
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-06-experiment-2.png",
+                      "sha256":  "39c652c2d34a2161faaa46128915f6919ff6af4d7054d8ca6a05a27534880f6b",
+                      "bytes":  116035
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-06-experiment-3.png",
+                      "sha256":  "7970eba499dbb92b0bc935a6cd9afcf0eb83fd1ebc10bb96178196b975aaf5c5",
+                      "bytes":  122656
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-06-experiment-4.png",
+                      "sha256":  "23f595a32a2cca10eb0b41d7eee2f082ac220485897c7336d99ca0147eb00d51",
+                      "bytes":  129968
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-06-experiment-5.png",
+                      "sha256":  "0ccdb4c133080ad5de9d8fd8d4c5278908da2a8aaae39b2ffc3fc3876abfbef0",
+                      "bytes":  124558
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-10-verdict.png",
+                      "sha256":  "722811d5c3c9c747160a5ccd518bba61a0ab246602c29328fb8993d7dcb9c2a9",
+                      "bytes":  132114
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-11-debrief.png",
+                      "sha256":  "d197d9140ee64754234d2a45682a3c2d6ea53333142b8c8ed4eee982ee677a57",
+                      "bytes":  892960
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-public-account.png",
+                      "sha256":  "7ef982ab972b96be6633ddb6e36759f52775a9004596a4e737831f94d6d036ef",
+                      "bytes":  87461
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-public-admin.png",
+                      "sha256":  "c249078b496db094d27dc2289d6ad5276611f8205455027d3066a44cb41b84a1",
+                      "bytes":  96487
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-public-articles.png",
+                      "sha256":  "161296cd2d2399d8680ebfd1f7d0bf7d8c0078c6c2a91a6d51164f1fa91d02e4",
+                      "bytes":  120017
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-public-comments.png",
+                      "sha256":  "4cf11ef3c18fbdd8b2a339731367a587973db465e47a94bb070cd6cef143efad",
+                      "bytes":  94965
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-public-feedback.png",
+                      "sha256":  "c3d04f712677d1ce14824a06a9e156ebcdd32f501d6a0a076ea5ee6265c735f7",
+                      "bytes":  87577
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-public-groups.png",
+                      "sha256":  "dcf189c4fff2a02683bd9625e4aad68f4777f445a29ee1466bba23e1c3b334b1",
+                      "bytes":  248903
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-public-library.png",
+                      "sha256":  "9d533e46b94bad6843886d4cfee475c62eb8565c46dfaf908881e0fa13b139b0",
+                      "bytes":  85113
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/mobile-public-variants.png",
+                      "sha256":  "d395c1f8c0a0fa049312299256462e230344cdf91576b77ac790eee9cc8e04b9",
+                      "bytes":  109830
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-01-landing.png",
+                      "sha256":  "5566d95e61ffd1fea8441861f48a863a2ee9cc938d75bba941b785e59671aef4",
+                      "bytes":  153829
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-02-case-board.png",
+                      "sha256":  "90c0781cf363d93a97e6d918b006022cd3350bc98c1e231af9630f5c06737e69",
+                      "bytes":  551641
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-03-briefing.png",
+                      "sha256":  "47a07f7ed5aaf6235822bf1e63b70892fc5516eda442ff92e49716235975465e",
+                      "bytes":  255192
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-04-investigation.png",
+                      "sha256":  "d3f0fb175a62969c29f4d8cc943097b8fe2e06de676a2b5da2686d399711d318",
+                      "bytes":  55506
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-05-experiment-1.png",
+                      "sha256":  "c44bf77a6c52f3f0d88ee8ac3c3b546113fd432fcc9d5a5c6f7874058b206659",
+                      "bytes":  267850
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-06-experiment-2.png",
+                      "sha256":  "a9dae58238a9172ca70af98d3163ba7833a976304ace14942fbb0fe20e12e2cc",
+                      "bytes":  247724
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-06-experiment-3.png",
+                      "sha256":  "f4b30f2fdd468130fa3143754d328e9e2c8bf54ca1d4c515af07f3d0e898066a",
+                      "bytes":  272839
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-06-experiment-4.png",
+                      "sha256":  "5be13219c5a2be7f738249c731efb5beac199516d790a0f9664000a319e2394d",
+                      "bytes":  264464
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-06-experiment-5.png",
+                      "sha256":  "da299fddbff5aba294cfbc6559b41dae8fdc0b25b3c0f44b10eeeb769a54e0cf",
+                      "bytes":  272769
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-10-verdict.png",
+                      "sha256":  "022fb3a1cbe7f8c98c7e964d08ce983c6a73cb22bd58a8e367efb72a32b4206a",
+                      "bytes":  273681
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-11-debrief.png",
+                      "sha256":  "ed82978dbec87f288a1b304f5957d884f342ac95827699515b9162646c181612",
+                      "bytes":  445296
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-public-account.png",
+                      "sha256":  "39c3e17e6e63ed856f819d368166bb9214195f05de5d74a7af0221d8ffe8cfec",
+                      "bytes":  180268
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-public-admin.png",
+                      "sha256":  "4ee35a1032ebbb52c474857daaaa33c4ec9c13f812fc9dcb50cfd1d6a4e7390d",
+                      "bytes":  213431
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-public-articles.png",
+                      "sha256":  "91ccac8b63865252f59e47bd4a075040382e9ed6f4085912a06ce4db23c7e7d4",
+                      "bytes":  233379
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-public-comments.png",
+                      "sha256":  "62f96b81a52a8368f5a0c77fd955101edd4ea32dce28add96ede85c89071f433",
+                      "bytes":  209264
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-public-feedback.png",
+                      "sha256":  "63816a373de750980989ebc06364468f1e90506f3865a666df26b05ca5bc2f8d",
+                      "bytes":  203866
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-public-groups.png",
+                      "sha256":  "d1349d9c443c31553fb179c701e7daa77bfccab286219afd83c97d2e5c0166fb",
+                      "bytes":  289759
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-public-library.png",
+                      "sha256":  "53c5292cf93227308ad8b45879679ae12ad817a88a49e10367eb0dd94e4926ad",
+                      "bytes":  203399
+                  },
+                  {
+                      "path":  "release-report/MDL-8/screenshots/tablet-public-variants.png",
+                      "sha256":  "eee0e20013282e0686191ad1698bb9bb863b320d7fb6b5aa49a425032d9f41c2",
+                      "bytes":  229882
+                  },
+                  {
+                      "path":  "requirements.txt",
+                      "sha256":  "c56b797bc72d086d443e135b575cad02a14a33a27024b464abf9107a5774349e",
+                      "bytes":  147
+                  },
+                  {
+                      "path":  "server/genie.py",
+                      "sha256":  "fc9f121986c1fffe6db5f4260bc8321b2103ec416da8a4e67fb60a04effd3866",
+                      "bytes":  21310
+                  },
+                  {
+                      "path":  "server/main.py",
+                      "sha256":  "7218c8c8ac7cd59b92a0ef5623d4fba46cd0758ce76a11e53b34d7fb18d0e708",
+                      "bytes":  56199
+                  },
+                  {
+                      "path":  "src/main.jsx",
+                      "sha256":  "5731372d3d2bbb41df531d5314c3427e7fd64e73e1b51e7ce2222b0b56b8d32e",
+                      "bytes":  46865
+                  },
+                  {
+                      "path":  "uv.lock",
+                      "sha256":  "58150c1c0e2676a3d38efa284ac01d014d5702a599ab08f38e40db04a2daa07e",
+                      "bytes":  124023
+                  }
+              ],
+    "pending_external":  [
+                             "final public-link confirmation",
+                             "submission-form acceptance"
+                         ]
+}

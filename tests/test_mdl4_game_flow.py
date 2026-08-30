@@ -197,7 +197,7 @@ class MDL4FlowTests(unittest.TestCase):
         self.assertEqual(replay.json(), first.json())
         self.assertEqual(len([e for e in SESSIONS[sid]["events"] if e["type"] == "INITIAL_PREDICTION_SUBMITTED"]), 1)
 
-    def test_live_genie_failure_never_substitutes_scripted_experiment(self):
+    def test_live_genie_failure_uses_safe_registered_recovery(self):
         sid = self.client.post("/api/sessions", json={"case_id": "CASE_0042"}).json()["session_id"]
         self.client.post(f"/api/sessions/{sid}/start")
         SESSIONS[sid]["conversation_id"] = "live-conversation"
@@ -210,9 +210,9 @@ class MDL4FlowTests(unittest.TestCase):
 
         with patch("server.main.genie", FailedLiveGenie()):
             response = self.client.post(f"/api/sessions/{sid}/next", json={})
-        self.assertEqual(response.status_code, 503)
-        self.assertEqual(response.json()["detail"]["code"], "GENIE_EXPERIMENT_UNAVAILABLE")
-        self.assertEqual(SESSIONS[sid]["completed"], [])
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["source"], "genie-recovery-continuation")
+        self.assertEqual(SESSIONS[sid]["completed"], ["COMPONENT_DECOMPOSITION"])
 
     def test_expired_session_is_not_reconstructed_and_restart_uses_new_id(self):
         sid = self.client.post("/api/sessions", json={"case_id": "CASE_0042"}).json()["session_id"]

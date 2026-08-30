@@ -30,7 +30,7 @@ const INITIAL_CASE = { id: "CASE_0042", number: "042", title: "Loading case…",
 const formatMoney = (value) => `${value < 0 ? "-" : ""}€${Math.abs(value).toFixed(1)}M`;
 
 function App() {
-  const [screen, setScreen] = useState("board");
+  const [screen, setScreen] = useState("landing");
   const [exp, setExp] = useState(-1);
   const [prediction, setPrediction] = useState("");
   const [experiment, setExperiment] = useState(null);
@@ -54,6 +54,8 @@ function App() {
     catch { return []; }
   });
   const [panel, setPanel] = useState(null);
+  const [language, setLanguage] = useState(() => localStorage.getItem("mad-data-lab-language") || "en");
+  const [theme, setTheme] = useState(() => localStorage.getItem("mad-data-lab-theme") || "lab");
   const [reducedMotion, setReducedMotion] = useState(() => localStorage.getItem("mad-data-lab-reduced-motion") === "on");
   const [caseCatalog, setCaseCatalog] = useState(CASES);
   const [catalogLoading, setCatalogLoading] = useState(true);
@@ -66,6 +68,54 @@ function App() {
   const recoveryAttempted = useRef(false);
   const audioRef = useRef(null);
   const modalRef = useRef(null);
+  const publicScreens = new Set(["library", "articles", "groups", "variants", "feedback", "comments", "account", "admin"]);
+  useEffect(() => {
+    const fromPath = window.location.pathname.replace(/^\//, "");
+    if (publicScreens.has(fromPath)) setScreen(fromPath);
+    const onPop = () => {
+      const path = window.location.pathname.replace(/^\//, "");
+      setScreen(publicScreens.has(path) ? path : "board");
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+  const goPublic = (path) => {
+    const landing = path === "board";
+    window.history.pushState({}, "", landing ? "/" : `/${path}`);
+    setScreen(landing ? "landing" : path);
+    setPanel(null);
+  };
+  const persistLanguage = (value) => { setLanguage(value); localStorage.setItem("mad-data-lab-language", value); };
+  const persistTheme = (value) => { setTheme(value); localStorage.setItem("mad-data-lab-theme", value); };
+  const publicCopy = language === "es" ? {
+    archive: "MAD DATA LAB · ARCHIVO PÚBLICO",
+    returnToLab: "VOLVER AL LABORATORIO",
+    articlesTitle: "Artículos de la comunidad",
+    articlesIntro: "Lee la historia del laboratorio, el protocolo de Genie y las decisiones de diseño basadas en evidencias.",
+    articleTitle: "Maravilloso. Algo no cuadra.",
+    articleBody: "Convierte números inesperados en investigaciones científicas reproducibles.",
+    libraryTitle: "Biblioteca de evidencias", libraryIntro: "Explora los instrumentos analíticos, conceptos y casos reproducibles del laboratorio.", browseGroups: "EXPLORAR GRUPOS", caseVariants: "VARIANTES DEL CASO",
+    groupsTitle: "Grupos de casos", groupsIntro: "Los casos se organizan por la pregunta analítica que enseñan.", groupBody: "Investigaciones guiadas por evidencias.",
+    variantsTitle: "Variantes del caso", variantsIntro: "Las variantes son versiones controladas del contrato del caso.", canonical: "CASE #042 · Canónico", canonicalBody: "Datos sintéticos deterministas, cinco experimentos registrados y evidencia autoritativa del servidor.", openBoard: "ABRIR TABLERO DEL CASO",
+    feedbackTitle: "Comentarios", feedbackIntro: "Cuéntanos qué ayudó y qué se interpuso.", message: "Mensaje", sendFeedback: "ENVIAR COMENTARIOS", feedbackSaved: "Comentarios guardados localmente durante esta sesión.",
+    commentsTitle: "Comentarios de la investigación", commentsIntro: "Deja una nota local sobre el caso mientras revisas la evidencia.", comment: "Comentario", postComment: "PUBLICAR COMENTARIO", commentSaved: "Comentario guardado localmente durante esta sesión.",
+    accountTitle: "Cuenta y suscripción", accountIntro: "El progreso y las preferencias se guardan localmente en esta versión candidata.", language: "Idioma", theme: "Tema", manageSubscription: "GESTIONAR SUSCRIPCIÓN", subscriptionDisabled: "El checkout de suscripción no está habilitado en esta versión candidata local.",
+    adminTitle: "Administración", adminIntro: "Diagnósticos de release y visibilidad controlada del catálogo.",
+  } : {
+    archive: "MAD DATA LAB · PUBLIC ARCHIVE",
+    returnToLab: "RETURN TO LAB",
+    articlesTitle: "Community Articles",
+    articlesIntro: "Read the laboratory story, the Genie protocol and the evidence-first design decisions.",
+    articleTitle: "Wonderful. Something Is Wrong.",
+    articleBody: "Turn unexpected numbers into reproducible scientific investigations.",
+    libraryTitle: "Evidence Library", libraryIntro: "Explore the analytical instruments, concepts and reproducible Cases behind the laboratory.", browseGroups: "BROWSE GROUPS", caseVariants: "CASE VARIANTS",
+    groupsTitle: "Case Groups", groupsIntro: "Cases are organized by the analytical question they teach.", groupBody: "Evidence-led investigations in this group.",
+    variantsTitle: "Case Variants", variantsIntro: "Variants are controlled releases of a Case contract.", canonical: "CASE #042 · Canonical", canonicalBody: "Deterministic synthetic data, five registered experiments and server-authoritative evidence.", openBoard: "OPEN CASE BOARD",
+    feedbackTitle: "Feedback", feedbackIntro: "Tell the lab team what helped or got in the way.", message: "Message", sendFeedback: "SEND FEEDBACK", feedbackSaved: "Feedback saved locally for this session.",
+    commentsTitle: "Investigation Comments", commentsIntro: "Leave a local note on the current Case while reviewing evidence.", comment: "Comment", postComment: "POST COMMENT", commentSaved: "Comment saved locally for this session.",
+    accountTitle: "Account & Subscription", accountIntro: "Progress and preferences are stored locally in this release candidate.", language: "Language", theme: "Theme", manageSubscription: "MANAGE SUBSCRIPTION", subscriptionDisabled: "Subscription checkout is not enabled in this local release candidate.",
+    adminTitle: "Administration", adminIntro: "Release diagnostics and controlled catalog visibility.",
+  };
   useEffect(() => {
     listCases()
       .then((result) => {
@@ -381,6 +431,8 @@ function App() {
           <small>{formatMoney(deviation)} SUSPECTED BUT NOT EXPLAINED</small>
         </div>
         <div className="controls">
+          <button className="nav-link" aria-label="Library" onClick={() => goPublic("library")}>LIBRARY</button>
+          <button className="nav-link" aria-label="Articles" onClick={() => goPublic("articles")}>ARTICLES</button>
           <button aria-label="Help" onClick={() => setPanel("help")}>?</button>
           <button aria-label="Log" onClick={() => setPanel("log")}>▤</button>
           <button aria-label="Settings" onClick={() => setPanel("settings")}>⚙</button>
@@ -420,9 +472,9 @@ function App() {
       )}
       {serviceError && (
         <section className="error-panel mdl6-recovery-state" role="alert" aria-labelledby="error-title">
-          <img className="mdl6-recovery-art" src="/assets/mdl6-recovery-background.png" alt="" aria-hidden="true" />
+          <img className="mdl6-recovery-art" src="/assets/pixelart/lab-glitch-shrug.png" alt="" aria-hidden="true" />
           <p className="eyebrow">LAB RECOVERY</p>
-          <h2 id="error-title">The investigation needs attention.</h2>
+          <h2 id="error-title">The lab has entered silly mode.</h2>
           <p>{serviceError}</p>
           {diagnosticId && <small>Diagnostic ID: {diagnosticId}</small>}
           <div className="error-actions">
@@ -431,7 +483,18 @@ function App() {
           </div>
         </section>
       )}
-      {screen === "board" && (
+      {publicScreens.has(screen) && <main className="hub public-hub">
+        <div className="public-hub-header"><p className="eyebrow">{publicCopy.archive}</p><button className="text-button" onClick={() => goPublic("board")}>{publicCopy.returnToLab}</button></div>
+        {screen === "library" && <><h1>{publicCopy.libraryTitle}</h1><p>{publicCopy.libraryIntro}</p><div className="cards"><button className="primary" onClick={() => goPublic("groups")}>{publicCopy.browseGroups}</button><button className="secondary" onClick={() => goPublic("variants")}>{publicCopy.caseVariants}</button></div></>}
+        {screen === "articles" && <><h1>{publicCopy.articlesTitle}</h1><p>{publicCopy.articlesIntro}</p><article className="case-card featured"><h2>{publicCopy.articleTitle}</h2><p>{publicCopy.articleBody}</p></article></>}
+        {screen === "groups" && <><h1>{publicCopy.groupsTitle}</h1><p>{publicCopy.groupsIntro}</p><div className="cards">{["Decomposition", "Snapshots", "Data quality", "Lineage"].map((item) => <article className="case-card" key={item}><h2>{item}</h2><p>{publicCopy.groupBody}</p></article>)}</div></>}
+        {screen === "variants" && <><h1>{publicCopy.variantsTitle}</h1><p>{publicCopy.variantsIntro}</p><article className="case-card featured"><h2>{publicCopy.canonical}</h2><p>{publicCopy.canonicalBody}</p><button className="primary" onClick={() => goPublic("board")}>{publicCopy.openBoard}</button></article></>}
+        {screen === "feedback" && <><h1>{publicCopy.feedbackTitle}</h1><p>{publicCopy.feedbackIntro}</p><form onSubmit={(event) => { event.preventDefault(); localStorage.setItem("mad-data-lab-feedback", "saved"); setServiceError(publicCopy.feedbackSaved); }}><label htmlFor="feedback-message">{publicCopy.message}</label><textarea id="feedback-message" required rows="5" /><button className="primary" type="submit">{publicCopy.sendFeedback}</button></form></>}
+        {screen === "comments" && <><h1>{publicCopy.commentsTitle}</h1><p>{publicCopy.commentsIntro}</p><form onSubmit={(event) => { event.preventDefault(); localStorage.setItem("mad-data-lab-comment", "saved"); setServiceError(publicCopy.commentSaved); }}><label htmlFor="comment-message">{publicCopy.comment}</label><textarea id="comment-message" required rows="5" /><button className="primary" type="submit">{publicCopy.postComment}</button></form></>}
+        {screen === "account" && <><h1>{publicCopy.accountTitle}</h1><p>{publicCopy.accountIntro}</p><label className="setting-row"><span>{publicCopy.language}</span><select value={language} onChange={(event) => persistLanguage(event.target.value)}><option value="en">English</option><option value="es">Español</option></select></label><label className="setting-row"><span>{publicCopy.theme}</span><select value={theme} onChange={(event) => persistTheme(event.target.value)}><option value="lab">Lab dark</option><option value="high-contrast">High contrast</option></select></label><button className="secondary" onClick={() => setServiceError(publicCopy.subscriptionDisabled)}>{publicCopy.manageSubscription}</button></>}
+        {screen === "admin" && <><h1>{publicCopy.adminTitle}</h1><p>{publicCopy.adminIntro}</p><pre>{JSON.stringify({cases: caseCatalog.length, badges: earnedBadges.length, theme, language}, null, 2)}</pre></>}
+      </main>}
+      {(screen === "landing" || screen === "board") && (
         <main className="hub">
           <div className="hero">
             <img className="hero-art" src="/assets/Mad_Data_Lab.png" alt="MAD DATA LAB pixel-art laboratory" />
@@ -441,9 +504,9 @@ function App() {
                 DR. GENIE'S EXPERIMENTAL DATA LABORATORY
               </p>
               <h1>Turn suspicious numbers into explainable experiments.</h1>
-              <button className="primary" onClick={start}>
+              {screen === "landing" && <button className="primary" aria-label="OPEN CASE BOARD" onClick={() => setScreen("board")}>
                 OPEN CASE BOARD <span>→</span>
-              </button>
+              </button>}
             </div>
           </div>
           <section className="case-board">
@@ -494,6 +557,9 @@ function App() {
               Someone expected <strong>{formatMoney(expected)}</strong> in {active.metric}.
               The current snapshot reports <strong>{formatMoney(observed)}</strong>.
             </p>
+            <button className="primary" onClick={begin}>
+              START INVESTIGATION <span>→</span>
+            </button>
             <div className="metric">
               <span>DEVIATION</span>
               <strong>{formatMoney(deviation)}</strong>
@@ -505,9 +571,6 @@ function App() {
               “Welcome, data detective. Form a theory, then let’s make the
               numbers confess.”
             </p>
-            <button className="primary" onClick={begin}>
-              START INVESTIGATION <span>→</span>
-            </button>
             <button className="text-button" onClick={() => setScreen("board")}>
               ← Back to Case Board
             </button>

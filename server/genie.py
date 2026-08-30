@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 import time
 from datetime import timedelta
@@ -11,30 +12,41 @@ from .catalog import DEFAULT_CASE_ID, get_any_case
 from .config import load_settings
 from backend.genie.protocol import validate_control_response
 
+logger = logging.getLogger(__name__)
+
 
 class CircuitOpenError(RuntimeError):
     """Raised when a session has exceeded its consecutive live-failure budget."""
 
 
 class SessionCircuitBreaker:
-    """Small in-memory breaker; state is scoped to one session by the caller."""
-    def __init__(self, threshold: int = 3) -> None:
+    """Session-scoped breaker with a bounded recovery window."""
+    def __init__(self, threshold: int = 5, recovery_seconds: float = 60.0) -> None:
         self.threshold = threshold
+        self.recovery_seconds = recovery_seconds
         self.consecutive_failures = 0
         self.open = False
+        self.opened_at: float | None = None
 
     def before_request(self) -> None:
         if self.open:
-            raise CircuitOpenError("Genie recovery is required for this session")
+            if self.opened_at is None or time.monotonic() - self.opened_at < self.recovery_seconds:
+                raise CircuitOpenError("Genie recovery is cooling down for this session")
+            # Half-open probe: success closes the breaker; failure re-opens it.
+            self.open = False
+            self.consecutive_failures = 0
+            self.opened_at = None
 
     def record_success(self) -> None:
         self.consecutive_failures = 0
         self.open = False
+        self.opened_at = None
 
     def record_failure(self) -> None:
         self.consecutive_failures += 1
         if self.consecutive_failures >= self.threshold:
             self.open = True
+            self.opened_at = time.monotonic()
 
 
 # The Genie protocol is a runtime contract. Keep it independent from the
@@ -246,8 +258,10 @@ class GenieAdapter:
             if status.endswith("COMPLETED") or (status.endswith("ASKING_AI") and has_answer):
                 return last
             if status.endswith("FAILED"):
+                logger.warning("Genie message failed", extra={"conversation_id": conversation_id, "message_id": message_id, "raw_status": status})
                 raise RuntimeError("Genie message failed")
             if status.endswith("CANCELED") or status.endswith("CANCELLED"):
+                logger.warning("Genie message canceled", extra={"conversation_id": conversation_id, "message_id": message_id, "raw_status": status})
                 raise RuntimeError("Genie message was canceled")
             self._sleeper(max(0.05, settings.genie_poll_interval_ms / 1000))
         raise TimeoutError(f"Genie message did not complete: {status or last}")
@@ -308,8 +322,8 @@ class GenieAdapter:
         allowed = {item.id for item in registered}
         last_error = None
         conversation_id = None
-        # One original response plus exactly one protocol repair attempt.
-        for _ in range(2):
+        # One original response plus bounded protocol/backend recovery attempts.
+        for _ in range(3):
             if _ == 0:
                 waiter = self._workspace().genie.start_conversation(space_id=self.space_id, content=system_prompt(case_id))
             else:
@@ -327,7 +341,14 @@ class GenieAdapter:
                         "Set target_component to null unless experiment_id is SNAPSHOT_DIFF; then use exactly V1, V2, V3, or V4."
                     ),
                 )
-            response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
+            try:
+                response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
+            except (RuntimeError, TimeoutError) as exc:
+                last_error = exc
+                if _ < 2:
+                    self._sleeper(0.5 * (_ + 1))
+                    continue
+                raise
             conversation_id = getattr(response, "conversation_id", None) or waiter.conversation_id
             try:
                 return {"conversation_id": getattr(response, "conversation_id", None), "message": self._control_message(response, case_id, allowed)}
@@ -342,12 +363,19 @@ class GenieAdapter:
         if not allowed:
             raise ValueError("no registered Experiments remain")
         last_error = None
-        for _ in range(2):
+        for _ in range(3):
             waiter = self._workspace().genie.create_message(
                 space_id=self.space_id, conversation_id=conversation_id,
                 content=f"{system_prompt(case_id)}\n\nInvestigation context: {context}",
             )
-            response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
+            try:
+                response = self._wait_for_message(waiter.conversation_id, waiter.message_id)
+            except (RuntimeError, TimeoutError) as exc:
+                last_error = exc
+                if _ < 2:
+                    self._sleeper(0.5 * (_ + 1))
+                    continue
+                raise
             try:
                 message = self._control_message(response, case_id, allowed)
                 # The canonical V3 protocol nests the selection, while the

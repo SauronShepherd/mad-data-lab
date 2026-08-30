@@ -1,0 +1,20 @@
+{
+  "case_id": "CASE_0042",
+  "case_title": "The Missing \u20ac6.8M",
+  "conclusion_status": "CONCLUDING",
+  "experiments": [
+    "SNAPSHOT_DIFF",
+    "DQ_MATERIALITY",
+    "FORMULA_VALIDATION",
+    "RECONCILIATION",
+    "COMPONENT_DECOMPOSITION"
+  ],
+  "finished_at": "2026-08-27T12:34:18.109706+00:00",
+  "health": "ok",
+  "iteration": "MDL-4",
+  "score": 1000,
+  "session_id_sha256": "82e6925a1ad12df75ed72ddbc60151e69ba7f31319e94cc45440776954ccd4b8",
+  "started_at": "2026-08-27T12:31:43.104138+00:00",
+  "state": "DEBRIEF",
+  "status": "PASS"
+}

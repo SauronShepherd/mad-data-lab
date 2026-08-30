@@ -1,0 +1,5 @@
+{
+  "status": "PASS",
+  "public_fixture_excludes_private_truth": true,
+  "private_fixture": "data/fixtures/private/case_0042_truth.json"
+}

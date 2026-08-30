@@ -13,5 +13,9 @@ export default defineConfig({
     ...(appToken ? { extraHTTPHeaders: { Authorization: `Bearer ${appToken}` } } : {}),
   },
   ...(useWebServer ? { webServer: { command: 'python -m server.run', url: 'http://127.0.0.1:8000/health', reuseExistingServer: true, timeout: 30_000 } } : {}),
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }]
+  projects: [
+    { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
+    { name: 'tablet', use: { ...devices['Desktop Chrome'], viewport: { width: 1024, height: 768 }, isMobile: true, hasTouch: true } },
+    { name: 'mobile', use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } },
+  ]
 });

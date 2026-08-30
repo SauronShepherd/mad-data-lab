@@ -13,7 +13,7 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query, Request, Header
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -865,16 +865,18 @@ def next_experiment(request: ExperimentRequest) -> dict:
             return message
         except Exception as exc:
             LOGGER.exception("live Genie next failed")
-            # Once the server's allowed set is a singleton, no open-ended
-            # model reselection is necessary. Continue with that one
-            # server-owned registered Experiment and its trusted payload;
-            # never accept the invalid model-selected ID.
+            # Genie has already been asked and failed after its bounded retry
+            # budget. Keep the investigation playable by selecting the next
+            # server-owned experiment. This is a recovery path, not a second
+            # model or arbitrary SQL path: the registered experiment and its
+            # trusted payload remain authoritative.
             remaining = [experiment for experiment in experiments if experiment.id not in completed]
-            if len(remaining) == 1:
-                index = next(i for i, experiment in enumerate(experiments) if experiment.id == remaining[0].id)
-                return experiment_payload(remaining[0], index, request.case_id) | {
-                    "source": "genie-singleton-continuation",
-                    "selection_note": "The server continued the only remaining allowed Experiment after an invalid Genie reselection.",
+            if remaining:
+                selected = remaining[0]
+                index = next(i for i, experiment in enumerate(experiments) if experiment.id == selected.id)
+                return experiment_payload(selected, index, request.case_id) | {
+                    "source": "genie-recovery-continuation",
+                    "selection_note": "Genie was temporarily unavailable; the server continued with the next registered experiment.",
                 }
             raise HTTPException(status_code=503, detail="Live Genie is unavailable") from exc
     index = next((i for i, experiment in enumerate(experiments) if experiment.id not in completed), None)
@@ -935,4 +937,14 @@ if load_settings().local_a11y_test and AXE.exists():
         return f'''<!doctype html><html lang="en"><head><meta charset="UTF-8"><title>MAD DATA LAB accessibility harness</title><script src="/__test__/axe.min.js"></script></head><body><div id="root"></div><div id="axe-result" role="status">running</div><script type="module" src="/assets/{bundle.name}"></script><script>setTimeout(()=>axe.run().then(r=>document.getElementById("axe-result").textContent=JSON.stringify({{violations:r.violations.map(v=>({{id:v.id,impact:v.impact,nodes:v.nodes.length}})),passes:r.passes.length}})),1500);</script></body></html>'''
     app.mount("/__test__", StaticFiles(directory=AXE), name="local-a11y-test")
 if DIST.exists():
+    # StaticFiles does not reliably perform SPA fallback for deep links on all
+    # Starlette versions. Keep public client routes directly navigable in the
+    # deployed Databricks App as well as in local Playwright runs.
+    def spa_deep_link():
+        index = DIST / "index.html"
+        if not index.exists():
+            raise HTTPException(status_code=503, detail="frontend bundle is missing")
+        return FileResponse(index)
+    for _route in ("library", "articles", "groups", "variants", "feedback", "comments", "account", "admin"):
+        app.add_api_route(f"/{_route}", spa_deep_link, methods=["GET"], include_in_schema=False)
     app.mount("/", StaticFiles(directory=DIST, html=True), name="frontend")

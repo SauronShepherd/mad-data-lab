@@ -6,7 +6,7 @@ import pytest
 from server.genie import GenieAdapter
 
 
-def test_start_allows_only_one_repair_attempt():
+def test_start_allows_bounded_repair_attempts():
     adapter = GenieAdapter()
     adapter.space_id = "space"
     response = SimpleNamespace(conversation_id="c", message_id="m")
@@ -17,4 +17,4 @@ def test_start_allows_only_one_repair_attempt():
     with patch.object(adapter, "_workspace", return_value=workspace), patch.object(adapter, "_wait_for_message", return_value=SimpleNamespace(content="invalid", attachments=[], conversation_id="c", message_id="m")), patch.object(adapter, "_control_message", side_effect=ValueError("invalid")) as control:
         with pytest.raises(ValueError):
             adapter.start("CASE_0042")
-    assert control.call_count == 2
+    assert control.call_count == 3

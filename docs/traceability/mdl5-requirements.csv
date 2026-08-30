@@ -1,0 +1,26 @@
+requirement_id,requirement,implementation,tests,release_evidence,status
+MDL5-001,MDL-5 entry and predecessor identity,docs/iterations/MDL-5-entry.md,tests/test_mdl5_traceability.py,release-report/MDL-5/manifest.json,implemented
+MDL5-002,Semantic visual tokens,src/styles/tokens.css,tests/test_mdl5_traceability.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-003,Responsive Investigation shell,src/main.jsx;src/styles.css,tests/browser/app.spec.ts,release-report/MDL-5/smoke.json,partial
+MDL5-004,Closed Instrument registry,src/instruments.jsx,tests/test_mdl5_instruments.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-005,KPI delta,src/instruments.jsx;server/case_data.py,tests/test_mdl5_instruments.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-006,Validated waterfall,src/instruments.jsx;server/case_data.py,tests/test_mdl5_instruments.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-007,Validated snapshot diff,src/instruments.jsx;server/case_data.py,tests/test_mdl5_instruments.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-008,Evidence table and server data,src/instruments.jsx;server/main.py,tests/test_case_contract.py;tests/test_mdl5_instruments.py,release-report/MDL-5/local-gate.json,partial
+MDL5-009,DQ overlap non-additive warning,src/instruments.jsx;server/case_data.py,tests/test_mdl5_instruments.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-010,Formula ID/hash comparison,src/instruments.jsx;server/case_data.py,tests/test_mdl5_instruments.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-011,Deterministic lineage and textual path,src/instruments.jsx;server/case_data.py,tests/test_mdl5_instruments.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-012,Reconciliation model,src/instruments.jsx;server/case_data.py,tests/test_mdl5_instruments.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-013,Evidence inspection reward,src/main.jsx;server/main.py,tests/test_case_contract.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-014,No CSS analytical claims,src/evidence-polish.css,tests/test_mdl5_instruments.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-015,MDL-4 historical manifest preservation,scripts/generate_mdl4_manifest.py,tests/test_mdl4_manifest.py,release-report/MDL-4/manifest.json,implemented
+MDL5-016,Full Python gate,scripts/pytest_gate.py,tests/test_pytest_gate.py,release-report/MDL-5/pytest-gate.xml,implemented
+MDL5-017,Local contract gate matrix,.github/workflows/ci.yml;scripts/,tests/test_mdl5_traceability.py,release-report/MDL-5/local-gate.json,implemented
+MDL5-018,Playwright browser coverage,tests/browser/,tests/browser/app.spec.ts,release-report/MDL-5/browser-report.json,implemented
+MDL5-019,Accessibility automation,scripts/a11y_gate.py;src/,tests/test_mdl5_traceability.py,release-report/MDL-5/a11y.json,partial
+MDL5-020,Visual regression coverage,scripts/visual_gate.py;tests/browser/,tests/test_mdl5_traceability.py,release-report/MDL-5/visual.json,partial
+MDL5-021,MDL5 artwork A08-A13,assets/art_source_manifest.yaml;assets/review/MDL-5/,tests/test_mdl5_traceability.py,release-report/MDL-5/art-preflight.json,pending
+MDL5-022,Human exact-byte artwork approval,docs/approvals/MDL-5-art.md,manual review,release-report/MDL-5/art-approval.json,pending
+MDL5-023,Databricks staging deployment,databricks.yml;resources/,scripts/deployed_smoke.py,release-report/MDL-5/deployment.json,pending
+MDL5-024,Live Genie evaluation,server/genie.py;scripts/run_mdl3_benchmark.py,scripts/live_genie_check.py,release-report/MDL-5/genie-evaluation.json,pending
+MDL5-025,MDL5 release report,docs/iterations/MDL-5-report.md,tests/test_mdl5_traceability.py,release-report/MDL-5/final-summary.json,implemented

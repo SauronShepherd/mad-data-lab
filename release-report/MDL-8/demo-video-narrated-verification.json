@@ -1,0 +1,12 @@
+{
+  "status": "PASS_TECHNICAL_FORMAT",
+  "file": "release-report/MDL-8/MDL-8-demo-narrated.mp4",
+  "duration_seconds": 164,
+  "width": 1920,
+  "height": 1080,
+  "video_codec": "h264",
+  "audio_codec": "aac",
+  "narration": "Microsoft Zira Desktop, English, generated from the MDL-8 required narrative",
+  "music_mix": "project curiosity track mixed beneath narration",
+  "human_review": "PENDING_REVIEW"
+}

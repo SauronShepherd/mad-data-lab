@@ -1,0 +1,12 @@
+{
+  "status": "RUNNING",
+  "profile": "mdl",
+  "app_name": "mad-data-lab",
+  "deployment_id": "01f1a4281fdb1fea92fc7c9300ea4c58",
+  "deployment_state": "SUCCEEDED",
+  "app_state": "RUNNING",
+  "compute_state": "ACTIVE",
+  "url": "https://mad-data-lab-7474643947913626.aws.databricksapps.com",
+  "http_smoke": {"/": 200, "/library": 200, "/articles": 200, "/groups": 200, "/variants": 200, "/feedback": 200, "/comments": 200, "/account": 200, "/admin": 200},
+  "note": "Redeployed under a new Databricks Free Edition account/workspace on 2026-08-30; deployment 01f1a4281fdb1fea92fc7c9300ea4c58 contains Genie backend retry logging and bounded session circuit-breaker recovery, and passed the deployed smoke gate."
+}

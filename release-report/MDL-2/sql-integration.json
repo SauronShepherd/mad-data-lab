@@ -1,0 +1,65 @@
+{
+  "case_id": "CASE_0042",
+  "catalog": "sda_dev",
+  "queries": [
+    "Q1",
+    "Q2",
+    "Q3",
+    "Q4",
+    "Q5",
+    "Q6",
+    "Q7",
+    "Q8"
+  ],
+  "row_counts": {
+    "Q1": 1,
+    "Q2": 4,
+    "Q3": 3,
+    "Q4": 30,
+    "Q5": 1,
+    "Q6": 1,
+    "Q7": 5,
+    "Q8": 1
+  },
+  "sq_checks": {
+    "SQ-001": "PASS",
+    "SQ-002": "PASS",
+    "SQ-003": "PASS",
+    "SQ-004": "PASS",
+    "SQ-005": "PASS",
+    "SQ-006": "PASS",
+    "SQ-007": "PASS",
+    "SQ-008": "PASS",
+    "SQ-009": "PASS",
+    "SQ-010": "PASS",
+    "SQ-011": "PASS",
+    "SQ-012": "PASS",
+    "SQ-013": "PASS",
+    "SQ-014": "PASS",
+    "SQ-015": "PASS",
+    "SQ-016": "PASS",
+    "SQ-017": "PASS",
+    "SQ-018": "PASS",
+    "SQ-019": "PASS",
+    "SQ-020": "PASS"
+  },
+  "status": "PASS",
+  "timings_seconds": {
+    "Q1": 4.0875,
+    "Q2": 2.3192,
+    "Q3": 2.5615,
+    "Q4": 1.4994,
+    "Q5": 2.4842,
+    "Q6": 1.5085,
+    "Q7": 2.5286,
+    "Q8": 1.8413
+  },
+  "value_checks": {
+    "Q1_deviation": "PASS",
+    "Q1_expected": "PASS",
+    "Q1_formula_hash": "PASS",
+    "Q1_observed": "PASS",
+    "Q2_component_total": "PASS",
+    "Q8_residual": "PASS"
+  }
+}

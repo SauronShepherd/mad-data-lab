@@ -1,8 +1,8 @@
 {
-  "space_id": "01f1a11f6c281e79bd1e0c448055fbdd",
+  "space_id": "01f19eb4ac691d2c88e7b18a6da39b3b",
   "title": "MAD DATA LAB - Case 042",
-  "warehouse_id": "02addf2c2a0a755b",
-  "catalog": "workspace",
-  "schema": "mad_data_lab",
+  "warehouse_id": "e444f39962128242",
+  "catalog": "sda_dev",
+  "schema": "mad_data_lab_curated",
   "created_with_profile": "mdl"
 }

@@ -68,8 +68,8 @@ python scripts/release_check.py
 The hidden case truth is not sent to Genie. Only curated experiment context and the player's prediction are included in follow-up prompts.
 
 Submission support artifacts are in `docs/architecture.md`,
-`docs/community_article_draft.md`, `docs/submission_checklist.md`, and
-`docs/implementation_audit.md`.
+`docs/community-article.md`, `docs/submission-checklist.md`,
+`docs/iterations/MDL-8-final-audit.md`, and `docs/MDL-8-submit-runbook.md`.
 
 ## Audio assets
 

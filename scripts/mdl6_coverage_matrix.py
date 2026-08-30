@@ -8,6 +8,7 @@ human approval are explicit non-applicable policy fields, never blockers.
 from __future__ import annotations
 
 import json
+import csv
 from pathlib import Path
 import sys
 
@@ -124,6 +125,12 @@ def build_matrix() -> list[dict[str, str]]:
 
 def main() -> int:
     rows = build_matrix()
+    traceability = ROOT / "docs/traceability/mdl6-requirements.csv"
+    traceability.parent.mkdir(parents=True, exist_ok=True)
+    with traceability.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(rows)
     result = {
         "status": "PASS" if all(row["status"] == "PASS_IMPLEMENTED" for row in rows) else "PARTIAL",
         "acceptance_policy": {

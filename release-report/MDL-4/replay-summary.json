@@ -1,0 +1,4 @@
+{
+  "status": "PASS",
+  "properties": ["score_reducer_is_deterministic", "duplicate_score_keys_are_ignored", "idempotent_prediction_replay", "idempotent_debrief_replay", "stale_revision_rejected"]
+}

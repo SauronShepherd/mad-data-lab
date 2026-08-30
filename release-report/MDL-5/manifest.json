@@ -1,0 +1,17 @@
+{
+  "iteration": "MDL-5",
+  "branch": "MDL-5",
+  "predecessor": {
+    "iteration": "MDL-4",
+    "accepted_sha": "f7d2f4d7255373bbed4d036561ea2ff3342ba4a7",
+    "ci_run": 33082673080
+  },
+  "rollback_point": "f7d2f4d7255373bbed4d036561ea2ff3342ba4a7",
+  "accepted_head_commit_sha": "PENDING_ACCEPTED_MD5_HEAD",
+  "accepted_head_tree_sha": "PENDING_ACCEPTED_MD5_TREE",
+  "required_ci_checks": ["local-contracts", "frontend", "container"],
+  "github_workflow_run_ids": [],
+  "databricks": {"profile": "mdl", "target": "staging", "deployment": "PENDING"},
+  "runtime_digest": "c3bccbda39229eb94884de0b464b89875a0f996201f4a7f9f1338f6024aaead9",
+  "open_blockers": ["accepted-mdl5-head", "md5-ci", "live-genie", "human-art-approval"]
+}

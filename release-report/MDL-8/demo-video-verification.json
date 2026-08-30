@@ -1,0 +1,11 @@
+{
+  "status": "PASS_TECHNICAL_FORMAT",
+  "file": "release-report/MDL-8/MDL-8-demo.mp4",
+  "duration_seconds": 164,
+  "width": 1920,
+  "height": 1080,
+  "video_codec": "h264",
+  "audio_codec": "aac",
+  "audio_source": "dist/audio/mad_data_lab_curiosity.mp3",
+  "human_narration": "PENDING_REVIEW"
+}

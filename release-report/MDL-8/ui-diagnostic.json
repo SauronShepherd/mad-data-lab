@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "criteria": [
+    {
+      "viewport": "desktop",
+      "overflow": false,
+      "offscreen": 0,
+      "brokenImages": 0,
+      "buttons": 0,
+      "contrastBasic": "PASS (axe color-contrast)"
+    },
+    {
+      "viewport": "tablet",
+      "overflow": false,
+      "offscreen": 0,
+      "brokenImages": 0,
+      "buttons": 0,
+      "contrastBasic": "PASS (axe color-contrast)"
+    },
+    {
+      "viewport": "mobile",
+      "overflow": false,
+      "offscreen": 0,
+      "brokenImages": 0,
+      "buttons": 0,
+      "contrastBasic": "PASS (axe color-contrast)"
+    }
+  ]
+}

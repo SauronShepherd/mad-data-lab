@@ -1,0 +1,135 @@
+{
+  "approval_status": "IMPLEMENTATION_OWNED",
+  "candidate_count": 10,
+  "candidates": [
+    {
+      "asset_id": "A05",
+      "candidate_id": "A05-C01",
+      "height": 1536,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-3/A05/candidate-001.png",
+      "sha256": "efabdba475baca9ff0d5f11af5b402ded9b5b9b850fc9e92bb3be9f913f3e7cd",
+      "status": "CANDIDATE",
+      "transparent_background": true,
+      "width": 1024
+    },
+    {
+      "asset_id": "A05",
+      "candidate_id": "A05-C02",
+      "height": 1319,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-3/A05/candidate-002.png",
+      "sha256": "dec154ae9986d279f078bfb5c0bcf23f50c7f3ac51c085d3578bf31eee7eeb07",
+      "status": "CANDIDATE",
+      "transparent_background": true,
+      "width": 1193
+    },
+    {
+      "asset_id": "A05",
+      "candidate_id": "A05-C03",
+      "height": 1536,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-3/A05/candidate-003.png",
+      "sha256": "2ba59896b24bf91e9d9d9c57e3e1fd9d4facb0101fe45d5e2f1b8fc8ddc557b1",
+      "status": "CANDIDATE",
+      "transparent_background": true,
+      "width": 1024
+    },
+    {
+      "asset_id": "A05",
+      "candidate_id": "A05-C04",
+      "height": 1536,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-3/A05/candidate-004.png",
+      "sha256": "b78da8aa114de3278303b3aa72fdd3090645870c809bf09b5b82f822325f787f",
+      "status": "CANDIDATE",
+      "transparent_background": true,
+      "width": 1024
+    },
+    {
+      "asset_id": "A05",
+      "candidate_id": "A05-C05",
+      "height": 1536,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-3/A05/candidate-005.png",
+      "sha256": "ca74cb41128ad93294aa44ff488de863bee5430b819956bda831998b6c31a383",
+      "status": "CANDIDATE",
+      "transparent_background": true,
+      "width": 1024
+    },
+    {
+      "asset_id": "A05",
+      "candidate_id": "A05-C06",
+      "height": 1303,
+      "mode": "RGBA",
+      "path": "assets/review/MDL-3/A05/candidate-006.png",
+      "sha256": "70f566cb3c917bba808ff19a33af87f31d313d7d3a518826cdf2e5f6a582fc2b",
+      "status": "CANDIDATE",
+      "transparent_background": true,
+      "width": 1207
+    },
+    {
+      "asset_id": "A07",
+      "candidate_id": "A07-C01",
+      "height": 992,
+      "mode": "RGB",
+      "path": "assets/review/MDL-3/A07/candidate-001.png",
+      "sha256": "8cc206b5498c4edada915c0074ae413c3b82f0102de7edbe6d3f95e43662bf80",
+      "status": "CANDIDATE",
+      "transparent_background": false,
+      "width": 1586
+    },
+    {
+      "asset_id": "A07",
+      "candidate_id": "A07-C02",
+      "height": 992,
+      "mode": "RGB",
+      "path": "assets/review/MDL-3/A07/candidate-002.png",
+      "sha256": "4fb59822a5f1dd3f4c3c4869dcdbfbd3c249ead7aecb330f4ccf858a06ddef47",
+      "status": "CANDIDATE",
+      "transparent_background": false,
+      "width": 1586
+    },
+    {
+      "asset_id": "A07",
+      "candidate_id": "A07-C03",
+      "height": 941,
+      "mode": "RGB",
+      "path": "assets/review/MDL-3/A07/candidate-003.png",
+      "sha256": "7d8021f527b45c46503848f22859dd6f4af3531ee07121b38db3450012e67879",
+      "status": "CANDIDATE",
+      "transparent_background": false,
+      "width": 1672
+    },
+    {
+      "asset_id": "A07",
+      "candidate_id": "A07-C04",
+      "height": 1024,
+      "mode": "RGB",
+      "path": "assets/review/MDL-3/A07/candidate-004.png",
+      "sha256": "28debc6eb1d643c703332065d3b2945bd05d17a532f57996a6dbecf3c7fe240c",
+      "status": "CANDIDATE",
+      "transparent_background": false,
+      "width": 1536
+    }
+  ],
+  "iteration": "MDL-3",
+  "preview_size": "1440x900",
+  "production_derivatives": [
+    {
+      "asset_id": "A05",
+      "exists": true,
+      "path": "public/assets/pixelart/dr-genie-mdl3.png",
+      "sha256": "70f566cb3c917bba808ff19a33af87f31d313d7d3a518826cdf2e5f6a582fc2b",
+      "source_candidate": "A05-C06"
+    },
+    {
+      "asset_id": "A07",
+      "exists": true,
+      "path": "public/assets/pixelart/hypothesis-chamber.png",
+      "sha256": "7d8021f527b45c46503848f22859dd6f4af3531ee07121b38db3450012e67879",
+      "source_candidate": "A07-C03"
+    }
+  ],
+  "status": "CANDIDATES_PREFLIGHT_PASS"
+}

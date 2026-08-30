@@ -1,0 +1,13 @@
+{
+  "iteration": "MDL-2",
+  "status": "CANDIDATES_GENERATED",
+  "approval_status": "PENDING_HUMAN_SELECTION",
+  "global_constraints": ["pixel art only", "funny comedic pixel-art style", "hard pixel edges with deliberately limited palette", "no photorealism", "no glossy 3D render", "no readable text", "no numbers", "no UI screenshot", "no logo", "no watermark", "no fantasy genie character"],
+  "slots": [
+    {"asset_id":"A08","name":"Deviation Decomposer","required_candidates":3,"contact_sheet":"assets/review/MDL-2/contact-sheets/A08.png","contact_sheet_sha256":"a46b6edb2f05ce02902d01e031805791daf842ac30949ec7b93803571f495208","candidates":["assets/review/MDL-2/A08/candidate-001.png", "assets/review/MDL-2/A08/candidate-002.png", "assets/review/MDL-2/A08/candidate-003.png"]},
+    {"asset_id":"A09","name":"Snapshot Reactor","required_candidates":3,"contact_sheet":"assets/review/MDL-2/contact-sheets/A09.png","contact_sheet_sha256":"ff1e196be32e96d55cb303f75190651e910d96396fd87849e016096ae1444b1c","candidates":["assets/review/MDL-2/A09/candidate-001.png", "assets/review/MDL-2/A09/candidate-002.png", "assets/review/MDL-2/A09/candidate-003.png"]},
+    {"asset_id":"A10","name":"Data Microscope","required_candidates":3,"contact_sheet":"assets/review/MDL-2/contact-sheets/A10.png","contact_sheet_sha256":"2c9aec53e010211c5149f70dfb4e0a98a0952d21bb13284b719619a784521e90","candidates":["assets/review/MDL-2/A10/candidate-001.png", "assets/review/MDL-2/A10/candidate-002.png", "assets/review/MDL-2/A10/candidate-003.png"]},
+    {"asset_id":"A11","name":"Lineage Telescope","required_candidates":3,"contact_sheet":"assets/review/MDL-2/contact-sheets/A11.png","contact_sheet_sha256":"2f900b98a092c5e5287fde166b1301ce2fd66d6a364fc491ff2aa074f12f80eb","candidates":["assets/review/MDL-2/A11/candidate-001.png", "assets/review/MDL-2/A11/candidate-002.png", "assets/review/MDL-2/A11/candidate-003.png"]},
+    {"asset_id":"A12","name":"DQ Contamination Scanner","required_candidates":3,"contact_sheet":"assets/review/MDL-2/contact-sheets/A12.png","contact_sheet_sha256":"4fc1e06856682ff197e9ab20f07b282dd9608fee7c3bc0a5ce1af274188aacab","candidates":["assets/review/MDL-2/A12/candidate-001.png", "assets/review/MDL-2/A12/candidate-002.png", "assets/review/MDL-2/A12/candidate-003.png"]}
+  ]
+}

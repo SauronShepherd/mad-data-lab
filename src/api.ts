@@ -8,13 +8,26 @@ export type EvidenceRecord = { business_key: string; impact: number; [key: strin
 type Json = Record<string, unknown>;
 const API_BASE = import.meta.env.VITE_API_BASE || (import.meta.env.DEV ? 'http://localhost:8000' : '');
 
+const SCIENCE_GLITCHES = [
+  "Something went gloriously sideways. It’s not you, it’s me — the data goblins are recalibrating the moon.",
+  "The lab sneezed on the pipeline. It’s not you, it’s me — a tiny robot is putting the rows back in order.",
+  "Our Genie briefly escaped into a spreadsheet. It’s not you, it’s me — please try the experiment again.",
+  "The numbers have formed a union. It’s not you, it’s me — the lab is negotiating with a rebellious chart.",
+];
+
+const publicErrorMessage = (code?: string, fallback?: string) => {
+  if (["SESSION_EXPIRED", "INVALID_REQUEST", "DUPLICATE_ACTION", "ALL_EXPERIMENTS_COMPLETE"].includes(code || "")) return fallback;
+  return SCIENCE_GLITCHES[Math.floor(Math.random() * SCIENCE_GLITCHES.length)];
+};
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, init);
   if (!response.ok) {
     const payload = await response.json().catch(() => ({}));
     const error = payload?.error;
-    const failure = new Error(error?.message || `API request failed: ${response.status}`) as Error & { code?: string; retryable?: boolean; requestId?: string };
+    const failure = new Error(publicErrorMessage(error?.code, error?.message || `API request failed: ${response.status}`)) as Error & { code?: string; retryable?: boolean; requestId?: string; technicalMessage?: string };
     failure.code = error?.code; failure.retryable = error?.retryable; failure.requestId = error?.request_id;
+    failure.technicalMessage = error?.message;
     throw failure;
   }
   return response.json() as Promise<T>;

@@ -120,7 +120,7 @@ test('MDL-6 network restoration allows catalog retry', async ({ page }) => {
 test('recovery restart continues with the newly issued session', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'OPEN CASE BOARD' }).click();
-  await page.getByRole('button', { name: 'OPEN CASE' }).click();
+  await page.getByRole('button', { name: 'OPEN CASE', exact: true }).click();
   await page.getByRole('button', { name: /START INVESTIGATION/ }).click();
   await expect(page.getByRole('button', { name: /RUN GENIE’S FIRST EXPERIMENT/ })).toBeVisible({ timeout: 120_000 });
 
