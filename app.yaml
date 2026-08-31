@@ -4,6 +4,12 @@ env:
     valueFrom: genie-space
   - name: ALLOW_FIXTURE_MODE
     value: "0"
+  - name: MDL_CATALOG
+    value: workspace
+  - name: DATABRICKS_SERVER_HOSTNAME
+    value: dbc-95316887-b64b.cloud.databricks.com
+  - name: DATABRICKS_HTTP_PATH
+    value: /sql/1.0/warehouses/d9238a4177b5ad22
   - name: CHALLENGE_REVIEW_MODE
     value: "0"
   - name: GENIE_REQUEST_TIMEOUT_SECONDS
