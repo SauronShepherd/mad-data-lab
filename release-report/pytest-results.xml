@@ -1,1 +1,625 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="7" tests="308" time="117.547" timestamp="2026-08-29T20:06:53.239768+02:00" hostname="T14-PF4WM3XL"><testcase classname="tests.test_canonical_artifacts" name="test_catalog_has_track_and_only_case042_playable" time="0.028" /><testcase classname="tests.test_canonical_artifacts" name="test_canonical_catalog_loader_validates_shape_and_identity" time="0.156" /><testcase classname="tests.test_canonical_artifacts" name="test_canonical_catalog_loader_rejects_duplicate_or_extra_fields" time="0.484" /><testcase classname="tests.test_canonical_artifacts" name="test_canonical_catalog_loader_rejects_private_truth_markers" time="0.126" /><testcase classname="tests.test_canonical_artifacts" name="test_genie_registry_is_versioned_and_closed" time="0.171" /><testcase classname="tests.test_canonical_artifacts" name="test_genie_agent_source_is_exact_sorted_curated_set" time="0.050" /><testcase classname="tests.test_canonical_artifacts" name="test_permanent_instructions_protect_truth_boundary" time="0.030" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_canonical_case_contract_metadata_is_published" time="0.148" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_case042_dq_signal_is_non_additive" time="0.002" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_case042_reconciles" time="0.002" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_case_availability_is_server_controlled_review_mode" time="0.301" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_case_detail_and_evidence_are_publicly_curated" time="0.434" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_case_experiment_contract_is_explicit_for_future_cases" time="0.027" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_case_registry_drives_live_allowlist" time="0.003" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_catalog_helper_resolves_full_game_cases" time="0.002" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_complete_catalog_is_published_but_only_core_cases_start" time="0.048" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_completion_records_best_score_and_hints_reduce_score" time="0.005"><skipped type="pytest.skip" message="superseded by MDL-4 explicit debrief/scoring contract">C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_case_contract.py:304: superseded by MDL-4 explicit debrief/scoring contract</skipped></testcase><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_concurrent_next_requests_append_only_one_experiment_per_action" time="0.165" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_deployed_frontend_uses_same_origin_api_by_default" time="0.003" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_documented_session_route_aliases" time="0.290" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_every_defined_case_has_a_registered_experiment_contract" time="0.166" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_evidence_is_bounded_filterable_and_request_has_id" time="0.180" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_experiments_are_ordered_and_closed" time="0.061" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_failed_genie_start_can_be_retried_without_duplicate_experiment" time="0.038" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_fixture_payload_preserves_requested_case_id" time="0.022" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_full_fixture_progression_closes_after_case042_sequence" time="0.141" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_future_cases_are_catalogued_but_locked" time="0.023" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_genie_control_allowlist_can_expand_per_case" time="0.002" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_genie_prompt_is_case_scoped" time="0.002" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_genie_protocol_rejects_invalid_status_duplicate_json_and_script" time="0.005" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_genie_sql_attachment_payload_is_normalized" time="0.002" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_health_reports_fixture_without_genie_resource" time="0.016" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_hints_are_server_ledgered_progressive_and_bounded" time="0.002"><skipped type="pytest.skip" message="superseded by MDL-4 staged hint entitlement contract">C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_case_contract.py:333: superseded by MDL-4 staged hint entitlement contract</skipped></testcase><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_invalid_case_is_rejected" time="0.033" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_invalid_live_reselection_continues_only_remaining_server_experiment" time="0.104" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_invalid_live_reselection_with_multiple_remaining_fails_closed" time="0.047" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_legal_alternate_genie_experiment_is_not_rejected_as_golden_sequence" time="0.003" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_live_start_selection_is_claimed_on_first_session_next" time="0.193" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_non_json_genie_output_is_rejected_instead_of_synthesized" time="0.003" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_production_without_genie_fails_closed_instead_of_using_fixture" time="0.189" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_restart_is_recoverable_and_keeps_case_isolation" time="0.002"><skipped type="pytest.skip" message="superseded by MDL-4 fresh-session restart contract">C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_case_contract.py:354: superseded by MDL-4 fresh-session restart contract</skipped></testcase><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_score_dto_reports_evidence_badge_and_event_ledger" time="0.002"><skipped type="pytest.skip" message="superseded by MDL-4 hidden-score and evidence-inspection contract">C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_case_contract.py:320: superseded by MDL-4 hidden-score and evidence-inspection contract</skipped></testcase><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_secondary_experiments_expose_contract_evidence" time="0.234" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_session_events_are_sequenced_and_append_only" time="0.001"><skipped type="pytest.skip" message="superseded by MDL-4 event type and observational evidence contract">C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_case_contract.py:341: superseded by MDL-4 event type and observational evidence contract</skipped></testcase><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_session_lifecycle_is_server_authoritative" time="0.001"><skipped type="pytest.skip" message="superseded by MDL-4 staged prediction contract">C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_case_contract.py:249: superseded by MDL-4 staged prediction contract</skipped></testcase><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_session_next_ignores_forged_client_completion_and_blocks_early_verdict" time="0.134" /><testcase classname="tests.test_case_contract.Case042ContractTests" name="test_unknown_session_is_not_created_or_leaked" time="0.090" /><testcase classname="tests.test_catalog_runtime_boundary" name="test_runtime_catalog_boundary_validates_canonical_artifact" time="0.002" /><testcase classname="tests.test_config" name="test_local_defaults_allow_fixture_mode" time="0.002" /><testcase classname="tests.test_config" name="test_deployed_defaults_fail_closed" time="0.002" /><testcase classname="tests.test_config" name="test_explicit_flags_and_genie_alias" time="0.002" /><testcase classname="tests.test_config" name="test_genie_budget_can_be_configured" time="0.002" /><testcase classname="tests.test_config" name="test_invalid_genie_budget_is_rejected" time="0.002" /><testcase classname="tests.test_configure_genie" name="test_configure_genie_renders_only_validated_source_identifiers" time="4.187" /><testcase classname="tests.test_configure_genie" name="test_configure_genie_rejects_sql_identifier_injection" time="3.648" /><testcase classname="tests.test_contract_validator" name="test_mdl2_contract_validator_passes_in_progress_mode" time="4.456" /><testcase classname="tests.test_contract_validator" name="test_mdl2_art_candidate_slots_are_complete_and_stable" time="0.003" /><testcase classname="tests.test_domain.DeterministicCaseTests" name="test_all_seven_case_observations_and_truth_are_materialized" time="0.004" /><testcase classname="tests.test_domain.DeterministicCaseTests" name="test_case042_golden_invariants" time="0.004" /><testcase classname="tests.test_domain.DeterministicCaseTests" name="test_curated_projection_has_no_private_truth" time="0.002" /><testcase classname="tests.test_domain.DeterministicCaseTests" name="test_record_null_semantics" time="0.002" /><testcase classname="tests.test_domain.DeterministicCaseTests" name="test_same_seed_is_byte_stable_and_other_seed_varies" time="0.005" /><testcase classname="tests.test_domain_models" name="test_domain_models_use_canonical_vocabulary" time="0.002" /><testcase classname="tests.test_domain_models" name="test_domain_models_reject_unknown_fields_and_invalid_ids" time="0.003" /><testcase classname="tests.test_domain_models" name="test_case_rejects_identity_and_release_contradictions" time="0.006" /><testcase classname="tests.test_genie_client" name="test_normalize_message_preserves_identity_and_state" time="0.001" /><testcase classname="tests.test_genie_client" name="test_normalize_message_accepts_enum_like_sdk_status" time="0.002" /><testcase classname="tests.test_genie_client" name="test_normalize_message_rejects_unknown_state_or_missing_identity[response0]" time="0.002" /><testcase classname="tests.test_genie_client" name="test_normalize_message_rejects_unknown_state_or_missing_identity[response1]" time="0.005" /><testcase classname="tests.test_genie_retry_policy" name="test_start_allows_only_one_repair_attempt" time="0.003" /><testcase classname="tests.test_genie_timing" name="test_wait_for_message_uses_injected_clock_and_sleeper" time="0.003" /><testcase classname="tests.test_genie_timing" name="test_wait_for_message_has_bounded_timeout" time="0.002" /><testcase classname="tests.test_genie_timing" name="test_wait_for_message_fails_fast_on_terminal_failure[FAILED]" time="0.002" /><testcase classname="tests.test_genie_timing" name="test_wait_for_message_fails_fast_on_terminal_failure[CANCELED]" time="0.002" /><testcase classname="tests.test_genie_timing" name="test_wait_for_message_fails_fast_on_terminal_failure[CANCELLED]" time="0.004" /><testcase classname="tests.test_live_sql_contract" name="test_live_sql_plan_uses_all_closed_queries_and_no_legacy_schema" time="1.176" /><testcase classname="tests.test_live_sql_contract" name="test_q4_declares_and_binds_case_and_limit_parameters" time="0.007" /><testcase classname="tests.test_live_sql_contract" name="test_query_registry_matches_trusted_sql_placeholder_counts" time="0.011" /><testcase classname="tests.test_live_sql_contract" name="test_sdk_cursor_binds_only_validated_positional_values" time="6.997" /><testcase classname="tests.test_live_v3_bridge" name="test_live_adapter_validates_v3_response_before_legacy_fallback" time="0.002" /><testcase classname="tests.test_live_v3_bridge" name="test_live_adapter_rejects_invalid_v3_response" time="0.002" /><testcase classname="tests.test_live_v3_bridge" name="test_live_adapter_accepts_any_currently_allowed_experiment_not_a_golden_answer" time="0.001" /><testcase classname="tests.test_live_v3_bridge" name="test_production_prompt_requests_v3_protocol" time="0.001" /><testcase classname="tests.test_live_v3_bridge" name="test_live_adapter_rejects_legacy_curated_rows_without_v3_control" time="0.002" /><testcase classname="tests.test_live_v3_bridge" name="test_live_adapter_rejects_ambiguous_legacy_curated_rows" time="0.002" /><testcase classname="tests.test_live_v3_bridge" name="test_live_adapter_rejects_flattened_fixture_shape" time="0.002" /><testcase classname="tests.test_mdl1_foundation_artifacts" name="test_challenge_rules_record_genie_core_and_track" time="0.048" /><testcase classname="tests.test_mdl1_foundation_artifacts" name="test_platform_baseline_records_runtime_boundary" time="0.069" /><testcase classname="tests.test_mdl1_foundation_artifacts" name="test_app_manifest_declares_genie_budget_defaults" time="0.004" /><testcase classname="tests.test_mdl2_data.Mdl2DataTests" name="test_all_operator_ids_are_deterministic_and_pure" time="0.002" /><testcase classname="tests.test_mdl2_data.Mdl2DataTests" name="test_canonical_domains_and_population_hashes" time="0.007" /><testcase classname="tests.test_mdl2_data.Mdl2DataTests" name="test_canonical_hash_is_independent_of_array_insertion_order" time="0.019" /><testcase classname="tests.test_mdl2_data.Mdl2DataTests" name="test_exact_snapshot_plan" time="0.006" /><testcase classname="tests.test_mdl2_data.Mdl2DataTests" name="test_generator_exposes_all_required_phases" time="0.005" /><testcase classname="tests.test_mdl2_data.Mdl2DataTests" name="test_golden_values_and_hash_are_deterministic" time="0.010" /><testcase classname="tests.test_mdl2_data.Mdl2DataTests" name="test_lineage_semantic_and_pipeline_evidence_are_public_and_resolvable" time="0.008" /><testcase classname="tests.test_mdl2_data.Mdl2DataTests" name="test_property_seeds_vary_without_changing_release_artifact" time="4.899" /><testcase classname="tests.test_mdl2_data.Mdl2DataTests" name="test_release_seed_is_locked" time="0.001" /><testcase classname="tests.test_mdl2_data.Mdl2DataTests" name="test_truth_is_not_in_public_projection" time="0.011" /><testcase classname="tests.test_mdl2_deployment_contract.DeploymentContractTests" name="test_identifiers_and_case_ids_fail_closed" time="0.002" /><testcase classname="tests.test_mdl2_deployment_contract.DeploymentContractTests" name="test_seed_cli_exposes_locked_plan_apply_verify_contract" time="2.636" /><testcase classname="tests.test_mdl2_deployment_contract.DeploymentContractTests" name="test_seed_plan_is_reproducible_and_not_apply" time="1.791" /><testcase classname="tests.test_mdl2_deployment_contract.DeploymentContractTests" name="test_seed_sql_is_case_scoped_and_public_only" time="0.732" /><testcase classname="tests.test_mdl2_deployment_contract.DeploymentContractTests" name="test_sql_connection_options_use_oauth_and_never_pat" time="0.001" /><testcase classname="tests.test_mdl2_deployment_contract.DeploymentContractTests" name="test_trusted_sql_uses_native_parameters_and_closed_catalog_placeholders" time="0.009" /><testcase classname="tests.test_mdl3_art" name="test_mdl3_art_preflight_is_reproducible_and_hash_bound" time="1.551" /><testcase classname="tests.test_mdl3_benchmark" name="test_fixture_benchmark_emits_40_attempts_and_junit" time="1.766" /><testcase classname="tests.test_mdl3_benchmark" name="test_live_mode_does_not_silently_use_fixture" time="2.086" /><testcase classname="tests.test_mdl3_benchmark" name="test_live_benchmark_uses_two_turn_protocol_for_gnext_cases" time="0.002" /><testcase classname="tests.test_mdl3_benchmark" name="test_benchmark_polling_accepts_asking_ai_with_answer_attachment" time="0.015" /><testcase classname="tests.test_mdl3_benchmark" name="test_live_transport_retries_transient_auth_failure" time="1.002" /><testcase classname="tests.test_mdl3_benchmark" name="test_live_identity_uses_canonical_case_hash" time="1.665" /><testcase classname="tests.test_mdl3_config_digest" name="test_locked_benchmark_contains_exact_40_attempts" time="0.045" /><testcase classname="tests.test_mdl3_config_digest" name="test_contract_digest_changes_when_instruction_changes" time="0.029" /><testcase classname="tests.test_mdl3_config_digest" name="test_benchmark_validator_rejects_missing_or_reordered_ids" time="0.050" /><testcase classname="tests.test_mdl3_config_digest" name="test_agent_source_renderer_allows_valid_identifiers_and_rejects_injection" time="0.003" /><testcase classname="tests.test_mdl3_contract_gate" name="test_mdl3_contract_gate_passes_and_writes_digest_artifact" time="2.522" /><testcase classname="tests.test_mdl3_decisions" name="test_pending_decision_is_not_consumed_until_next_action" time="0.002" /><testcase classname="tests.test_mdl3_decisions" name="test_stale_pending_decision_is_rejected_and_concurrent_put_is_blocked" time="0.001" /><testcase classname="tests.test_mdl3_evidence" name="test_current_evidence_identity_is_accepted" time="0.002" /><testcase classname="tests.test_mdl3_evidence" name="test_any_identity_drift_is_rejected[implementation_sha]" time="0.002" /><testcase classname="tests.test_mdl3_evidence" name="test_any_identity_drift_is_rejected[genie_contract_digest]" time="0.002" /><testcase classname="tests.test_mdl3_evidence" name="test_any_identity_drift_is_rejected[genie_live_config_sha256]" time="0.002" /><testcase classname="tests.test_mdl3_evidence" name="test_any_identity_drift_is_rejected[mdl2_data_contract_digest]" time="0.002" /><testcase classname="tests.test_mdl3_evidence" name="test_any_identity_drift_is_rejected[case_hash]" time="0.001" /><testcase classname="tests.test_mdl3_evidence" name="test_mixed_or_incomplete_batches_are_rejected" time="0.002" /><testcase classname="tests.test_mdl3_evidence" name="test_failed_attempts_and_wrong_benchmark_ids_are_rejected" time="0.002" /><testcase classname="tests.test_mdl3_lifecycle" name="test_one_repair_then_success_and_query_runs_after_validation" time="0.003" /><testcase classname="tests.test_mdl3_lifecycle" name="test_second_invalid_protocol_never_runs_query" time="0.001" /><testcase classname="tests.test_mdl3_lifecycle" name="test_query_failure_preserves_valid_selection_but_is_not_committed" time="0.002" /><testcase classname="tests.test_mdl3_protocol" name="test_accepts_direct_and_single_fenced_json" time="0.003" /><testcase classname="tests.test_mdl3_protocol" name="test_rejects_ambiguous_or_missing_control[]" time="0.002" /><testcase classname="tests.test_mdl3_protocol" name="test_rejects_ambiguous_or_missing_control[plain prose]" time="0.002" /><testcase classname="tests.test_mdl3_protocol" name="test_rejects_ambiguous_or_missing_control[{}\n{}]" time="0.002" /><testcase classname="tests.test_mdl3_protocol" name="test_rejects_ambiguous_or_missing_control[```json\n{}\n```\n```json\n{}\n```]" time="0.001" /><testcase classname="tests.test_mdl3_protocol" name="test_strict_domain_validation_rejects_wrong_case_unknown_fields_and_completed" time="0.001" /><testcase classname="tests.test_mdl3_protocol" name="test_action_semantics_and_instrument_allowlist" time="0.002" /><testcase classname="tests.test_mdl3_protocol" name="test_duplicate_hypotheses_and_unknown_targets_are_rejected" time="0.002" /><testcase classname="tests.test_mdl3_protocol" name="test_assertive_hypothesis_status_requires_evidence" time="0.002" /><testcase classname="tests.test_mdl3_protocol" name="test_unknown_hypothesis_id_is_rejected_for_active_case" time="0.002" /><testcase classname="tests.test_mdl3_protocol" name="test_sql_control_text_is_rejected" time="0.003" /><testcase classname="tests.test_mdl4_contract_artifacts" name="test_mdl4_contract_validator_passes" time="5.247" /><testcase classname="tests.test_mdl4_contract_artifacts" name="test_mdl4_art_review_contains_all_candidates_and_contact_sheets" time="0.047" /><testcase classname="tests.test_mdl4_game_flow.MDL4DomainTests" name="test_all_locked_score_golden_scenarios" time="0.002" /><testcase classname="tests.test_mdl4_game_flow.MDL4DomainTests" name="test_completion_requires_each_case042_evidence_contract" time="0.002" /><testcase classname="tests.test_mdl4_game_flow.MDL4DomainTests" name="test_completion_requires_five_families_and_lineage_action" time="0.001" /><testcase classname="tests.test_mdl4_game_flow.MDL4DomainTests" name="test_prediction_ids_are_closed_for_case042" time="0.046" /><testcase classname="tests.test_mdl4_game_flow.MDL4DomainTests" name="test_reconciliation_failure_uses_stable_error_and_rolls_back_conclusion" time="0.030" /><testcase classname="tests.test_mdl4_game_flow.MDL4DomainTests" name="test_score_golden_scenarios" time="0.002" /><testcase classname="tests.test_mdl4_game_flow.MDL4DomainTests" name="test_score_replay_caps_required_experiments_and_is_idempotent" time="0.001" /><testcase classname="tests.test_mdl4_game_flow.MDL4DomainTests" name="test_verdict_validator_rejects_formula_and_dq_primary_claims" time="0.002" /><testcase classname="tests.test_mdl4_game_flow.MDL4FlowTests" name="test_cross_case_case042_evidence_is_forbidden" time="0.013"><skipped type="pytest.skip" message="CASE_001 is not enabled in the current catalog">C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl4_game_flow.py:169: CASE_001 is not enabled in the current catalog</skipped></testcase><testcase classname="tests.test_mdl4_game_flow.MDL4FlowTests" name="test_early_reveal_is_only_legal_after_analysis_and_applies_penalty" time="0.174" /><testcase classname="tests.test_mdl4_game_flow.MDL4FlowTests" name="test_expired_session_is_not_reconstructed_and_restart_uses_new_id" time="0.061" /><testcase classname="tests.test_mdl4_game_flow.MDL4FlowTests" name="test_fake_case042_reaches_verdict_then_debrief" time="0.262" /><testcase classname="tests.test_mdl4_game_flow.MDL4FlowTests" name="test_final_prediction_cannot_bypass_analytical_completion" time="0.039" /><testcase classname="tests.test_mdl4_game_flow.MDL4FlowTests" name="test_live_duplicate_experiment_cannot_be_committed" time="0.061" /><testcase classname="tests.test_mdl4_game_flow.MDL4FlowTests" name="test_live_genie_failure_never_substitutes_scripted_experiment" time="0.043" /><testcase classname="tests.test_mdl4_game_flow.MDL4FlowTests" name="test_revision_conflict_and_idempotent_prediction_replay" time="0.088" /><testcase classname="tests.test_mdl4_game_flow.MDL4FlowTests" name="test_session_creation_replays_same_idempotency_key" time="0.032" /><testcase classname="tests.test_mdl4_game_flow.MDL4FlowTests" name="test_session_projection_never_exposes_private_truth_or_score_ledger" time="0.037" /><testcase classname="tests.test_mdl4_manifest" name="test_mdl4_manifest_generator_records_predecessor_and_current_identity" time="0.878" /><testcase classname="tests.test_mdl4_manifest" name="test_mdl4_manifest_closure_validator_is_fail_closed" time="0.556" /><testcase classname="tests.test_mdl4_manifest" name="test_successor_branch_preserves_historical_mdl4_manifest" time="0.975" /><testcase classname="tests.test_mdl4_manifest" name="test_mdl4_manifest_validator_rejects_malformed_manifest" time="0.623" /><testcase classname="tests.test_mdl4_manifest" name="test_closed_manifest_with_open_blockers_fails_closed" time="0.536" /><testcase classname="tests.test_mdl4_manifest" name="test_manifest_generator_does_not_accept_branch_spoofing" time="0.631" /><testcase classname="tests.test_mdl5_genie_hardening" name="test_protocol_rejects_version_identifier_instrument_and_state_tampering" time="0.002" /><testcase classname="tests.test_mdl5_genie_hardening" name="test_protocol_and_query_boundary_reject_cross_case_evidence_and_invalid_filters" time="0.001" /><testcase classname="tests.test_mdl5_genie_hardening" name="test_protocol_rejects_a_valid_payload_for_the_wrong_active_case" time="0.002" /><testcase classname="tests.test_mdl5_genie_hardening" name="test_public_genie_boundaries_exclude_private_truth_and_scoring_oracle" time="0.006" /><testcase classname="tests.test_mdl5_genie_hardening" name="test_experiment_rationales_explain_analytical_use_without_private_cause" time="0.001" /><testcase classname="tests.test_mdl5_genie_hardening" name="test_genie_turn_failures_never_become_success[failure0]" time="0.002" /><testcase classname="tests.test_mdl5_genie_hardening" name="test_genie_turn_failures_never_become_success[failure1]" time="0.002" /><testcase classname="tests.test_mdl5_genie_hardening" name="test_genie_turn_failures_never_become_success[failure2]" time="0.005" /><testcase classname="tests.test_mdl5_genie_hardening" name="test_genie_turn_failures_never_become_success[failure3]" time="0.002" /><testcase classname="tests.test_mdl5_genie_hardening" name="test_genie_turn_failures_never_become_success[failure4]" time="0.002" /><testcase classname="tests.test_mdl5_genie_hardening" name="test_genie_turn_failures_never_become_success[failure5]" time="0.002" /><testcase classname="tests.test_mdl5_genie_hardening" name="test_legacy_boundary_rejects_unsafe_nested_hypothesis_content" time="0.002" /><testcase classname="tests.test_mdl5_instruments" name="test_case042_experiment_payloads_include_data_backed_instrument_models" time="0.032" /><testcase classname="tests.test_mdl5_instruments" name="test_instrument_renderer_has_closed_registry_and_no_case_specific_route" time="0.004" /><testcase classname="tests.test_mdl5_instruments" name="test_css_does_not_generate_analytical_evidence_claims" time="0.002" /><testcase classname="tests.test_mdl5_traceability" name="test_mdl5_traceability_rows_are_complete_and_evidence_bound" time="0.113" /><testcase classname="tests.test_mdl5_traceability" name="test_mdl5_manifest_is_separate_from_mdl4_and_has_required_identity_fields" time="0.043" /><testcase classname="tests.test_mdl5_ui_contract" name="test_production_ui_uses_state_driven_investigation_map_not_board_mechanics" time="0.009" /><testcase classname="tests.test_mdl5_ui_contract" name="test_board_artifact_is_not_a_production_reference" time="0.018" /><testcase classname="tests.test_mdl6_assets" name="test_packaged_images_meet_mdl6_budget" time="0.221" /><testcase classname="tests.test_mdl6_assets" name="test_production_audio_meets_mdl6_budget" time="21.588" /><testcase classname="tests.test_mdl6_assets" name="test_mdl6_production_artwork_manifest_and_alpha_contract" time="0.003" /><testcase classname="tests.test_mdl6_chaos" name="test_local_chaos_harness_asserts_recovery_contract" time="4.987" /><testcase classname="tests.test_mdl6_circuit_breaker" name="test_breaker_opens_after_three_consecutive_failures" time="0.001" /><testcase classname="tests.test_mdl6_circuit_breaker" name="test_success_resets_failure_count_and_closes_breaker" time="0.001" /><testcase classname="tests.test_mdl6_contract" name="test_mdl6_catalog_has_all_specified_ids" time="0.001" /><testcase classname="tests.test_mdl6_coverage_matrix" name="test_mdl6_coverage_matrix_is_complete_and_does_not_overclaim" time="0.731" /><testcase classname="tests.test_mdl6_coverage_matrix" name="test_csv_traceability_is_synchronized_with_matrix" time="0.585" /><testcase classname="tests.test_mdl6_data_failures" name="test_malformed_evidence_is_a_stable_schema_error_without_truth_leak" time="0.033" /><testcase classname="tests.test_mdl6_data_failures" name="test_unexpected_evidence_failure_is_data_invariant_error" time="0.037" /><testcase classname="tests.test_mdl6_data_failures" name="test_empty_evidence_result_is_a_safe_schema_error_without_state_commit" time="0.024" /><testcase classname="tests.test_mdl6_data_failures" name="test_sql_platform_error_reaches_http_envelope_without_provider_details[WAREHOUSE_PENDING-True]" time="0.030" /><testcase classname="tests.test_mdl6_data_failures" name="test_sql_platform_error_reaches_http_envelope_without_provider_details[WAREHOUSE_QUOTA_EXHAUSTED-True]" time="0.029" /><testcase classname="tests.test_mdl6_data_failures" name="test_sql_platform_error_reaches_http_envelope_without_provider_details[APP_RESOURCE_UNAVAILABLE-True]" time="0.023" /><testcase classname="tests.test_mdl6_data_failures" name="test_oversized_business_key_is_rejected_without_repository_access" time="0.024" /><testcase classname="tests.test_mdl6_error_mapping" name="test_missing_case_route_uses_case_error_code" time="0.014" /><testcase classname="tests.test_mdl6_error_mapping" name="test_unearned_evidence_uses_stable_data_error_code" time="0.027" /><testcase classname="tests.test_mdl6_errors" name="test_error_envelope_is_stable_and_safe" time="0.001" /><testcase classname="tests.test_mdl6_errors" name="test_unknown_session_uses_stable_error_envelope_and_request_id" time="0.012" /><testcase classname="tests.test_mdl6_errors" name="test_validation_errors_use_stable_error_envelope" time="0.012" /><testcase classname="tests.test_mdl6_errors" name="test_mdl6_error_taxonomy_contains_required_categories" time="0.001" /><testcase classname="tests.test_mdl6_errors" name="test_all_literal_api_error_codes_are_registered" time="0.003" /><testcase classname="tests.test_mdl6_errors" name="test_app_error_rejects_unregistered_codes" time="0.002" /><testcase classname="tests.test_mdl6_errors" name="test_unhandled_request_failure_is_safe" time="0.088" /><testcase classname="tests.test_mdl6_errors" name="test_adapter_errors_convert_to_safe_public_platform_envelopes" time="0.001" /><testcase classname="tests.test_mdl6_observability" name="test_sensitive_observability_fields_are_redacted" time="0.001" /><testcase classname="tests.test_mdl6_observability" name="test_structured_event_logging_is_json" time="0.002" /><testcase classname="tests.test_mdl6_performance" name="test_production_bundle_meets_mdl6_budgets" time="0.131" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-001-axe]" time="0.095" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-002-investigation-map]" time="0.004" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-003-experiment-rationale]" time="0.003" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-004-evidence-explorer]" time="0.004" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-005-ACCEPT SCIENTIFIC VERDICT]" time="0.003" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-006-button]" time="0.003" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-007-aria-current]" time="0.005" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-008-aria-label]" time="0.004" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-009-&lt;dt&gt;]" time="0.004" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-010-status]" time="0.005" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-011-aria-label=&quot;State-driven investigation map&quot;]" time="0.003" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-012-prefers-reduced-motion]" time="0.003" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-013-runtime axe]" time="0.054" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-014-Mute laboratory music]" time="0.003" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_accessibility_criterion_is_bound_to_runtime_contract[AX-015-role=&quot;status&quot;]" time="0.003" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_performance_criterion_is_bound_to_budget_gate[PF-001]" time="0.044" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_performance_criterion_is_bound_to_budget_gate[PF-002]" time="0.003" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_performance_criterion_is_bound_to_budget_gate[PF-003]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_performance_criterion_is_bound_to_budget_gate[PF-004]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_performance_criterion_is_bound_to_budget_gate[PF-005]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_performance_criterion_is_bound_to_budget_gate[PF-006]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_performance_criterion_is_bound_to_budget_gate[PF-007]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_performance_criterion_is_bound_to_budget_gate[PF-008]" time="0.006" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-001]" time="18.969" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-002]" time="0.001" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-003]" time="0.001" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-004]" time="0.001" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-005]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-006]" time="0.001" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-007]" time="0.001" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-008]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-009]" time="0.001" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-010]" time="0.001" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-011]" time="0.001" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-012]" time="0.001" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-013]" time="0.001" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-014]" time="0.037" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_asset_criterion_is_bound_to_preflight[AS-015]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-001]" time="0.208" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-002]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-003]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-004]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-005]" time="0.003" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-006]" time="0.004" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-007]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-008]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-009]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-010]" time="0.004" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-011]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-012]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-013]" time="0.003" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-014]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-015]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-016]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-017]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-018]" time="0.002" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-019]" time="0.003" /><testcase classname="tests.test_mdl6_requirement_coverage" name="test_security_criterion_is_bound_to_security_gate[SEC-020]" time="0.002" /><testcase classname="tests.test_mdl6_resilience" name="test_genie_ask_retries_transient_transport_once" time="0.181" /><testcase classname="tests.test_mdl6_resilience" name="test_genie_waiter_times_out_without_accepting_incomplete_message[5]" time="0.005" /><testcase classname="tests.test_mdl6_resilience" name="test_genie_waiter_times_out_without_accepting_incomplete_message[30]" time="0.019" /><testcase classname="tests.test_mdl6_resilience" name="test_genie_failed_message_is_not_treated_as_success" time="0.002" /><testcase classname="tests.test_mdl6_security" name="test_repository_has_no_credential_files_or_secret_patterns" time="0.166" /><testcase classname="tests.test_mdl6_security" name="test_security_gate_has_production_bundle_and_frontend_sinks_covered" time="0.008" /><testcase classname="tests.test_mutation.MutationTests" name="test_mutations_are_deterministic_and_preserve_null_semantics" time="0.002" /><testcase classname="tests.test_mutation.MutationTests" name="test_structural_operators_have_expected_effect" time="0.002" /><testcase classname="tests.test_orchestration" name="test_first_experiment_is_claimed_once_and_not_reselectable" time="0.002" /><testcase classname="tests.test_orchestration" name="test_stale_allowed_set_cannot_claim_pending_experiment" time="0.001" /><testcase classname="tests.test_pytest_gate" name="test_pytest_gate_exists_and_is_release_safe" time="0.002" /><testcase classname="tests.test_query_registry" name="test_trusted_query_is_closed_case_scoped_and_bounded" time="0.001" /><testcase classname="tests.test_query_registry" name="test_arbitrary_query_and_cross_case_result_are_rejected" time="0.003" /><testcase classname="tests.test_query_registry" name="test_empty_and_wrong_column_results_fail_closed" time="0.002" /><testcase classname="tests.test_query_registry" name="test_reconciliation_mismatch_fails_closed_with_tolerance" time="0.002" /><testcase classname="tests.test_release_candidate" name="test_release_candidate_gate_order_is_deterministic" time="0.001" /><testcase classname="tests.test_release_candidate" name="test_python_release_gates_use_project_environment_when_uv_is_available" time="0.002" /><testcase classname="tests.test_release_candidate" name="test_release_candidate_never_reuses_stale_live_pass" time="0.058" /><testcase classname="tests.test_release_gate" name="test_release_gate_converts_hung_gate_to_failure" time="0.001" /><testcase classname="tests.test_runtime_digest" name="test_runtime_digest_is_deterministic" time="1.416" /><testcase classname="tests.test_runtime_digest" name="test_runtime_digest_file_set_includes_genie_contract_and_case_catalog" time="0.059" /><testcase classname="tests.test_sql_models" name="test_sql_decimal_models_preserve_cent_precision_and_reject_unknown_columns" time="0.001" /><testcase classname="tests.test_sql_models" name="test_all_trusted_result_shapes_are_typed" time="0.002" /><testcase classname="tests.test_sql_models" name="test_sql_connection_failures_are_normalized_without_provider_details" time="0.002" /><testcase classname="tests.test_sql_models" name="test_sql_platform_failures_map_to_stable_codes[warehouse is pending provisioning-WAREHOUSE_PENDING]" time="0.001" /><testcase classname="tests.test_sql_models" name="test_sql_platform_failures_map_to_stable_codes[warehouse quota exceeded-WAREHOUSE_QUOTA_EXHAUSTED]" time="0.003" /><testcase classname="tests.test_sql_models" name="test_sql_platform_failures_map_to_stable_codes[connection reset by peer-APP_RESOURCE_UNAVAILABLE]" time="0.002" /><testcase classname="tests.test_state.StateMachineTests" name="test_illegal_transition_is_rejected" time="0.001" /><testcase classname="tests.test_state.StateMachineTests" name="test_legal_player_journey" time="0.001" /><testcase classname="tests.test_technical_debt" name="test_catalog_projection_is_not_an_entitlement_source" time="0.008" /><testcase classname="tests.test_technical_debt" name="test_debt_ledger_has_no_unexplained_open_items" time="0.002" /><testcase classname="tests.test_technical_debt" name="test_td005_closure_is_bound_to_real_historical_live_evidence" time="0.165" /><testcase classname="tests.test_traceability" name="test_g42_traceability_is_unique_and_complete" time="0.535" /><testcase classname="tests.test_validate_mdl3_evidence" name="test_cli_accepts_current_artifact" time="1.249" /><testcase classname="tests.test_validate_mdl3_evidence" name="test_cli_rejects_stale_artifact" time="1.293" /></testsuite></testsuites>
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="25" failures="0" skipped="0" tests="25" time="6.544" timestamp="2026-08-31T15:20:32.977211+02:00" hostname="T14-PF4WM3XL"><testcase classname="" name="tests.test_canonical_artifacts" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_canonical_artifacts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_canonical_artifacts.py:7: in &lt;module&gt;
+    from backend.domain.catalog import CatalogError, load_catalog, load_case_models
+backend\domain\__init__.py:3: in &lt;module&gt;
+    from .catalog import CatalogError, load_catalog, load_case_models
+backend\domain\catalog.py:10: in &lt;module&gt;
+    from .models import Case
+backend\domain\models.py:7: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_case_contract" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_case_contract.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_case_contract.py:6: in &lt;module&gt;
+    from fastapi.testclient import TestClient
+.testdeps\fastapi\__init__.py:7: in &lt;module&gt;
+    from .applications import FastAPI as FastAPI
+.testdeps\fastapi\applications.py:7: in &lt;module&gt;
+    from fastapi import routing
+.testdeps\fastapi\routing.py:45: in &lt;module&gt;
+    from fastapi import params
+.testdeps\fastapi\params.py:7: in &lt;module&gt;
+    from fastapi.exceptions import FastAPIDeprecationWarning
+.testdeps\fastapi\exceptions.py:5: in &lt;module&gt;
+    from pydantic import BaseModel, create_model
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_catalog_runtime_boundary" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_catalog_runtime_boundary.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_catalog_runtime_boundary.py:1: in &lt;module&gt;
+    from server.catalog import CANONICAL_PUBLIC_CATALOG, DEFAULT_CASE_ID
+server\catalog.py:6: in &lt;module&gt;
+    from backend.domain.catalog import load_catalog
+backend\domain\__init__.py:3: in &lt;module&gt;
+    from .catalog import CatalogError, load_catalog, load_case_models
+backend\domain\catalog.py:10: in &lt;module&gt;
+    from .models import Case
+backend\domain\models.py:7: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_domain_models" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_domain_models.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_domain_models.py:2: in &lt;module&gt;
+    from pydantic import ValidationError
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_genie_client" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_genie_client.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_genie_client.py:5: in &lt;module&gt;
+    from backend.genie.client import GenieClientError, MessageState, normalize_message
+backend\genie\__init__.py:3: in &lt;module&gt;
+    from .protocol import (
+backend\genie\protocol.py:14: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_genie_retry_policy" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_genie_retry_policy.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_genie_retry_policy.py:6: in &lt;module&gt;
+    from server.genie import GenieAdapter
+server\genie.py:11: in &lt;module&gt;
+    from .catalog import DEFAULT_CASE_ID, get_any_case
+server\catalog.py:6: in &lt;module&gt;
+    from backend.domain.catalog import load_catalog
+backend\domain\__init__.py:3: in &lt;module&gt;
+    from .catalog import CatalogError, load_catalog, load_case_models
+backend\domain\catalog.py:10: in &lt;module&gt;
+    from .models import Case
+backend\domain\models.py:7: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_genie_timing" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_genie_timing.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_genie_timing.py:5: in &lt;module&gt;
+    from server.genie import GenieAdapter
+server\genie.py:11: in &lt;module&gt;
+    from .catalog import DEFAULT_CASE_ID, get_any_case
+server\catalog.py:6: in &lt;module&gt;
+    from backend.domain.catalog import load_catalog
+backend\domain\__init__.py:3: in &lt;module&gt;
+    from .catalog import CatalogError, load_catalog, load_case_models
+backend\domain\catalog.py:10: in &lt;module&gt;
+    from .models import Case
+backend\domain\models.py:7: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_live_v3_bridge" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_live_v3_bridge.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_live_v3_bridge.py:5: in &lt;module&gt;
+    from server.genie import GenieAdapter
+server\genie.py:11: in &lt;module&gt;
+    from .catalog import DEFAULT_CASE_ID, get_any_case
+server\catalog.py:6: in &lt;module&gt;
+    from backend.domain.catalog import load_catalog
+backend\domain\__init__.py:3: in &lt;module&gt;
+    from .catalog import CatalogError, load_catalog, load_case_models
+backend\domain\catalog.py:10: in &lt;module&gt;
+    from .models import Case
+backend\domain\models.py:7: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl3_config_digest" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl3_config_digest.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl3_config_digest.py:5: in &lt;module&gt;
+    from backend.genie.config_digest import file_digest, genie_contract_digest, load_benchmark, render_agent_source
+backend\genie\__init__.py:3: in &lt;module&gt;
+    from .protocol import (
+backend\genie\protocol.py:14: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl3_decisions" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl3_decisions.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl3_decisions.py:3: in &lt;module&gt;
+    from backend.genie.decisions import PendingDecisionStore, make_pending_decision
+backend\genie\__init__.py:3: in &lt;module&gt;
+    from .protocol import (
+backend\genie\protocol.py:14: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl3_evidence" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl3_evidence.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl3_evidence.py:3: in &lt;module&gt;
+    from backend.genie.evidence import EvidenceIdentity, validate_evidence_identity
+backend\genie\__init__.py:3: in &lt;module&gt;
+    from .protocol import (
+backend\genie\protocol.py:14: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl3_lifecycle" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl3_lifecycle.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl3_lifecycle.py:1: in &lt;module&gt;
+    from backend.genie.lifecycle import GenieTurn, TurnFailure
+backend\genie\__init__.py:3: in &lt;module&gt;
+    from .protocol import (
+backend\genie\protocol.py:14: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl3_protocol" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl3_protocol.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl3_protocol.py:5: in &lt;module&gt;
+    from backend.genie.protocol import Action, Instrument, extract_control_object, validate_control_response
+backend\genie\__init__.py:3: in &lt;module&gt;
+    from .protocol import (
+backend\genie\protocol.py:14: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl4_game_flow" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl4_game_flow.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl4_game_flow.py:5: in &lt;module&gt;
+    from fastapi.testclient import TestClient
+.testdeps\fastapi\__init__.py:7: in &lt;module&gt;
+    from .applications import FastAPI as FastAPI
+.testdeps\fastapi\applications.py:7: in &lt;module&gt;
+    from fastapi import routing
+.testdeps\fastapi\routing.py:45: in &lt;module&gt;
+    from fastapi import params
+.testdeps\fastapi\params.py:7: in &lt;module&gt;
+    from fastapi.exceptions import FastAPIDeprecationWarning
+.testdeps\fastapi\exceptions.py:5: in &lt;module&gt;
+    from pydantic import BaseModel, create_model
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl5_genie_hardening" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl5_genie_hardening.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl5_genie_hardening.py:6: in &lt;module&gt;
+    from backend.genie.protocol import validate_control_response
+backend\genie\__init__.py:3: in &lt;module&gt;
+    from .protocol import (
+backend\genie\protocol.py:14: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl6_circuit_breaker" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl6_circuit_breaker.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl6_circuit_breaker.py:3: in &lt;module&gt;
+    from server.genie import CircuitOpenError, SessionCircuitBreaker
+server\genie.py:11: in &lt;module&gt;
+    from .catalog import DEFAULT_CASE_ID, get_any_case
+server\catalog.py:6: in &lt;module&gt;
+    from backend.domain.catalog import load_catalog
+backend\domain\__init__.py:3: in &lt;module&gt;
+    from .catalog import CatalogError, load_catalog, load_case_models
+backend\domain\catalog.py:10: in &lt;module&gt;
+    from .models import Case
+backend\domain\models.py:7: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl6_data_failures" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl6_data_failures.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl6_data_failures.py:4: in &lt;module&gt;
+    from fastapi.testclient import TestClient
+.testdeps\fastapi\__init__.py:7: in &lt;module&gt;
+    from .applications import FastAPI as FastAPI
+.testdeps\fastapi\applications.py:7: in &lt;module&gt;
+    from fastapi import routing
+.testdeps\fastapi\routing.py:45: in &lt;module&gt;
+    from fastapi import params
+.testdeps\fastapi\params.py:7: in &lt;module&gt;
+    from fastapi.exceptions import FastAPIDeprecationWarning
+.testdeps\fastapi\exceptions.py:5: in &lt;module&gt;
+    from pydantic import BaseModel, create_model
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl6_error_mapping" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl6_error_mapping.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl6_error_mapping.py:1: in &lt;module&gt;
+    from fastapi import HTTPException
+.testdeps\fastapi\__init__.py:7: in &lt;module&gt;
+    from .applications import FastAPI as FastAPI
+.testdeps\fastapi\applications.py:7: in &lt;module&gt;
+    from fastapi import routing
+.testdeps\fastapi\routing.py:45: in &lt;module&gt;
+    from fastapi import params
+.testdeps\fastapi\params.py:7: in &lt;module&gt;
+    from fastapi.exceptions import FastAPIDeprecationWarning
+.testdeps\fastapi\exceptions.py:5: in &lt;module&gt;
+    from pydantic import BaseModel, create_model
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl6_errors" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl6_errors.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl6_errors.py:4: in &lt;module&gt;
+    from fastapi.testclient import TestClient
+.testdeps\fastapi\__init__.py:7: in &lt;module&gt;
+    from .applications import FastAPI as FastAPI
+.testdeps\fastapi\applications.py:7: in &lt;module&gt;
+    from fastapi import routing
+.testdeps\fastapi\routing.py:45: in &lt;module&gt;
+    from fastapi import params
+.testdeps\fastapi\params.py:7: in &lt;module&gt;
+    from fastapi.exceptions import FastAPIDeprecationWarning
+.testdeps\fastapi\exceptions.py:5: in &lt;module&gt;
+    from pydantic import BaseModel, create_model
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl6_observability" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl6_observability.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl6_observability.py:4: in &lt;module&gt;
+    from server.main import _safe_log_fields, log_event
+server\main.py:15: in &lt;module&gt;
+    from fastapi import FastAPI, HTTPException, Query, Request, Header
+.testdeps\fastapi\__init__.py:7: in &lt;module&gt;
+    from .applications import FastAPI as FastAPI
+.testdeps\fastapi\applications.py:7: in &lt;module&gt;
+    from fastapi import routing
+.testdeps\fastapi\routing.py:45: in &lt;module&gt;
+    from fastapi import params
+.testdeps\fastapi\params.py:7: in &lt;module&gt;
+    from fastapi.exceptions import FastAPIDeprecationWarning
+.testdeps\fastapi\exceptions.py:5: in &lt;module&gt;
+    from pydantic import BaseModel, create_model
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_mdl6_resilience" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_mdl6_resilience.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_mdl6_resilience.py:1: in &lt;module&gt;
+    from server.genie import GenieAdapter
+server\genie.py:11: in &lt;module&gt;
+    from .catalog import DEFAULT_CASE_ID, get_any_case
+server\catalog.py:6: in &lt;module&gt;
+    from backend.domain.catalog import load_catalog
+backend\domain\__init__.py:3: in &lt;module&gt;
+    from .catalog import CatalogError, load_catalog, load_case_models
+backend\domain\catalog.py:10: in &lt;module&gt;
+    from .models import Case
+backend\domain\models.py:7: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_orchestration" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_orchestration.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_orchestration.py:3: in &lt;module&gt;
+    from backend.domain.orchestration import DecisionOrchestrator
+backend\domain\__init__.py:3: in &lt;module&gt;
+    from .catalog import CatalogError, load_catalog, load_case_models
+backend\domain\catalog.py:10: in &lt;module&gt;
+    from .models import Case
+backend\domain\models.py:7: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_query_registry" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_query_registry.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_query_registry.py:3: in &lt;module&gt;
+    from backend.genie.query_registry import render_query, resolve_query, validate_reconciliation, validate_result
+backend\genie\__init__.py:3: in &lt;module&gt;
+    from .protocol import (
+backend\genie\protocol.py:14: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_sql_models" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_sql_models.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_sql_models.py:5: in &lt;module&gt;
+    from backend.data.models import (
+backend\data\models.py:4: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase><testcase classname="" name="tests.test_technical_debt" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\angel.alvarez\PycharmProjects\mad-data-lab\tests\test_technical_debt.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+..\..\AppData\Local\Programs\Python\Python311\Lib\importlib\__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_technical_debt.py:7: in &lt;module&gt;
+    from server.catalog import FULL_CASE_CATALOG, case_availability
+server\catalog.py:6: in &lt;module&gt;
+    from backend.domain.catalog import load_catalog
+backend\domain\__init__.py:3: in &lt;module&gt;
+    from .catalog import CatalogError, load_catalog, load_case_models
+backend\domain\catalog.py:10: in &lt;module&gt;
+    from .models import Case
+backend\domain\models.py:7: in &lt;module&gt;
+    from pydantic import BaseModel, ConfigDict, Field, model_validator
+.testdeps\pydantic\__init__.py:5: in &lt;module&gt;
+    from ._migration import getattr_migration
+.testdeps\pydantic\_migration.py:4: in &lt;module&gt;
+    from pydantic.warnings import PydanticDeprecatedSince20
+.testdeps\pydantic\warnings.py:5: in &lt;module&gt;
+    from .version import version_short
+.testdeps\pydantic\version.py:7: in &lt;module&gt;
+    from pydantic_core import __version__ as __pydantic_core_version__
+.testdeps\pydantic_core\__init__.py:8: in &lt;module&gt;
+    from ._pydantic_core import (
+E   ModuleNotFoundError: No module named 'pydantic_core._pydantic_core'</error></testcase></testsuite></testsuites>

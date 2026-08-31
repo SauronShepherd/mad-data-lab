@@ -38,10 +38,17 @@ class SdkCursor:
             else:
                 literal = "'" + str(value).replace("'", "''") + "'"
             rendered = rendered.replace("?", literal, 1)
-        from databricks.sdk.service.sql import Disposition, Format
+        try:
+            from databricks.sdk.service.sql import Disposition, Format
+            disposition, output_format = Disposition.INLINE, Format.JSON_ARRAY
+        except ImportError:
+            # Keep the adapter testable without the optional SDK. The REST
+            # client accepts the wire values, while production environments
+            # still use the SDK enum constants above.
+            disposition, output_format = "INLINE", "JSON_ARRAY"
         response = self.client.statement_execution.execute_statement(
             statement=rendered, warehouse_id=self.warehouse_id,
-            disposition=Disposition.INLINE, format=Format.JSON_ARRAY, wait_timeout="30s",
+            disposition=disposition, format=output_format, wait_timeout="30s",
         )
         status = getattr(response, "status", None)
         error = getattr(status, "error", None)

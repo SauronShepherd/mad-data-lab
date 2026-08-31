@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+import importlib
 from contextlib import contextmanager
 
 class SqlAdapterError(RuntimeError):
@@ -56,9 +57,11 @@ def configured_object(catalog: str, schema: str, object_name: str) -> str:
 def connect_from_env():
     """Connect using Databricks resource-bound environment variables on staging."""
     try:
-        from databricks import sql
+        # Import the leaf module directly so test doubles (and constrained
+        # runtimes that provide only the connector module) are honored.
+        sql = importlib.import_module("databricks.sql")
     except ImportError as exc:
-        raise SqlAdapterError("databricks-sql-connector is not installed") from exc
+        raise SqlAdapterError("Databricks SQL connection failed") from exc
     host, http_path, options = connection_options()
     try:
         with sql.connect(server_hostname=host, http_path=http_path, **options) as connection:
