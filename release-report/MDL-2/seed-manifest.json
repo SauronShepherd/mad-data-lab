@@ -1,8 +1,8 @@
 {
   "canonical_case_hash": "88f885383fe8eb6d1ed6c2aeae1ff93df1be0549fcc51dbf49e2c7d2e35db68b",
   "case_id": "CASE_0042",
-  "mode": "plan",
+  "mode": "apply",
   "private_truth_included": false,
-  "sql_path": "release-report/MDL-2/test-seed.sql",
-  "target": "local"
+  "sql_path": "release-report/MDL-2/seed-case-0042.sql",
+  "target": "staging"
 }
