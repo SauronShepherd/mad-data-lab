@@ -582,7 +582,7 @@ function App() {
               <span>DEVIATION</span>
               <strong>{formatMoney(deviation)}</strong>
               <small>
-                Find the root cause without trusting the first explanation.
+                Find the supported explanation without trusting the first hypothesis.
               </small>
             </div>
             <p className="genie-line">

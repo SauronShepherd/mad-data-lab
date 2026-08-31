@@ -51,11 +51,12 @@ test('MDL-6 keyboard-only path reaches the investigation briefing', async ({ pag
   await page.getByRole('button', { name: 'OPEN CASE BOARD' }).focus();
   await page.keyboard.press('Enter');
   const open = page.getByRole('button', { name: /OPEN CASE/ }).first();
+  const start = page.getByRole('button', { name: /START INVESTIGATION/ });
+  await expect(open.or(start)).toBeVisible({ timeout: 120_000 });
   if (await open.count()) {
     await open.focus();
     await page.keyboard.press('Enter');
   }
-  const start = page.getByRole('button', { name: /START INVESTIGATION/ });
   await expect(start).toBeVisible();
   await start.focus();
   await page.keyboard.press('Enter');

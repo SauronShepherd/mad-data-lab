@@ -92,3 +92,9 @@ def test_legacy_boundary_rejects_unsafe_nested_hypothesis_content():
     }
     with pytest.raises(ValueError, match="unsafe"):
         parse_control_json(json.dumps(payload), {"SNAPSHOT_DIFF"})
+
+
+def test_session_runtime_does_not_replace_a_legal_live_selection_with_scripted_order():
+    source = (ROOT / "server/main.py").read_text(encoding="utf-8")
+    assert "server-sequenced-live" not in source
+    assert "The live model may select a valid experiment out of order" not in source

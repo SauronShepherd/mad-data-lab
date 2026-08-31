@@ -35,7 +35,8 @@ def main() -> None:
     else:
         raise AssertionError(f"container did not become ready: {last_error}")
     session = call("/api/sessions", "POST", {"case_id": "CASE_0042"})
-    assert session["state"] == "CASE_BRIEFING" and "score" not in session
+    assert session["state"] == "CASE_BRIEFING"
+    assert session.get("score_visibility") == "HIDDEN_DURING_INVESTIGATION"
     session_id = session["session_id"]
     started = call(f"/api/sessions/{session_id}/start", "POST", {})
     assert started["state"] == "HYPOTHESES_READY"

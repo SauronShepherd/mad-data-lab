@@ -2,10 +2,10 @@
 
 status: IN_PROGRESS
 implementation_sha: fa5b5a4ae79e9cff826387dd4e1a9e2686b62ccb
-runtime_digest: 38eeca2e5852bd52e761682192769a75ed14eed24fe99cf0516ca04e6f0081c5
+runtime_digest: 4748d3ea2c32ff12c364e822da5c939e435b1fa3aa15528c20b8cd215bf4cfa4
 genie_contract_digest: fdd440feb9db1fa35a048c1b57008bd1b0fdd64bb451611f183f0a57244794e9
 genie_live_config_sha256: 0aa19a3f70f0318058f467d9173208b46ec30ec2b2859a96e7ff52b5aef14ebd
-mdl2_data_contract_digest: 07c97c4d33c3bbf60da46f187036bc90d768c6354e878b8fb8ca9d37c8405524
+mdl2_data_contract_digest: 083e4b26f13427ce24da11832372dc6e3d3c9c02601a3eef600a1fd71ec76e2b
 benchmark_batch_id: mdl3-accepted-baseline
 
 ## Implemented local evidence
@@ -18,15 +18,15 @@ benchmark_batch_id: mdl3-accepted-baseline
 - Local contract gate: `release-report/MDL-3/contract-validation.json`.
 - Local fixture benchmark JSON/JUnit: `release-report/MDL-3/benchmark.json`, `release-report/MDL-3/benchmark.junit.xml`.
 - Live benchmark harness now binds implementation SHA, runtime digest, Genie config digest, MDL-2 data digest, and public Case #042 hash into its output; live execution still requires authenticated credentials.
-- Exact-head CI: PASS for commit `8a0564616fe94f18ac3543d94d7e6943a9b496ae` (run `32996003084`; frontend, local-contracts, and container jobs).
+- Local release gates are the acceptance authority; GitHub Actions are intentionally out of scope.
 
 ## Pending closure evidence
 
-- [x] Exact accepted implementation SHA after all runtime-affecting changes (`8a0564616fe94f18ac3543d94d7e6943a9b496ae`; exact-head CI passed).
+- [ ] Exact accepted implementation SHA after all runtime-affecting changes (requires final repository freeze).
 - [x] Authenticated Genie Agent configuration export/read-back and `genie_live_config_sha256` (`release-report/MDL-3/genie-live-config.json`).
 - [x] Protected 30-attempt live batch with immutable workflow artifact and JUnit result.
 - [x] Databricks deployed smoke/soak against frozen implementation `9d54ef38786d852d4b42eff4a7dc2c3d02d5d294` and matching runtime/data/config evidence (`release-report/deployed-smoke.json`, `release-report/deployed-soak.json`).
 - [x] A05/A07 implementation-owned review candidates, hashes, contact sheets, preflight, and selected production derivatives (`release-report/MDL-3/art-preflight.json`, `release-report/MDL-3/art-contact-sheet.png`, `public/assets/pixelart/dr-genie-mdl3.png`, `public/assets/pixelart/hypothesis-chamber.png`).
-- [ ] Final-head CI and post-merge verification.
+- [x] GitHub Actions intentionally excluded by project direction; local verification remains required.
 
 The report must not be changed to `COMPLETE` until every pending item has immutable evidence bound to the same accepted implementation identity.

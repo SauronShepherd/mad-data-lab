@@ -33,7 +33,7 @@ from backend.private.case_oracle import FINAL_PREDICTION_IDS, INITIAL_PREDICTION
 from backend.private.verdict_validator import validate_case042_verdict
 from backend.genie.decisions import PendingDecisionStore, PendingDecision
 from .state import InvestigationState, transition
-from backend.data.repositories import EvidenceRepository
+from backend.data.repositories import EvidenceRepository, SqlEvidenceRepository
 from backend.data.sql_client import SqlAdapterError
 from .config import load_settings
 from .errors import AppError, app_error_from_exception, envelope
@@ -107,7 +107,14 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
     error = AppError("INVALID_REQUEST", "The request contains invalid or missing fields.", 422, False, details={"field_count": len(exc.errors())})
     return JSONResponse(status_code=422, content=envelope(error, request_id))
 genie = CanonicalGenieBoundary(GenieAdapter())
-evidence_repository = EvidenceRepository()
+# Local fixture mode is the only path allowed to use generated evidence.
+# Databricks App deployments set ALLOW_FIXTURE_MODE=0 and therefore bind the
+# public evidence surface to the registered curated SQL repository.
+evidence_repository = EvidenceRepository() if load_settings().allow_fixture_mode else SqlEvidenceRepository()
+
+def _experiment_payload(experiment, index: int, case_id: str) -> dict:
+    builder = getattr(evidence_repository, "experiment_payload", None)
+    return builder(experiment, index, case_id) if builder else experiment_payload(experiment, index, case_id)
 SESSIONS: dict[str, dict] = {}
 PENDING_STORES: dict[str, PendingDecisionStore] = {}
 CREATE_IDEMPOTENCY: dict[str, dict] = {}
@@ -354,7 +361,7 @@ def case_experiments(case_id: str) -> dict:
         "state": case.state,
         "experiments": list(case.required_experiments),
         "ready": case.id in EXPERIMENTS_BY_CASE,
-        "catalog": [experiment_payload(item, index, case.id) for index, item in enumerate(EXPERIMENTS_BY_CASE.get(case.id) or PLANNED_EXPERIMENTS_BY_CASE.get(case.id, ()))],
+        "catalog": [_experiment_payload(item, index, case.id) for index, item in enumerate(EXPERIMENTS_BY_CASE.get(case.id) or PLANNED_EXPERIMENTS_BY_CASE.get(case.id, ()))],
     }
 
 
@@ -816,7 +823,7 @@ def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency
             raise HTTPException(status_code=409, detail="Pending Genie decision is stale") from exc
         selected = selected_decision.experiment_id
         index = next(i for i, item in enumerate(registered) if item.id == selected)
-        result = experiment_payload(registered[index], index, session["case_id"])
+        result = _experiment_payload(registered[index], index, session["case_id"])
         pending["consumed"] = True
         append_event(session, "PENDING_EXPERIMENT_CONSUMED", experiment_id=selected)
     else:
@@ -831,18 +838,12 @@ def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency
             if result.get("source") in {"genie-recovery-continuation", "genie-singleton-continuation"}:
                 result["source"] = "genie-recovery-continuation"
             registered = EXPERIMENTS_BY_CASE.get(session["case_id"]) or PLANNED_EXPERIMENTS_BY_CASE.get(session["case_id"], ())
-            expected_next = next((item for item in registered if item.id not in completed), None)
             if result.get("experiment_id") in completed or result.get("experiment_id") not in {item.id for item in registered}:
                 raise HTTPException(status_code=503, detail={"code": "GENIE_INVALID_EXPERIMENT", "retryable": True})
-            # The live model may select a valid experiment out of order. The
-            # session contract is authoritative: required experiments must be
-            # consumed exactly once in the registered sequence so a live
-            # response cannot skip a required family (notably formula check).
-            if expected_next and result.get("experiment_id") != expected_next.id:
-                result = experiment_payload(expected_next, next(i for i, item in enumerate(registered) if item.id == expected_next.id), session["case_id"]) | {
-                    "source": "server-sequenced-live",
-                    "selection_note": "The server preserved the registered experiment sequence after an out-of-order Genie selection.",
-                }
+            # A valid live selection is authoritative. The server enforces the
+            # closed registry and completion invariants, but never substitutes
+            # a scripted next Experiment merely because Genie chose a legal
+            # branch out of order.
             if genie.enabled:
                 breaker.record_success()
         except CircuitOpenError as exc:
@@ -872,7 +873,7 @@ def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency
             if index is None:
                 session["state"] = previous
                 raise HTTPException(status_code=409, detail="All registered experiments are complete") from exc
-            result = experiment_payload(registered[index], index, session["case_id"]) | {
+            result = _experiment_payload(registered[index], index, session["case_id"]) | {
                 "source": "genie-server-continuation",
                 "selection_note": "The server continued the next registered Experiment after an invalid Genie response.",
             }
@@ -928,7 +929,7 @@ def next_experiment(request: ExperimentRequest) -> dict:
             if remaining and (len(remaining) == 1 or request.allow_multi_experiment_recovery):
                 selected = remaining[0]
                 index = next(i for i, experiment in enumerate(experiments) if experiment.id == selected.id)
-                return experiment_payload(selected, index, request.case_id) | {
+                return _experiment_payload(selected, index, request.case_id) | {
                     "source": "genie-singleton-continuation",
                     "selection_note": "Genie was temporarily unavailable; the server continued with the next registered experiment.",
                 }
@@ -936,7 +937,7 @@ def next_experiment(request: ExperimentRequest) -> dict:
     index = next((i for i, experiment in enumerate(experiments) if experiment.id not in completed), None)
     if index is None:
         raise HTTPException(status_code=409, detail="All registered experiments are complete")
-    return experiment_payload(experiments[index], index, request.case_id)
+    return _experiment_payload(experiments[index], index, request.case_id)
 
 
 @app.post("/api/genie/ask")

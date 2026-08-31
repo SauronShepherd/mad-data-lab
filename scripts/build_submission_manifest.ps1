@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $root = (Get-Location).Path
 $files = @(
-  'app.yaml','app.yml','requirements.txt','pyproject.toml','uv.lock',
+  'app.yaml','requirements.txt','pyproject.toml','uv.lock',
   'src/main.jsx','server/main.py','server/genie.py',
   'docs/MDL-8-build-plan.md','docs/iterations/MDL-8-report.md',
   'release-report/MDL-8/final-acceptance-matrix.md',

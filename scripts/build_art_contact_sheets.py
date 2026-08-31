@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import time
 from pathlib import Path
 from typing import Any
 from PIL import Image, ImageDraw
@@ -53,7 +54,16 @@ def build(iteration: str) -> dict:
             per.paste(image, (x + (thumb_w - image.width) // 2, (thumb_h - image.height) // 2))
             per_draw.text((x + 8, thumb_h + 8), f"{asset_id}-C{index + 1:02d} / {path.stem}", fill="black")
         per_path = per_asset_dir / f"{asset_id}.png"
-        per.save(per_path, format="PNG", optimize=False)
+        # Windows security/indexing tools can briefly hold an existing PNG;
+        # retry the deterministic write once before failing the release gate.
+        for attempt in range(2):
+            try:
+                per.save(per_path, format="PNG", optimize=False)
+                break
+            except OSError:
+                if attempt == 1:
+                    raise
+                time.sleep(0.25)
         per_asset[asset_id] = {"path": per_path.relative_to(ROOT).as_posix(), "sha256": hashlib.sha256(per_path.read_bytes()).hexdigest(), "candidate_count": len(items)}
     return {"iteration": iteration, "status": "PASS", "candidate_count": len(entries), "path": output.relative_to(ROOT).as_posix(), "width": sheet.width, "height": sheet.height, "per_asset": per_asset}
 

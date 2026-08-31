@@ -1,0 +1,13 @@
+# Private generation truth is a build-time authoring input, never a runtime asset.
+data/generation/private_specs/
+data/fixtures/private/
+
+# Repository-only material is not needed by the application image.
+.git/
+.github/
+tests/
+docs/
+release-report/
+assets/review/
+*.md
+.env*

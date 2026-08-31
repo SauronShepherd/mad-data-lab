@@ -2,6 +2,12 @@
 
 Local-first React + FastAPI game foundation for the Databricks Genie-Powered App challenge.
 
+## For reviewers
+
+MAD DATA LAB turns an unexpected metric into a scientific investigation. In Case #042, Expected is €125.0M, Observed is €118.2M, and the deviation is -€6.8M. Dr. Genie selects the next Experiment, evidence changes the hypotheses, and the explanation must reconcile to €0.0M before the Scientific Verdict.
+
+The reviewer path and evidence are collected in [the judge guide](docs/JUDGE_GUIDE.md), [the Case #042 walkthrough](docs/CASE_0042_WALKTHROUGH.md), and [the screenshot gallery](docs/JUDGE_SCREENSHOTS.md). Run the local acceptance surface with `python scripts/release_candidate.py`; GitHub Actions is intentionally outside this project scope.
+
 ## Local run
 
 ```powershell

@@ -130,7 +130,7 @@ class MDL4FlowTests(unittest.TestCase):
         self.assertEqual(second_debrief.json()["score"], debrief.json()["score"])
         self.assertEqual(SESSIONS[sid]["score_events"], score_events)
 
-    def test_live_duplicate_experiment_cannot_be_committed(self):
+    def test_live_legal_alternate_experiment_is_committed_once(self):
         sid = self.client.post("/api/sessions", json={"case_id": "CASE_0042"}).json()["session_id"]
         self.client.post(f"/api/sessions/{sid}/start")
         from unittest.mock import patch
@@ -139,8 +139,8 @@ class MDL4FlowTests(unittest.TestCase):
             self.assertEqual(first.status_code, 200)
             second = self.client.post(f"/api/sessions/{sid}/next", json={})
         self.assertEqual(second.status_code, 200)
-        self.assertEqual(first.json()["experiment_id"], "COMPONENT_DECOMPOSITION")
-        self.assertEqual(second.json()["experiment_id"], "SNAPSHOT_DIFF")
+        self.assertEqual(first.json()["experiment_id"], "SNAPSHOT_DIFF")
+        self.assertEqual(second.json()["experiment_id"], "COMPONENT_DECOMPOSITION")
         self.assertEqual(len(SESSIONS[sid]["completed"]), 2)
 
     def test_session_projection_never_exposes_private_truth_or_score_ledger(self):

@@ -1,4 +1,4 @@
-.PHONY: setup lint typecheck test-unit test-data test-contract test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-secondary-soak test-chaos test-web test-sql test-genie-live test-genie-contract test-genie-benchmark validate-live-evidence deploy-staging smoke-staging soak deployed-soak release-report release-gate release-candidate audit-contract docker-build docker-smoke
+.PHONY: setup lint typecheck test-unit test-data test-contract test-e2e test-visual test-assets test-security test-a11y docs-preflight demo-preflight container-gate dependency-audit test-soak test-secondary-soak test-chaos test-web test-sql test-genie-live test-genie-contract test-genie-benchmark validate-live-evidence deploy-staging smoke-staging soak deployed-soak release-report release-gate release-candidate audit-contract docker-build docker-smoke
 
 setup:
 	python -m pip install -e ".[dev]"
@@ -36,6 +36,15 @@ test-security:
 
 test-a11y:
 	python scripts/a11y_gate.py
+
+docs-preflight:
+	python scripts/docs_preflight.py
+
+demo-preflight:
+	python scripts/demo_preflight.py
+
+container-gate:
+	python scripts/container_gate.py
 
 dependency-audit:
 	npm audit --omit=dev --audit-level=high

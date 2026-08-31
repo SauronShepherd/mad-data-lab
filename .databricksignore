@@ -27,3 +27,5 @@ tmp/**
 release-report/
 test-results/
 assets/review/
+data/generation/private_specs/
+data/fixtures/private/

@@ -17,6 +17,6 @@ COPY cases cases
 RUN pip install --no-cache-dir .
 COPY --from=frontend-build /frontend/dist dist
 COPY app.yaml .
-ENV UVICORN_HOST=0.0.0.0 DATABRICKS_APP_PORT=8000 ALLOW_FIXTURE_MODE=1
+ENV UVICORN_HOST=0.0.0.0 DATABRICKS_APP_PORT=8000 ALLOW_FIXTURE_MODE=0
 EXPOSE 8000
 CMD ["python", "-m", "server.run"]

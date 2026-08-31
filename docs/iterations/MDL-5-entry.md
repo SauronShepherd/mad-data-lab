@@ -28,11 +28,11 @@ preserving the server-authoritative MDL-4 game flow.
 - Changing MDL-4 scoring, completion, private-truth, Genie protocol, or predecessor evidence semantics except for regression fixes.
 - Adding secondary playable Cases or arbitrary Genie/model-driven component imports.
 - Treating generated artwork as functional UI or embedding analytical claims in images/CSS.
-- Marking human approval, GitHub settings, live Genie evaluation, or deployment acceptance from local tests alone.
+- Marking human approval, live Genie evaluation, or deployment acceptance from local tests alone.
 
 ## Release blockers
 
-- Any failed mandatory local or CI gate.
+- Any failed mandatory local gate.
 - Any stale or identity-inconsistent MDL-5 manifest/evidence artifact.
 - Missing/invalid Instrument or Evidence Explorer contract.
 - Serious/critical accessibility violation, critical responsive clipping, or evidence N+1 behavior.
@@ -49,7 +49,7 @@ preserving the server-authoritative MDL-4 game flow.
 
 ## External and human blockers
 
-- GitHub exact-head CI for the accepted MDL-5 commit.
+- GitHub Actions is intentionally out of scope for this owner-directed local acceptance run.
 - Databricks live Genie five-experiment smoke/soak and evaluation.
 - Human exact-byte artwork approval for MDL-5 A08-A13 and inherited approvals.
 - Confirmation of the intended staging identity for Databricks profile `mdl`.

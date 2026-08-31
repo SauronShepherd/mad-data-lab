@@ -12,6 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts import release_gate
+from backend.genie.config_digest import genie_contract_digest
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "release-report/MDL-5/release-candidate.json"
@@ -30,6 +31,8 @@ def identity() -> dict[str, str]:
         "tree_sha": git("rev-parse", "HEAD^{tree}"),
         "runtime_digest": subprocess.check_output([sys.executable, "scripts/compute_runtime_digest.py"], cwd=ROOT, text=True).strip(),
         "data_contract_digest": subprocess.check_output([sys.executable, "scripts/compute_mdl2_data_digest.py"], cwd=ROOT, text=True).strip(),
+        "genie_contract_digest": genie_contract_digest(),
+        "genie_live_config_sha256": json.loads((ROOT / "release-report/MDL-3/genie-live-config.json").read_text(encoding="utf-8")).get("genie_live_config_sha256", "NOT_RECORDED"),
     }
 
 
