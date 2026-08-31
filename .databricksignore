@@ -9,6 +9,12 @@ node_modules/
 .mdl3-venv/**
 .venv/
 .venv/**
+**/.venv/
+**/.venv/**
+**/.mdl3-venv/
+**/.mdl3-venv/**
+**/__pycache__/
+**/__pycache__/**
 dist/
 dist/**
 __pycache__/

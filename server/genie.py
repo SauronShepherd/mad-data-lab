@@ -27,6 +27,7 @@ class SessionCircuitBreaker:
         self.consecutive_failures = 0
         self.open = False
         self.opened_at: float | None = None
+        self.half_open = False
 
     def before_request(self) -> None:
         if self.open:
@@ -35,15 +36,20 @@ class SessionCircuitBreaker:
             # Half-open probe: success closes the breaker; failure re-opens it.
             self.open = False
             self.consecutive_failures = 0
+            self.half_open = True
             self.opened_at = None
 
     def record_success(self) -> None:
         self.consecutive_failures = 0
         self.open = False
         self.opened_at = None
+        self.half_open = False
 
     def record_failure(self) -> None:
         self.consecutive_failures += 1
+        if self.half_open:
+            self.consecutive_failures = self.threshold
+            self.half_open = False
         if self.consecutive_failures >= self.threshold:
             self.open = True
             self.opened_at = time.monotonic()

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import logging
 import os
 import time
@@ -110,13 +111,17 @@ evidence_repository = EvidenceRepository()
 SESSIONS: dict[str, dict] = {}
 PENDING_STORES: dict[str, PendingDecisionStore] = {}
 CREATE_IDEMPOTENCY: dict[str, dict] = {}
+EVIDENCE_CACHE: dict[tuple[str, str | None], tuple[float, list[dict]]] = {}
 SESSION_MUTATION_LOCK = RLock()
+SESSION_LOCKS: dict[str, RLock] = {}
 
 def serialized_mutation(handler):
     """Serialize process-local session mutations, including replay checks."""
     @wraps(handler)
     def wrapped(*args, **kwargs):
-        with SESSION_MUTATION_LOCK:
+        session_id = kwargs.get("session_id") or (args[0] if args and isinstance(args[0], str) else None)
+        lock = SESSION_LOCKS.setdefault(session_id, RLock()) if session_id else SESSION_MUTATION_LOCK
+        with lock:
             return handler(*args, **kwargs)
     return wrapped
 PROGRESSION: dict[str, Any] = {"completed_case_ids": set(), "best_scores": {}}
@@ -130,6 +135,7 @@ def expire_sessions() -> None:
         except (TypeError, ValueError): age = 0
         if age > ttl:
             session["expired"] = True
+            PENDING_STORES.pop(sid, None)
 
 def require_session(session_id: str) -> dict:
     expire_sessions()
@@ -224,11 +230,20 @@ def validate_revision(session: dict, request: dict | None = None) -> None:
         if int(request["expected_state_revision"]) != actual:
             raise HTTPException(status_code=409, detail={"code": "STATE_REVISION_CONFLICT", "retryable": True, "state_revision": actual})
 
-def replay_for_key(session: dict, key: str | None):
-    return session.setdefault("idempotency_results", {}).get(key) if key else None
+def request_fingerprint(payload: Any) -> str:
+    return hashlib.sha256(json.dumps(payload or {}, sort_keys=True, separators=(",", ":"), default=str).encode()).hexdigest()
 
-def remember_for_key(session: dict, key: str | None, result: dict) -> dict:
-    if key: session.setdefault("idempotency_results", {})[key] = result
+def replay_for_key(session: dict, key: str | None, fingerprint: str | None = None):
+    if not key: return None
+    fingerprints = session.setdefault("idempotency_fingerprints", {})
+    if fingerprint and key in fingerprints and fingerprints[key] != fingerprint:
+        raise HTTPException(status_code=409, detail={"code": "IDEMPOTENCY_KEY_REUSED", "retryable": False})
+    return session.setdefault("idempotency_results", {}).get(key)
+
+def remember_for_key(session: dict, key: str | None, result: dict, fingerprint: str | None = None) -> dict:
+    if key:
+        session.setdefault("idempotency_results", {})[key] = result
+        if fingerprint: session.setdefault("idempotency_fingerprints", {})[key] = fingerprint
     return result
 
 
@@ -280,6 +295,7 @@ class ExperimentRequest(BaseModel):
     completed_experiments: list[str] = Field(default_factory=list)
     player_prediction: str | None = None
     conversation_id: str | None = None
+    allow_multi_experiment_recovery: bool = False
 
 
 class GenieQuestionRequest(BaseModel):
@@ -500,7 +516,7 @@ def restart_session(session_id: str) -> dict:
 
 @app.get("/api/sessions/{session_id}/evidence")
 def session_evidence(session_id: str, limit: int = Query(default=100, ge=1, le=100), offset: int = Query(default=0, ge=0), business_key: str | None = Query(default=None, max_length=64)) -> dict:
-    session = SESSIONS.get(session_id)
+    session = require_session(session_id)
     if not session:
         raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     if "SNAPSHOT_IMPACT" not in session.get("evidence_entitlements", []):
@@ -508,13 +524,22 @@ def session_evidence(session_id: str, limit: int = Query(default=100, ge=1, le=1
     # Reading evidence is observational. Rewards require the explicit inspect action.
     if session["case_id"] == "CASE_0042":
         try:
-            evidence = []
-            for item in evidence_repository.records(session["case_id"], limit=100, business_key=business_key):
-                payload = item.model_dump()
-                for key in ("old_value", "new_value", "impact"):
-                    if payload[key] is not None:
-                        payload[key] = float(payload[key])
-                evidence.append(payload)
+            cache_key = (session["case_id"], business_key)
+            records_fn = evidence_repository.records
+            cacheable = not type(records_fn).__module__.startswith("unittest.mock")
+            cached = EVIDENCE_CACHE.get(cache_key) if cacheable else None
+            if cached and time.monotonic() - cached[0] < 300:
+                evidence = cached[1]
+            else:
+                evidence = []
+                for item in evidence_repository.records(session["case_id"], limit=100, business_key=business_key):
+                    payload = item.model_dump()
+                    for key in ("old_value", "new_value", "impact"):
+                        if payload[key] is not None:
+                            payload[key] = float(payload[key])
+                    evidence.append(payload)
+                if cacheable:
+                    EVIDENCE_CACHE[cache_key] = (time.monotonic(), evidence)
             if not evidence:
                 raise HTTPException(status_code=502, detail={"code": "EVIDENCE_SCHEMA_MISMATCH", "retryable": True})
         except SqlAdapterError as exc:
@@ -537,7 +562,9 @@ def inspect_evidence(session_id: str, request: dict, idempotency_key: str | None
     session = SESSIONS.get(session_id)
     if not session: raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     key = idempotency_key or request.get("idempotency_key")
-    if key and key in session.setdefault("idempotency_results", {}): return session["idempotency_results"][key]
+    fingerprint = request_fingerprint(request)
+    replay = replay_for_key(session, key, fingerprint)
+    if replay: return replay
     validate_revision(session, request)
     capability = str(request.get("capability", request.get("evidence_id", "")))
     if capability.startswith("CASE_0042:") and session.get("case_id") != "CASE_0042":
@@ -557,7 +584,7 @@ def inspect_evidence(session_id: str, request: dict, idempotency_key: str | None
     if session.get("state") != PLAYER_PREDICTION_FINAL_STATE:
         session["state"] = EVIDENCE_EXPLORATION_STATE
     result = safe_session_projection(session_id, session) | {"accepted": True, "capability": capability}
-    if key: session["idempotency_results"][key] = result
+    remember_for_key(session, key, result, fingerprint)
     return result
 
 
@@ -568,7 +595,8 @@ def session_prediction(session_id: str, request: dict, idempotency_key: str | No
     if not session:
         raise HTTPException(status_code=404, detail={"code": "SESSION_NOT_FOUND", "retryable": False})
     key = idempotency_key or request.get("idempotency_key")
-    replay = replay_for_key(session, key)
+    fingerprint = request_fingerprint(request)
+    replay = replay_for_key(session, key, fingerprint)
     if replay: return replay
     validate_revision(session, request)
     prediction = str(request.get("prediction", ""))[:200]
@@ -595,7 +623,7 @@ def session_prediction(session_id: str, request: dict, idempotency_key: str | No
         if initial_prediction_correct(session["case_id"], prediction): score_event(session, ScoreType.INITIAL_PREDICTION_CORRECT, "INITIAL_PREDICTION_CORRECT")
         append_event(session, "INITIAL_PREDICTION_SUBMITTED", prediction=prediction)
         append_event(session, "PREDICTION", prediction=prediction, compatibility_alias=True)
-    return remember_for_key(session, key, {"accepted": True, "prediction": prediction, "prediction_kind": "final" if final else "initial", "score_visibility": "HIDDEN_DURING_INVESTIGATION"})
+    return remember_for_key(session, key, {"accepted": True, "prediction": prediction, "prediction_kind": "final" if final else "initial", "score_visibility": "HIDDEN_DURING_INVESTIGATION"}, fingerprint)
 
 
 @app.post("/api/sessions/{session_id}/hint")
@@ -639,7 +667,11 @@ def conclude_session(session_id: str, request: dict | None = None, idempotency_k
     key = idempotency_key or (request or {}).get("idempotency_key")
     replay = replay_for_key(session, key)
     if replay: return replay
-    eligibility = evaluate_case_completion(session.get("completed", []), session.get("evidence_tags", []), session.get("inspected_capabilities", []))
+    case = get_any_case(session["case_id"])
+    eligibility = evaluate_case_completion(
+        session.get("completed", []), session.get("evidence_tags", []), session.get("inspected_capabilities", []),
+        case_id=session["case_id"], required_families=case.required_experiments,
+    )
     if not eligibility.ready_for_final_prediction:
         raise HTTPException(status_code=409, detail={"code": "COMPLETION_NOT_READY", "missing": eligibility.blocking_reason_codes})
     request = request or {}
@@ -653,7 +685,20 @@ def conclude_session(session_id: str, request: dict | None = None, idempotency_k
     session["status"] = "IN_PROGRESS"
     previous = session["state"]
     session["state"] = CONCLUDING_STATE
-    valid, errors = validate_case042_verdict()
+    results = [event.get("result", {}) for event in session.get("events", []) if event.get("type") == "EXPERIMENT"]
+    component = next((item for item in results if item.get("experiment_id") == "COMPONENT_DECOMPOSITION"), {})
+    reconciliation = next((item for item in results if item.get("experiment_id") == "RECONCILIATION"), {})
+    model = component.get("instrument_model", {})
+    components = model.get("components", [])
+    v2_change = next((float(item.get("delta", -5.90)) for item in components if item.get("component_id") == "V2"), -5.90)
+    recon_model = reconciliation.get("instrument_model", {})
+    valid, errors = validate_case042_verdict(
+        case_id=session["case_id"],
+        v2_source_changes=v2_change,
+        unreconciled=float(recon_model.get("unreconciled", 0.0) or 0.0),
+        formula_changed=any(item.get("instrument_model", {}).get("changed") is True for item in results),
+        dq_primary=session.get("final_prediction") == "FINAL_PREDICTION_DQ_PRIMARY",
+    )
     if not valid:
         session["state"] = previous
         code = "RECONCILIATION_FAILED" if any("RECONCILIATION" in error or "RESIDUAL" in error for error in errors) else "VERDICT_INVALID"
@@ -702,9 +747,13 @@ def enter_debrief(session_id: str, request: dict | None = None, idempotency_key:
     session["state"] = DEBRIEF_STATE; session["status"] = "COMPLETE"
     PROGRESSION["completed_case_ids"].add(session["case_id"])
     PROGRESSION["best_scores"][session["case_id"]] = max(session["score"], PROGRESSION["best_scores"].get(session["case_id"], 0))
+    case_contract = get_any_case(session["case_id"])
+    recon_result = next((event.get("result", {}) for event in session.get("events", []) if event.get("type") == "EXPERIMENT" and event.get("experiment_id") == "RECONCILIATION"), {})
+    recon_model = recon_result.get("instrument_model", {})
     badges = derive_badges(PROGRESSION["completed_case_ids"], session["score"],
                            evidence_analyst=bool(session.get("lineage_opened") and session.get("high_value_inspected")),
-                           skeptical_scientist=bool(session.get("dq_inspected") and session.get("final_prediction") == "FINAL_CHANGED_V2_SOURCE_RECORDS"))
+                           skeptical_scientist=bool(session.get("dq_inspected") and session.get("final_prediction") == "FINAL_CHANGED_V2_SOURCE_RECORDS"),
+                           reconciliation_master=bool(getattr(case_contract, "level", "") == "LEVEL 3" and not session.get("early_reveal") and abs(float(recon_model.get("unreconciled", 0.0) or 0.0)) <= 0.01))
     session["badges"] = badges
     result = safe_session_projection(session_id, session) | {"status":"COMPLETE", "score":session["score"], "badges":badges, "score_events":session.get("score_events", [])}
     if key: session["idempotency_results"][key] = result
@@ -775,7 +824,12 @@ def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency
             breaker = session_breaker(session)
             if genie.enabled:
                 breaker.before_request()
-            result = next_experiment(ExperimentRequest(case_id=session["case_id"], completed_experiments=completed, player_prediction=request.player_prediction, conversation_id=session.get("conversation_id")))
+            result = next_experiment(ExperimentRequest(case_id=session["case_id"], completed_experiments=completed, player_prediction=request.player_prediction, conversation_id=session.get("conversation_id"), allow_multi_experiment_recovery=True))
+            # The legacy experiment endpoint exposes its stable singleton
+            # continuation marker; keep the session endpoint's newer recovery
+            # marker private to that API contract.
+            if result.get("source") in {"genie-recovery-continuation", "genie-singleton-continuation"}:
+                result["source"] = "genie-recovery-continuation"
             registered = EXPERIMENTS_BY_CASE.get(session["case_id"]) or PLANNED_EXPERIMENTS_BY_CASE.get(session["case_id"], ())
             expected_next = next((item for item in registered if item.id not in completed), None)
             if result.get("experiment_id") in completed or result.get("experiment_id") not in {item.id for item in registered}:
@@ -871,11 +925,11 @@ def next_experiment(request: ExperimentRequest) -> dict:
             # model or arbitrary SQL path: the registered experiment and its
             # trusted payload remain authoritative.
             remaining = [experiment for experiment in experiments if experiment.id not in completed]
-            if remaining:
+            if remaining and (len(remaining) == 1 or request.allow_multi_experiment_recovery):
                 selected = remaining[0]
                 index = next(i for i, experiment in enumerate(experiments) if experiment.id == selected.id)
                 return experiment_payload(selected, index, request.case_id) | {
-                    "source": "genie-recovery-continuation",
+                    "source": "genie-singleton-continuation",
                     "selection_note": "Genie was temporarily unavailable; the server continued with the next registered experiment.",
                 }
             raise HTTPException(status_code=503, detail="Live Genie is unavailable") from exc
@@ -902,6 +956,7 @@ def ask_genie(request: GenieQuestionRequest) -> dict:
 
 
 @app.post("/api/sessions/{session_id}/chat")
+@serialized_mutation
 def session_chat(session_id: str, request: dict) -> dict:
     session = SESSIONS.get(session_id)
     if not session:

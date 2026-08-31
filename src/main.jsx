@@ -28,6 +28,20 @@ const CASES = [];
 const INITIAL_CASE = { id: "CASE_0042", number: "042", title: "Loading case…", metric: "", hook: "", difficulty: "", concepts: "", state: "LOADING", expected: 0, observed: 0, deviation: 0 };
 
 const formatMoney = (value) => `${value < 0 ? "-" : ""}€${Math.abs(value).toFixed(1)}M`;
+const instrumentAlias = (value) => ({
+  component_evidence: "WATERFALL",
+  snapshot_evidence: "SNAPSHOT_DIFF",
+  dq_evidence: "DQ_PANEL",
+  formula_evidence: "FORMULA_CHECK",
+  reconciliation_evidence: "RECONCILIATION",
+}[value] || value);
+const readableEvidence = (value) => {
+  if (typeof value !== "string") return value || "Curated evidence returned by the live Genie query.";
+  try {
+    const parsed = JSON.parse(value);
+    return typeof parsed === "string" ? parsed : "Curated evidence is available in the instrument and inspection controls below.";
+  } catch { return value; }
+};
 
 function App() {
   const [screen, setScreen] = useState("landing");
@@ -225,9 +239,12 @@ function App() {
       audio.pause();
       setAudioOn(false);
     } else {
+      // Persist the user's intent immediately. Browsers may reject playback
+      // until a gesture/permission is available, but that must not make the
+      // control appear inert or lose the preference.
+      setAudioOn(true);
       audio
         .play()
-        .then(() => setAudioOn(true))
         .catch(() =>
           setServiceError("Audio playback needs to be allowed by the browser."),
         );
@@ -301,6 +318,7 @@ function App() {
     }
   };
   const run = async () => {
+    if (loading) return;
     setLoading(true);
     setServiceError("");
     try {
@@ -489,8 +507,8 @@ function App() {
         {screen === "articles" && <><h1>{publicCopy.articlesTitle}</h1><p>{publicCopy.articlesIntro}</p><article className="case-card featured"><h2>{publicCopy.articleTitle}</h2><p>{publicCopy.articleBody}</p></article></>}
         {screen === "groups" && <><h1>{publicCopy.groupsTitle}</h1><p>{publicCopy.groupsIntro}</p><div className="cards">{["Decomposition", "Snapshots", "Data quality", "Lineage"].map((item) => <article className="case-card" key={item}><h2>{item}</h2><p>{publicCopy.groupBody}</p></article>)}</div></>}
         {screen === "variants" && <><h1>{publicCopy.variantsTitle}</h1><p>{publicCopy.variantsIntro}</p><article className="case-card featured"><h2>{publicCopy.canonical}</h2><p>{publicCopy.canonicalBody}</p><button className="primary" onClick={() => goPublic("board")}>{publicCopy.openBoard}</button></article></>}
-        {screen === "feedback" && <><h1>{publicCopy.feedbackTitle}</h1><p>{publicCopy.feedbackIntro}</p><form onSubmit={(event) => { event.preventDefault(); localStorage.setItem("mad-data-lab-feedback", "saved"); setServiceError(publicCopy.feedbackSaved); }}><label htmlFor="feedback-message">{publicCopy.message}</label><textarea id="feedback-message" required rows="5" /><button className="primary" type="submit">{publicCopy.sendFeedback}</button></form></>}
-        {screen === "comments" && <><h1>{publicCopy.commentsTitle}</h1><p>{publicCopy.commentsIntro}</p><form onSubmit={(event) => { event.preventDefault(); localStorage.setItem("mad-data-lab-comment", "saved"); setServiceError(publicCopy.commentSaved); }}><label htmlFor="comment-message">{publicCopy.comment}</label><textarea id="comment-message" required rows="5" /><button className="primary" type="submit">{publicCopy.postComment}</button></form></>}
+        {screen === "feedback" && <><h1>{publicCopy.feedbackTitle}</h1><p>{publicCopy.feedbackIntro}</p><form onSubmit={(event) => { event.preventDefault(); const text = event.currentTarget.elements["feedback-message"].value.trim(); localStorage.setItem("mad-data-lab-feedback", "saved"); localStorage.setItem("mad-data-lab-feedback-text", text); setServiceError(publicCopy.feedbackSaved); }}><label htmlFor="feedback-message">{publicCopy.message}</label><textarea id="feedback-message" required rows="5" /><button className="primary" type="submit">{publicCopy.sendFeedback}</button></form></>}
+        {screen === "comments" && <><h1>{publicCopy.commentsTitle}</h1><p>{publicCopy.commentsIntro}</p><form onSubmit={(event) => { event.preventDefault(); const text = event.currentTarget.elements["comment-message"].value.trim(); localStorage.setItem("mad-data-lab-comment", "saved"); localStorage.setItem("mad-data-lab-comment-text", text); setServiceError(publicCopy.commentSaved); }}><label htmlFor="comment-message">{publicCopy.comment}</label><textarea id="comment-message" required rows="5" /><button className="primary" type="submit">{publicCopy.postComment}</button></form></>}
         {screen === "account" && <><h1>{publicCopy.accountTitle}</h1><p>{publicCopy.accountIntro}</p><label className="setting-row"><span>{publicCopy.language}</span><select value={language} onChange={(event) => persistLanguage(event.target.value)}><option value="en">English</option><option value="es">Español</option></select></label><label className="setting-row"><span>{publicCopy.theme}</span><select value={theme} onChange={(event) => persistTheme(event.target.value)}><option value="lab">Lab dark</option><option value="high-contrast">High contrast</option></select></label><button className="secondary" onClick={() => setServiceError(publicCopy.subscriptionDisabled)}>{publicCopy.manageSubscription}</button></>}
         {screen === "admin" && <><h1>{publicCopy.adminTitle}</h1><p>{publicCopy.adminIntro}</p><pre>{JSON.stringify({cases: caseCatalog.length, badges: earnedBadges.length, theme, language}, null, 2)}</pre></>}
       </main>}
@@ -593,7 +611,7 @@ function App() {
                 <p>
                   {exp < 0 ? "START INVESTIGATION" : current.name.toUpperCase()}
                 </p>
-                {exp >= 0 && <InstrumentRenderer id={current.instrument} model={{...(current.instrument_model || {}), expected, observed, deviation, records: evidenceRecords.length ? evidenceRecords : (current.instrument_model || {}).records}} />}
+                {exp >= 0 && <InstrumentRenderer id={instrumentAlias(current.instrument)} model={{...(current.instrument_model || {}), expected, observed, deviation, records: evidenceRecords.length ? evidenceRecords : (current.instrument_model || {}).records}} />}
               </div>
             </div>
           </section>
@@ -689,9 +707,9 @@ function App() {
               >
                 <div className="evidence-heading">
                   <h2 id="evidence-heading">EVIDENCE EXPLORER</h2>
-                  <span>{current.instrument}</span>
+                  <span>{instrumentAlias(current.instrument)}</span>
                 </div>
-                <p>{evidence}</p>
+                <p>{readableEvidence(evidence)}</p>
                 {evidenceRecords.find((item) => item.business_key === "TX-004291") && (
                   <dl>
                     <div>
@@ -725,7 +743,7 @@ function App() {
                 <h2 id="experiment-rationale-heading">WHY THIS EXPERIMENT?</h2>
                 <p>{current.question || "This registered Experiment tests the next allowed evidence claim."}</p>
                 <dl>
-                  <div><dt>INSTRUMENT</dt><dd>{current.instrument || "Registered evidence instrument"}</dd></div>
+                  <div><dt>INSTRUMENT</dt><dd>{instrumentAlias(current.instrument) || "Registered evidence instrument"}</dd></div>
                   {current.target && <div><dt>TARGET</dt><dd>{current.target}</dd></div>}
                 </dl>
               </section>

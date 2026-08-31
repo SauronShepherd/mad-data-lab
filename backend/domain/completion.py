@@ -13,13 +13,16 @@ class CompletionEligibility:
     failed_reconciliations: list[str] = field(default_factory=list)
     blocking_reason_codes: list[str] = field(default_factory=list)
 
-def evaluate_case_completion(completed_experiments, evidence_tags=(), inspected_capabilities=(), *, residual=0.0) -> CompletionEligibility:
+def evaluate_case_completion(completed_experiments, evidence_tags=(), inspected_capabilities=(), *, residual=0.0, case_id=None, required_families=None, required_evidence=None, required_lineage=None) -> CompletionEligibility:
     completed = set(completed_experiments)
     tags = set(evidence_tags)
     inspected = set(inspected_capabilities)
-    missing_exp = [x for x in REQUIRED_FAMILIES if x not in completed]
-    missing_evidence = [x for x in REQUIRED_EVIDENCE if x not in tags]
-    if "CASE_0042:LINEAGE:V2_SOURCE_PATH" not in inspected:
+    families = tuple(required_families or REQUIRED_FAMILIES)
+    evidence = tuple(required_evidence or REQUIRED_EVIDENCE)
+    missing_exp = [x for x in families if x not in completed]
+    missing_evidence = [x for x in evidence if x not in tags]
+    lineage = required_lineage if required_lineage is not None else ("CASE_0042:LINEAGE:V2_SOURCE_PATH" if case_id in (None, "CASE_0042") else None)
+    if lineage and lineage not in inspected:
         missing_evidence.append("OPEN_REQUIRED_LINEAGE")
     failed = ["V2_RESIDUAL_OUT_OF_TOLERANCE"] if abs(float(residual)) > 0.01 else []
     reasons = [f"{x}_REQUIRED" for x in missing_exp] + failed
