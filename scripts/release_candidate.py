@@ -86,7 +86,7 @@ def main() -> int:
     live_names = ("genie-eval", "deployed-smoke", "deployed-soak")
     if os.getenv("RUN_LIVE_GATES") == "1":
         commands = {
-            "genie-eval": [sys.executable, "scripts/live_genie_check.py"],
+            "genie-eval": [sys.executable, "scripts/run_mdl3_benchmark.py", "--no-fixture", "--output", "release-report/genie-eval.json"],
             "deployed-smoke": [sys.executable, "scripts/deployed_smoke.py"],
             "deployed-soak": [sys.executable, "scripts/deployed_soak.py"],
         }

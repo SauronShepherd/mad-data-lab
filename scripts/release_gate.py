@@ -115,7 +115,7 @@ def main() -> None:
     if os.getenv("RUN_LIVE_GATES") == "1":
         live_identity = source_identity()
         live_commands = {
-            "genie-eval.json": [sys.executable, "scripts/live_genie_check.py"],
+            "genie-eval.json": [sys.executable, "scripts/run_mdl3_benchmark.py", "--no-fixture", "--output", "release-report/genie-eval.json"],
             "deployed-smoke.json": [sys.executable, "scripts/deployed_smoke.py"],
             "deployed-soak.json": [sys.executable, "scripts/deployed_soak.py"],
         }

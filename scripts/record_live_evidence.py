@@ -5,12 +5,13 @@ import json
 import argparse
 import subprocess
 import sys
+import shlex
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TARGETS = {
-    "genie-eval.json": "scripts/live_genie_check.py",
+    "genie-eval.json": "scripts/run_mdl3_benchmark.py --no-fixture --output release-report/genie-eval.json",
     "deployed-smoke.json": "scripts/deployed_smoke.py",
     "deployed-soak.json": "scripts/deployed_soak.py",
 }
@@ -43,10 +44,11 @@ def main() -> None:
                 raise SystemExit("captured deployed evidence lacks the exact PASS marker")
             result = subprocess.CompletedProcess([sys.executable, script], 0, output, "")
         else:
-            result = subprocess.run([sys.executable, script], cwd=ROOT, capture_output=True, text=True)
+            command = [sys.executable, *shlex.split(script)]
+            result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
         payload = {
             "status": "PASS" if result.returncode == 0 else "FAIL",
-            "command": [sys.executable, script],
+            "command": command if not (args.captured_output and filename in {"deployed-soak.json", "deployed-smoke.json"}) else [sys.executable, script],
             "output": (result.stdout + result.stderr)[-4000:],
             "source_identity": source_identity,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
