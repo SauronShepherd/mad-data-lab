@@ -10,6 +10,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from backend.genie.config_digest import genie_contract_digest
 TARGETS = {
     "genie-eval.json": "scripts/run_mdl3_benchmark.py --no-fixture --output release-report/genie-eval.json",
     "deployed-smoke.json": "scripts/deployed_smoke.py",
@@ -21,7 +23,14 @@ def identity() -> dict:
     head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip() or "NOT_IN_GIT"
     runtime = subprocess.check_output([sys.executable, "scripts/compute_runtime_digest.py"], cwd=ROOT, text=True).strip()
     data = subprocess.check_output([sys.executable, "scripts/compute_mdl2_data_digest.py"], cwd=ROOT, text=True).strip()
-    return {"git_head": head, "runtime_digest": runtime, "data_contract_digest": data}
+    config = json.loads((ROOT / "release-report/MDL-3/genie-live-config.json").read_text(encoding="utf-8"))
+    return {
+        "git_head": head,
+        "runtime_digest": runtime,
+        "data_contract_digest": data,
+        "genie_contract_digest": genie_contract_digest(),
+        "genie_live_config_sha256": config.get("genie_live_config_sha256", "NOT_RECORDED"),
+    }
 
 
 def main() -> None:
