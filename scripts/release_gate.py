@@ -121,6 +121,15 @@ def main() -> None:
         }
         for name, command in live_commands.items():
             live_payloads[name] = run(name, command)
+            if name == "genie-eval.json":
+                generated = REPORT / name
+                try:
+                    detailed = json.loads(generated.read_text(encoding="utf-8"))
+                    if isinstance(detailed, dict) and "attempts" in detailed:
+                        detailed["gate_command"] = command
+                        live_payloads[name] = detailed
+                except (OSError, json.JSONDecodeError):
+                    pass
             live_payloads[name]["source_identity"] = live_identity
             live_payloads[name]["generated_at_utc"] = datetime.now(timezone.utc).isoformat()
     for name, payload in (("genie-eval.json", live_payloads["genie-eval.json"]), ("asset-preflight.json", next(item for item in results if item["name"] == "assets")), ("visual-diff-summary.json", next(item for item in results if item["name"] == "visual")), ("deployed-smoke.json", live_payloads["deployed-smoke.json"]), ("deployed-soak.json", live_payloads["deployed-soak.json"])):

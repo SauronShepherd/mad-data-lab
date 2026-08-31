@@ -53,6 +53,14 @@ def main() -> None:
             "source_identity": source_identity,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         }
+        if filename == "genie-eval.json":
+            try:
+                detailed = json.loads((ROOT / "release-report" / filename).read_text(encoding="utf-8"))
+                if isinstance(detailed, dict) and "attempts" in detailed:
+                    detailed.update({"command": payload["command"], "source_identity": source_identity, "generated_at_utc": payload["generated_at_utc"]})
+                    payload = detailed
+            except (OSError, json.JSONDecodeError):
+                pass
         (ROOT / "release-report" / filename).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
         print(json.dumps({"artifact": filename, "status": payload["status"]}))
         if result.returncode != 0:

@@ -93,6 +93,14 @@ def main() -> int:
         for name in live_names:
             print(f"release candidate: running {name}", flush=True)
             item = release_gate.run(name, _project_command(commands[name]))
+            if name == "genie-eval":
+                generated = ROOT / "release-report/genie-eval.json"
+                try:
+                    detailed = json.loads(generated.read_text(encoding="utf-8"))
+                    if isinstance(detailed, dict) and "attempts" in detailed:
+                        item["benchmark"] = detailed
+                except (OSError, json.JSONDecodeError):
+                    pass
             print(f"release candidate: {name}={item['status']}", flush=True)
             item["source_identity"] = source
             live[name] = item
