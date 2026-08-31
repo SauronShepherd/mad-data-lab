@@ -56,7 +56,10 @@ class SqlEvidenceRepository:
     def records(self, case_id: str, *, limit: int = 100, business_key: str | None = None) -> list[SourceRecordResult]:
         if not 1 <= limit <= 100:
             raise ValueError("limit must be between 1 and 100")
-        rows = self._query("Q4", case_id, limit=limit)
+        # Apply the business-key predicate after retrieving the bounded public
+        # snapshot set; otherwise a requested key outside the top-N impact
+        # window can be reported as missing even though it is valid evidence.
+        rows = self._query("Q4", case_id, limit=100 if business_key is not None else limit)
         if business_key is not None:
             rows = [row for row in rows if row.get("business_key") == business_key]
         return [SourceRecordResult(business_key=row["business_key"], component=row["component"], old_value=row.get("old_value"), new_value=row.get("new_value"), impact=row["impact"], change_type=row["change_type"]) for row in rows[:limit]]
