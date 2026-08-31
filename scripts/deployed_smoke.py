@@ -65,6 +65,11 @@ def main() -> None:
     assert started["state"] == "HYPOTHESES_READY"
     call(f"/api/sessions/{session_id}/prediction", "POST", {"prediction": "PRED_SOURCE_VALUES_CHANGED"})
     experiments = [call(f"/api/sessions/{session_id}/next", "POST", {}) for _ in range(5)]
+    assert all(item.get("source") == "genie" for item in experiments), (
+        f"deployed experiment was not selected by Genie: {[item.get('source') for item in experiments]}"
+    )
+    assert all(not item.get("safe_fallback_used", False) for item in experiments)
+    assert all("server-continuation" not in str(item.get("source", "")) for item in experiments)
     actual_experiment_ids = [item["experiment_id"] for item in experiments]
     expected_experiment_ids = {
         "COMPONENT_DECOMPOSITION", "SNAPSHOT_DIFF", "DQ_MATERIALITY", "FORMULA_VALIDATION", "RECONCILIATION"

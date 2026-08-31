@@ -302,7 +302,6 @@ class ExperimentRequest(BaseModel):
     completed_experiments: list[str] = Field(default_factory=list)
     player_prediction: str | None = None
     conversation_id: str | None = None
-    allow_multi_experiment_recovery: bool = False
 
 
 class GenieQuestionRequest(BaseModel):
@@ -831,7 +830,7 @@ def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency
             breaker = session_breaker(session)
             if genie.enabled:
                 breaker.before_request()
-            result = next_experiment(ExperimentRequest(case_id=session["case_id"], completed_experiments=completed, player_prediction=request.player_prediction, conversation_id=session.get("conversation_id"), allow_multi_experiment_recovery=True))
+            result = next_experiment(ExperimentRequest(case_id=session["case_id"], completed_experiments=completed, player_prediction=request.player_prediction, conversation_id=session.get("conversation_id")))
             # The legacy experiment endpoint exposes its stable singleton
             # continuation marker; keep the session endpoint's newer recovery
             # marker private to that API contract.
@@ -920,19 +919,8 @@ def next_experiment(request: ExperimentRequest) -> dict:
             return message
         except Exception as exc:
             LOGGER.exception("live Genie next failed")
-            # Genie has already been asked and failed after its bounded retry
-            # budget. Keep the investigation playable by selecting the next
-            # server-owned experiment. This is a recovery path, not a second
-            # model or arbitrary SQL path: the registered experiment and its
-            # trusted payload remain authoritative.
-            remaining = [experiment for experiment in experiments if experiment.id not in completed]
-            if remaining and (len(remaining) == 1 or request.allow_multi_experiment_recovery):
-                selected = remaining[0]
-                index = next(i for i, experiment in enumerate(experiments) if experiment.id == selected.id)
-                return _experiment_payload(selected, index, request.case_id) | {
-                    "source": "genie-singleton-continuation",
-                    "selection_note": "Genie was temporarily unavailable; the server continued with the next registered experiment.",
-                }
+            # A failed Genie decision must never become a server-selected
+            # experiment, even when only one registered option remains.
             raise HTTPException(status_code=503, detail="Live Genie is unavailable") from exc
     index = next((i for i, experiment in enumerate(experiments) if experiment.id not in completed), None)
     if index is None:
