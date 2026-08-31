@@ -32,6 +32,7 @@ def main() -> None:
     source_identity = identity()
     targets = ((filename, TARGETS[filename]) for filename in (args.only or list(TARGETS)))
     for filename, script in targets:
+        command = [sys.executable, *shlex.split(script)]
         if args.captured_output and filename in {"deployed-soak.json", "deployed-smoke.json"}:
             captured = Path(args.captured_output)
             if not captured.is_file():
@@ -44,11 +45,10 @@ def main() -> None:
                 raise SystemExit("captured deployed evidence lacks the exact PASS marker")
             result = subprocess.CompletedProcess([sys.executable, script], 0, output, "")
         else:
-            command = [sys.executable, *shlex.split(script)]
             result = subprocess.run(command, cwd=ROOT, capture_output=True, text=True)
         payload = {
             "status": "PASS" if result.returncode == 0 else "FAIL",
-            "command": command if not (args.captured_output and filename in {"deployed-soak.json", "deployed-smoke.json"}) else [sys.executable, script],
+            "command": command,
             "output": (result.stdout + result.stderr)[-4000:],
             "source_identity": source_identity,
             "generated_at_utc": datetime.now(timezone.utc).isoformat(),
