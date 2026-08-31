@@ -47,6 +47,7 @@ function App() {
   const [screen, setScreen] = useState("landing");
   const [exp, setExp] = useState(-1);
   const [prediction, setPrediction] = useState("");
+  const [predictionNotice, setPredictionNotice] = useState("");
   const [experiment, setExperiment] = useState(null);
   const [completed, setCompleted] = useState([]);
   const [conversationId, setConversationId] = useState(null);
@@ -753,7 +754,18 @@ function App() {
               <select
                 id="prediction-choice"
                 value={prediction}
-                onChange={(e) => setPrediction(e.target.value)}
+                className={prediction ? "prediction-selected" : ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setPrediction(value);
+                  if (!value) {
+                    setPredictionNotice("");
+                    return;
+                  }
+                  const label = e.target.options[e.target.selectedIndex].text;
+                  setPredictionNotice(`Hypothesis locked: ${label}`);
+                  window.setTimeout(() => setPredictionNotice(""), 4200);
+                }}
               >
                 <option value="">What is most likely?</option>
                 <option value="PRED_SOURCE_VALUES_CHANGED">Component movement</option>
@@ -761,6 +773,7 @@ function App() {
                 <option value="PRED_FORMULA_CHANGED">Formula change</option>
                 <option value="PRED_INSUFFICIENT_EVIDENCE">Insufficient evidence</option>
               </select>
+              {predictionNotice && <div className="prediction-toast" role="status">{predictionNotice}</div>}
             </div>
             {finalStage ? (
               <>
