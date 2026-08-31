@@ -5,5 +5,5 @@ MDL3-DECISION-001..006,pending first decision lifecycle,backend/genie/decisions.
 MDL3-REG-001..006,closed Experiment registry,genie/registry.json;scripts/validate_mdl3_contract.py,tests/test_canonical_artifacts.py;release-report/MDL-3/contract-validation.json,implemented
 MDL3-CUR-001..006,curated instructions/config boundary,genie/instructions.md;scripts/validate_mdl3_contract.py,release-report/MDL-3/contract-validation.json,partial
 MDL3-CONTRACT-007,exact 30 benchmark corpus,genie/benchmarks/mdl3-live.yaml;backend/genie/config_digest.py,tests/test_mdl3_config_digest.py,implemented
-MDL3-LIVE-001,live 30-attempt authenticated evaluation,scripts/run_mdl3_benchmark.py,release-report/MDL-3/benchmark.json,blocked-authentication
+MDL3-LIVE-001,live 40-attempt authenticated evaluation,scripts/run_mdl3_benchmark.py,release-report/MDL-3/benchmark.json,blocked-authentication
 MDL3-EVIDENCE-001..006,stale live-evidence invalidation,backend/genie/config_digest.py;MDL-3 report,docs/iterations/MDL-3-report.md,partial
