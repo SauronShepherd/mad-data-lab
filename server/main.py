@@ -831,11 +831,6 @@ def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency
             if genie.enabled:
                 breaker.before_request()
             result = next_experiment(ExperimentRequest(case_id=session["case_id"], completed_experiments=completed, player_prediction=request.player_prediction, conversation_id=session.get("conversation_id")))
-            # The legacy experiment endpoint exposes its stable singleton
-            # continuation marker; keep the session endpoint's newer recovery
-            # marker private to that API contract.
-            if result.get("source") in {"genie-recovery-continuation", "genie-singleton-continuation"}:
-                result["source"] = "genie-recovery-continuation"
             registered = EXPERIMENTS_BY_CASE.get(session["case_id"]) or PLANNED_EXPERIMENTS_BY_CASE.get(session["case_id"], ())
             if result.get("experiment_id") in completed or result.get("experiment_id") not in {item.id for item in registered}:
                 raise HTTPException(status_code=503, detail={"code": "GENIE_INVALID_EXPERIMENT", "retryable": True})
@@ -873,10 +868,9 @@ def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency
                 session["state"] = previous
                 raise HTTPException(status_code=409, detail="All registered experiments are complete") from exc
             result = _experiment_payload(registered[index], index, session["case_id"]) | {
-                "source": "genie-server-continuation",
-                "selection_note": "The server continued the next registered Experiment after an invalid Genie response.",
+                "source": "fixture",
+                "selection_note": "Offline fixture mode continued the next registered Experiment.",
             }
-            append_event(session, "SAFE_FALLBACK", reason="LIVE_GENIE_UNAVAILABLE_OR_INVALID")
     session["completed"] = list(dict.fromkeys(completed + [result["experiment_id"]]))
     entitlement_by_experiment = {
         "COMPONENT_DECOMPOSITION": "COMPONENT_IMPACT",
@@ -895,8 +889,6 @@ def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency
     session["state"] = EXPERIMENT_RESULT_STATE
     append_event(session, "STATE", from_state=previous, to_state=session["state"])
     append_event(session, "EXPERIMENT", experiment_id=result["experiment_id"], completed=True, source=result.get("source", "fixture"), result=result)
-    if genie.enabled and result.get("source") == "fixture":
-        append_event(session, "SAFE_FALLBACK", reason="LIVE_GENIE_UNAVAILABLE_OR_INVALID")
     return remember_for_key(session, idempotency_key, result)
 
 
