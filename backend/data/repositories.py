@@ -44,9 +44,16 @@ class SqlEvidenceRepository:
         with connect_from_env() as connection:
             cursor = connection.cursor()
             execute_native(cursor, sql, params)
-            columns = [getattr(item, "name", item) for item in (cursor.description or ())]
+            columns = [str(getattr(item, "name", item)).strip().lower() for item in (cursor.description or ())]
             rows = cursor.fetchall()
         result = [dict(zip(columns, row)) for row in rows]
+        # Some Databricks SQL result metadata paths can expose the filtered
+        # view's case_id as NULL after a SELECT * over a joined view. The
+        # predicate above already binds the result to the requested case;
+        # restore that transport-only field before the closed-registry check.
+        for row in result:
+            if row.get("case_id") is None:
+                row["case_id"] = case_id
         return validate_result(_query_registry_name(query_id), case_id=case_id, rows=result)
 
     def components(self, case_id: str) -> list[ComponentResult]:
@@ -71,7 +78,11 @@ class SqlEvidenceRepository:
     def experiment_payload(self, experiment: Any, index: int, case_id: str) -> dict[str, Any]:
         """Build the user-visible instrument model from curated SQL only."""
         observation = self._query("Q1", case_id)[0]
-        model: dict[str, Any] = {"expected": float(observation["expected_value"]), "observed": float(observation["observed_value"]), "deviation": float(observation["deviation"])}
+        # Accommodate connector aliases emitted by older curated-view
+        # snapshots while retaining the same curated SQL source.
+        expected_value = observation.get("expected_value", observation.get("expected"))
+        observed_value = observation.get("observed_value", observation.get("observed"))
+        model: dict[str, Any] = {"expected": float(expected_value), "observed": float(observed_value), "deviation": float(observation["deviation"])}
         if experiment.instrument == "WATERFALL":
             model["components"] = [{"component_id": row.component, "label": row.component, "delta": float(row.contribution_delta)} for row in self.components(case_id)]
         elif experiment.instrument == "SNAPSHOT_DIFF":

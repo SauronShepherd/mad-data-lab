@@ -5,7 +5,7 @@ env:
   - name: ALLOW_FIXTURE_MODE
     value: "0"
   - name: MDL_CATALOG
-    value: sda_dev
+    value: workspace
   - name: DATABRICKS_SERVER_HOSTNAME
     value: dbc-916267ef-3b9b.cloud.databricks.com
   - name: DATABRICKS_HTTP_PATH

@@ -13,6 +13,7 @@ COPY pyproject.toml uv.lock ./
 COPY server server
 COPY backend backend
 COPY data data
+COPY sql sql
 COPY cases cases
 RUN pip install --no-cache-dir .
 COPY --from=frontend-build /frontend/dist dist

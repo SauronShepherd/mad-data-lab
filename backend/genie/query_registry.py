@@ -63,7 +63,10 @@ def validate_result(query_id: str, *, case_id: str, rows: list[dict]) -> list[di
         raise ValueError("trusted query returned empty result")
     required = REQUIRED_RESULT_COLUMNS[query_id]
     for row in rows:
-        if isinstance(row, dict) and row.get("case_id") != case_id:
+        # Databricks SQL connectors may return fixed-width/string-like values
+        # with harmless surrounding whitespace. Normalize only that transport
+        # representation while keeping the exact validated Case ID boundary.
+        if isinstance(row, dict) and str(row.get("case_id", "")).strip().upper() != case_id:
             raise ValueError("trusted query result crossed Case boundary")
         if not isinstance(row, dict) or not required.issubset(row):
             raise ValueError("trusted query result schema mismatch")
