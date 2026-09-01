@@ -822,7 +822,11 @@ def _session_next_impl(session_id: str, request: SessionNextRequest, idempotency
             raise HTTPException(status_code=409, detail="Pending Genie decision is stale") from exc
         selected = selected_decision.experiment_id
         index = next(i for i, item in enumerate(registered) if item.id == selected)
-        result = _experiment_payload(registered[index], index, session["case_id"])
+        result = _experiment_payload(registered[index], index, session["case_id"]) | {
+            # The pending decision was produced by the live Genie boundary;
+            # the SQL repository supplies evidence, not the experiment source.
+            "source": "genie",
+        }
         pending["consumed"] = True
         append_event(session, "PENDING_EXPERIMENT_CONSUMED", experiment_id=selected)
     else:
