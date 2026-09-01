@@ -1,4 +1,4 @@
-"""Authoritative fail-closed MDL-5 release-candidate orchestration."""
+"""Authoritative fail-closed MDL-8 release-candidate orchestration."""
 from __future__ import annotations
 
 import hashlib
@@ -15,7 +15,7 @@ from scripts import release_gate
 from backend.genie.config_digest import genie_contract_digest
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "release-report/MDL-5/release-candidate.json"
+OUTPUT = ROOT / "release-report/MDL-8/release-candidate.json"
 
 # Ordered deliberately: source checks, contracts, tests, UI, then soak/live.
 ORDER = tuple(release_gate.GATES)
@@ -45,7 +45,7 @@ def asset_hashes() -> dict[str, str]:
 
 
 def test_counts() -> dict[str, int]:
-    path = ROOT / "release-report/MDL-5/pytest-gate.xml"
+    path = ROOT / "release-report/MDL-8/pytest-gate.xml"
     if not path.is_file():
         return {"collected": 0, "passed": 0, "skipped": 0, "failed": 0}
     import xml.etree.ElementTree as ET

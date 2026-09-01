@@ -1,4 +1,4 @@
-.PHONY: setup lint typecheck test-unit test-data test-contract test-e2e test-visual test-assets test-security test-a11y docs-preflight demo-preflight container-gate dependency-audit test-soak test-secondary-soak test-chaos test-web test-sql test-genie-live test-genie-contract test-genie-benchmark validate-live-evidence deploy-staging smoke-staging soak deployed-soak release-report release-gate release-candidate audit-contract docker-build docker-smoke
+.PHONY: setup lint typecheck test-unit test-data test-contract test-e2e test-visual test-assets test-security test-a11y docs-preflight demo-preflight container-gate dependency-audit test-soak test-secondary-soak test-chaos test-web test-sql test-genie-live test-genie-contract test-genie-benchmark validate-live-evidence deploy-staging smoke-staging soak deployed-soak release-report release-gate performance-gate release-candidate audit-contract docker-build docker-smoke
 
 setup:
 	python -m pip install -e ".[dev]"
@@ -80,8 +80,8 @@ release-report:
 
 deploy-staging:
 	@test -n "$(DATABRICKS_SOURCE_PATH)" || (echo "DATABRICKS_SOURCE_PATH is required" && exit 1)
-	databricks workspace import-dir . "$(DATABRICKS_SOURCE_PATH)" --overwrite -p sda
-	databricks apps deploy mad-data-lab --source-code-path "$(DATABRICKS_SOURCE_PATH)" -p sda
+	databricks workspace import-dir . "$(DATABRICKS_SOURCE_PATH)" --overwrite -p mdl
+	databricks apps deploy mad-data-lab --source-code-path "$(DATABRICKS_SOURCE_PATH)" -p mdl
 
 smoke-staging:
 	python scripts/deployed_smoke.py
@@ -94,7 +94,10 @@ soak: deployed-soak
 test-web:
 	python scripts/local_web_smoke.py
 
-release-gate: lint typecheck test-unit test-data test-contract build test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-chaos test-genie-contract test-genie-benchmark
+release-gate: lint typecheck test-unit test-data test-contract build performance-gate test-e2e test-visual test-assets test-security test-a11y dependency-audit test-soak test-chaos test-genie-contract test-genie-benchmark
+
+performance-gate: build
+	python scripts/performance_gate.py
 
 release-candidate:
 	python scripts/release_candidate.py

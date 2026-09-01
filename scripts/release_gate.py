@@ -37,6 +37,7 @@ GATES = {
     "assets": [sys.executable, "scripts/assets_gate.py"],
     "security": [sys.executable, "scripts/security_gate.py"],
     "production_package": [sys.executable, "scripts/production_package_gate.py"],
+    "performance": [sys.executable, "scripts/performance_gate.py"],
     "frontend_contract": [sys.executable, "scripts/frontend_contract_gate.py"],
     "art_contact_sheets": [sys.executable, "scripts/build_art_contact_sheets.py"],
     "art_preflight": [sys.executable, "scripts/build_mdl3_art_review.py"],
@@ -147,7 +148,7 @@ def main() -> None:
     (REPORT / "summary.md").write_text("\n".join(summary) + "\n", encoding="utf-8")
     # MDL-7 requires a self-contained release bundle. Keep each artifact
     # truthful: live evidence is produced only when RUN_LIVE_GATES=1.
-    mdl7 = REPORT / "MDL-7"
+    mdl7 = REPORT / "MDL-8"
     mdl7.mkdir(parents=True, exist_ok=True)
     local_by_name = {item["name"]: item for item in results}
     artifact_map = {
@@ -166,7 +167,7 @@ def main() -> None:
     audio_result = run("audio-preflight", [sys.executable, "scripts/audio_preflight.py"])
     (mdl7 / "audio-preflight.json").write_text(json.dumps(audio_result, indent=2) + "\n", encoding="utf-8")
     (mdl7 / "test-results.xml").write_bytes((REPORT / "test-results.xml").read_bytes())
-    gate_lines = ["# MDL-7 release report", "", f"Source: `{identity['git_head']}`", "", "## Gates", ""]
+    gate_lines = ["# MDL-8 release report", "", f"Source: `{identity['git_head']}`", "", "## Gates", ""]
     gate_lines.extend(f"- {item['name']}: {item['status']}" for item in results)
     gate_lines.extend([
         f"- live-genie: {live_payloads['genie-eval.json'].get('status', 'NOT_RUN')}",

@@ -26,6 +26,9 @@ tmp/
 tmp/**
 release-report/
 test-results/
+.testdeps/
+deploy-*/
+runtime-deploy-*/
 assets/review/
 data/generation/private_specs/
 data/fixtures/private/

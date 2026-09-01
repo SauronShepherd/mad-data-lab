@@ -44,10 +44,10 @@ Build the frontend, import the project, and deploy it to the existing app:
 
 ```powershell
 npm run build
-databricks workspace import-dir . /Workspace/Users/<user-email>/mad-data-lab --overwrite -p sda
+databricks workspace import-dir . /Workspace/Users/<user-email>/mad-data-lab --overwrite -p mdl
 databricks apps deploy mad-data-lab `
   --source-code-path /Workspace/Users/<user-email>/mad-data-lab `
-  -p sda --timeout 20m
+  -p mdl --timeout 20m
 ```
 
 For the reproducible Make target, set `DATABRICKS_SOURCE_PATH` to the workspace path and run `make deploy-staging`.
